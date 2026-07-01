@@ -210,6 +210,7 @@ function meleeHit(player, range, mult, { full = false, knockback = 0, source, ai
       const nd = normalize(dx, dy);
       if (nd.x * f.x + nd.y * f.y < 0.35) continue; // ~110° cone
     }
+    if (!game.map.lineClear(player.x, player.y, e.x, e.y)) continue;
     const { dmg, crit } = rollDamage(player, mult);
     damageEnemy(e, dmg, { crit, source: source || player, knockback, dir: normalize(dx, dy) });
     hitAny = true;
