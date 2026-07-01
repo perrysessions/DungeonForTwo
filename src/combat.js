@@ -148,7 +148,8 @@ export function passiveOnKill(player, enemy) {
       const dmg = Math.max(1, Math.round(player.stats.attackDamage * 0.4 * rank * player.stats.damageMult));
       for (const e of game.enemies) {
         if (e.dead) continue;
-        if (Math.hypot(e.x - enemy.x, e.y - enemy.y) <= radius + e.radius)
+        if (Math.hypot(e.x - enemy.x, e.y - enemy.y) <= radius + e.radius &&
+            game.map.lineClear(enemy.x, enemy.y, e.x, e.y))
           damageEnemy(e, dmg, { source: player, burn: player.stats.attackDamage * 0.25 * rank });
       }
       spawnParticles(enemy.x, enemy.y, '#ff7020', 10, 130);
@@ -158,7 +159,8 @@ export function passiveOnKill(player, enemy) {
       const radius = 48 + 15 * rank;
       for (const e of game.enemies) {
         if (e.dead) continue;
-        if (Math.hypot(e.x - enemy.x, e.y - enemy.y) <= radius + e.radius)
+        if (Math.hypot(e.x - enemy.x, e.y - enemy.y) <= radius + e.radius &&
+            game.map.lineClear(enemy.x, enemy.y, e.x, e.y))
           e.slow = { factor: 0.3 + 0.05 * rank, time: 2 };
       }
       spawnParticles(enemy.x, enemy.y, '#a0e0ff', 8, 90);
@@ -336,7 +338,7 @@ const ABILITIES = {
     for (const e of game.enemies) {
       if (e.dead) continue;
       const d = Math.hypot(e.x - player.x, e.y - player.y);
-      if (d <= radius) {
+      if (d <= radius && game.map.lineClear(player.x, player.y, e.x, e.y)) {
         damageEnemy(e, dmg, { source: player, slow: 0.45 + player.mods.slowPower, slowTime: 3 });
       }
     }
@@ -411,7 +413,7 @@ function explodeAt(x, y, ex) {
   for (const e of game.enemies) {
     if (e.dead) continue;
     const d = Math.hypot(e.x - x, e.y - y);
-    if (d <= ex.radius + e.radius) {
+    if (d <= ex.radius + e.radius && game.map.lineClear(x, y, e.x, e.y)) {
       const { dmg, crit } = rollDamage(ex.source, 1.2);
       damageEnemy(e, dmg, { crit, source: ex.source, burn: ex.burn });
     }
