@@ -3,6 +3,17 @@ import { game, addShake } from './state.js';
 import { rand, randRange, chance } from './rng.js';
 import { rollLoot } from './items.js';
 
+function safePos(x, y) {
+  if (!game.map.worldSolid(x, y)) return { x, y };
+  for (let r = 16; r <= 96; r += 16) {
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+      const cx = x + Math.cos(a) * r, cy = y + Math.sin(a) * r;
+      if (!game.map.worldSolid(cx, cy)) return { x: cx, y: cy };
+    }
+  }
+  return { x, y };
+}
+
 // Direction toward the nearest living enemy with a CLEAR line of sight (no
 // walls in the way), so shots don't just splat into barriers. Falls back to the
 // nearest enemy overall, then to the player's facing.
@@ -85,8 +96,10 @@ export function damageEnemy(enemy, amount, opts = {}) {
   if (amount > 0)
     spawnFloater(enemy.x, enemy.y - enemy.radius, String(amount), opts.crit ? '#ffe23a' : '#ffffff', opts.crit);
   if (opts.knockback && opts.dir) {
-    enemy.x += opts.dir.x * opts.knockback * 0.3;
-    enemy.y += opts.dir.y * opts.knockback * 0.3;
+    const kx = enemy.x + opts.dir.x * opts.knockback * 0.3;
+    const ky = enemy.y + opts.dir.y * opts.knockback * 0.3;
+    if (!game.map.worldSolid(kx, enemy.y)) enemy.x = kx;
+    if (!game.map.worldSolid(enemy.x, ky)) enemy.y = ky;
   }
   if (opts.burn) enemy.burn = { dps: opts.burn, time: 3 };
   if (opts.slow) enemy.slow = { factor: opts.slow, time: opts.slowTime || 2.5 };
@@ -105,14 +118,16 @@ function killEnemy(enemy, source) {
   deathBurst(enemy);
   addShake(enemy.isBoss ? 12 : 3.2);
   // Gold drop -> pickup.
+  const gpos = safePos(enemy.x, enemy.y);
   game.pickups.push({
-    kind: 'gold', x: enemy.x, y: enemy.y, amount: enemy.goldValue,
+    kind: 'gold', x: gpos.x, y: gpos.y, amount: enemy.goldValue,
     vx: randRange(-40, 40), vy: randRange(-40, 40), life: 30, r: 6,
   });
   // Loot.
   for (const d of rollLoot(game.floor, enemy.tierRank || 1)) {
+    const ipos = safePos(enemy.x + randRange(-8, 8), enemy.y + randRange(-8, 8));
     game.pickups.push({
-      kind: 'item', item: d.item, x: enemy.x + randRange(-8, 8), y: enemy.y + randRange(-8, 8),
+      kind: 'item', item: d.item, x: ipos.x, y: ipos.y,
       vx: randRange(-30, 30), vy: randRange(-30, 30), life: 40, r: 8,
     });
   }

@@ -112,10 +112,24 @@ function updateRevives(dt) {
   }
 }
 
+function safePickupPos(x, y) {
+  if (!game.map.worldSolid(x, y)) return { x, y };
+  for (let r = 16; r <= 96; r += 16) {
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+      const cx = x + Math.cos(a) * r, cy = y + Math.sin(a) * r;
+      if (!game.map.worldSolid(cx, cy)) return { x: cx, y: cy };
+    }
+  }
+  return { x, y };
+}
+
 function updatePickups(dt) {
   for (const pk of game.pickups) {
     pk.vx *= 0.86; pk.vy *= 0.86;
-    pk.x += pk.vx * dt; pk.y += pk.vy * dt; pk.life -= dt;
+    const nx = pk.x + pk.vx * dt, ny = pk.y + pk.vy * dt;
+    if (!game.map.worldSolid(nx, pk.y)) pk.x = nx; else pk.vx = 0;
+    if (!game.map.worldSolid(pk.x, ny)) pk.y = ny; else pk.vy = 0;
+    pk.life -= dt;
     let best = null, bd = 1e9;
     for (const p of game.players) {
       if (p.downed) continue;
