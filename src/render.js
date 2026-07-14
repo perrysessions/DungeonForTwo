@@ -103,19 +103,115 @@ function drawStairs(ctx) {
 
 function drawPickups(ctx) {
   for (const p of game.pickups) {
+    const x = Math.round(p.x), y = Math.round(p.y);
     if (p.kind === 'gold') {
       ctx.fillStyle = '#ffcf3a';
-      ctx.fillRect(p.x - 4, p.y - 4, 8, 8);
-      ctx.fillStyle = '#fff0a0';
-      ctx.fillRect(p.x - 4, p.y - 4, 3, 3);
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff8c0'; ctx.beginPath(); ctx.arc(x - 1, y - 1, 2, 0, Math.PI * 2); ctx.fill();
     } else {
-      ctx.fillStyle = p.item.color || '#fff';
-      ctx.fillRect(p.x - 6, p.y - 6, 12, 12);
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(p.x - 6, p.y - 6, 12, 12);
+      const item = p.item;
+      const slot = item.slot;
+      if (slot === 'consumable') {
+        _drawVial(ctx, x, y, item.id.startsWith('mana') ? '#5080ff' : '#e03050');
+      } else if (slot === 'weapon') {
+        _drawSword(ctx, x, y, item.color || '#b8b8c4');
+      } else if (slot === 'armor') {
+        _drawShield(ctx, x, y, item.color || '#b8b8c4');
+      } else {
+        _drawGem(ctx, x, y, item.color || '#b8b8c4');
+      }
     }
   }
+}
+
+function _drawVial(ctx, x, y, liquidColor) {
+  // body
+  ctx.fillStyle = 'rgba(200,230,255,0.35)';
+  ctx.strokeStyle = 'rgba(200,230,255,0.85)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(x - 3, y - 4, 6, 8, 1);
+  ctx.fill(); ctx.stroke();
+  // liquid fill
+  ctx.fillStyle = liquidColor;
+  ctx.beginPath(); ctx.roundRect(x - 2, y, 4, 3, 1); ctx.fill();
+  // shine
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillRect(x - 2, y - 3, 1, 3);
+  // neck
+  ctx.strokeStyle = 'rgba(200,230,255,0.85)';
+  ctx.beginPath(); ctx.moveTo(x - 2, y - 4); ctx.lineTo(x - 1, y - 6);
+  ctx.moveTo(x + 2, y - 4); ctx.lineTo(x + 1, y - 6); ctx.stroke();
+  // cork
+  ctx.fillStyle = '#c89050';
+  ctx.fillRect(x - 1, y - 8, 2, 2);
+}
+
+function _drawSword(ctx, x, y, rarityColor) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(Math.PI / 4); // diagonal
+  // blade
+  ctx.fillStyle = '#dde8f0';
+  ctx.beginPath();
+  ctx.moveTo(0, -8); ctx.lineTo(2, -2); ctx.lineTo(-2, -2); ctx.closePath();
+  ctx.fill();
+  // edge shine
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0.6, -3); ctx.lineTo(0, -3); ctx.closePath(); ctx.fill();
+  // crossguard
+  ctx.fillStyle = rarityColor;
+  ctx.fillRect(-4, -2, 8, 2);
+  // handle
+  ctx.fillStyle = '#8b6040';
+  ctx.fillRect(-1, 0, 2, 5);
+  // pommel
+  ctx.fillStyle = rarityColor;
+  ctx.beginPath(); ctx.arc(0, 6, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function _drawShield(ctx, x, y, rarityColor) {
+  ctx.save();
+  ctx.translate(x, y);
+  // shield body
+  ctx.fillStyle = rarityColor;
+  ctx.beginPath();
+  ctx.moveTo(0, 8); ctx.lineTo(-6, 2); ctx.lineTo(-6, -5); ctx.lineTo(0, -7); ctx.lineTo(6, -5); ctx.lineTo(6, 2); ctx.closePath();
+  ctx.fill();
+  // rim
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // metal face
+  ctx.fillStyle = 'rgba(200,220,240,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(0, 5); ctx.lineTo(-4, 1); ctx.lineTo(-4, -3); ctx.lineTo(0, -5); ctx.lineTo(4, -3); ctx.lineTo(4, 1); ctx.closePath();
+  ctx.fill();
+  // boss
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.beginPath(); ctx.arc(0, 0, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function _drawGem(ctx, x, y, rarityColor) {
+  ctx.save();
+  ctx.translate(x, y);
+  // chain arc
+  ctx.strokeStyle = '#c8a860';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(0, -3, 5, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+  // gem body
+  ctx.fillStyle = rarityColor;
+  ctx.beginPath();
+  ctx.moveTo(0, 7); ctx.lineTo(-5, 1); ctx.lineTo(-3, -3); ctx.lineTo(3, -3); ctx.lineTo(5, 1); ctx.closePath();
+  ctx.fill();
+  // facet shine
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(0, 5); ctx.lineTo(-3, 1); ctx.lineTo(-1, -1); ctx.lineTo(1, -1); ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
 // --- entity pixel art ---
