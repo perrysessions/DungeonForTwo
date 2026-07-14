@@ -189,7 +189,6 @@ export class Player {
     if (this.swing && this.swing.t > 0) { this.swing.t -= dt; if (this.swing.t <= 0) this.swing = null; }
     if (this.novaFx && this.novaFx.t > 0) { this.novaFx.t -= dt; if (this.novaFx.t <= 0) this.novaFx = null; }
     if (!this.downed) {
-      this.mana = Math.min(this.stats.maxMana, this.mana + this.stats.manaRegen * dt);
       if (this.stats.hpRegen > 0)
         this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.hpRegen * dt);
     }

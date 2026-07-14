@@ -257,9 +257,11 @@ function projColor(player) {
 }
 
 // ---- abilities ----------------------------------------------------------
+// Abilities are now mana-gated, not cooldown-gated.
+// The tiny lock just prevents firing 60x/frame while the button is held.
 const ABILITY_CD = {
-  cleave: 1.4, multishot: 1.1, fireball: 1.1, raiseMinion: 2.6,
-  healAura: 2.4, dash: 1.2, smite: 1.2, frostNova: 2.4,
+  cleave: 0.15, multishot: 0.15, fireball: 0.15, raiseMinion: 0.15,
+  healAura: 0.15, dash: 0.15, smite: 0.15, frostNova: 0.15,
 };
 
 export function useAbility(player) {

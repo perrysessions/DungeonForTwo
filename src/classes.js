@@ -4,7 +4,7 @@
 export const BASE_STATS = {
   maxHp: 100, maxMana: 50, moveSpeed: 150, damageMult: 1,
   attackRange: 320, attackCooldown: 0.45, attackDamage: 10,
-  critChance: 0.05, critMult: 2, armor: 0, manaRegen: 5, hpRegen: 0,
+  critChance: 0.05, critMult: 2, armor: 0, hpRegen: 0,
   projectileSpeed: 400, projectileCount: 1, pierce: 0,
   weaponType: 'ranged',
 };
@@ -34,7 +34,7 @@ export const CLASSES = {
     art: { body: '#8a6d3b', accent: '#c0c0c8', trim: '#e8c34a', head: 'helm' },
     stats: {
       maxHp: 170, maxMana: 40, moveSpeed: 140, armor: 7, weaponType: 'melee',
-      attackRange: 58, attackCooldown: 0.5, attackDamage: 17, manaRegen: 4,
+      attackRange: 58, attackCooldown: 0.5, attackDamage: 17,
     },
     tree: [
       node('w_pass', 'Bloodlust', 'PASSIVE — On kill: heal 2% max HP per rank', { passive: true, maxRank: 4 }),
@@ -72,13 +72,13 @@ export const CLASSES = {
     art: { body: '#a02020', accent: '#ff8020', trim: '#ffd060', head: 'hat' },
     stats: {
       maxHp: 82, maxMana: 95, attackDamage: 8, attackCooldown: 0.5,
-      manaRegen: 8, projectileSpeed: 360,
+      projectileSpeed: 360,
     },
     tree: [
       node('f_pass', 'Conflagration', 'PASSIVE — On kill: a fiery blast burns nearby foes (per rank)', { passive: true, maxRank: 4 }),
       node('f_burn', 'Cinders', '+25% Burn damage', { maxRank: 4, mods: { burn: 0.25 } }),
       node('f_blast', 'Big Bang', '+15% Blast radius', { maxRank: 3, mods: { blastRadius: 0.15 } }),
-      node('f_mana', 'Deep Well', '+15 Max Mana & regen', { maxRank: 3, stats: { maxMana: 15, manaRegen: 1.5 } }),
+      node('f_mana', 'Deep Well', '+15 Max Mana', { maxRank: 3, stats: { maxMana: 15 } }),
       node('f_dmg', 'Pyromancy', '+9% Damage', { maxRank: 4, stats: { damageMult: 0.09 } }),
       node('f_cast', 'Quick Cast', '-7% Attack cooldown', { maxRank: 2, mods: { castSpeed: 0.075 } }),
       node('f_hp', 'Ward', '+10 Max HP', { maxRank: 3, stats: { maxHp: 10 } }),
@@ -109,14 +109,14 @@ export const CLASSES = {
     art: { body: '#d8d0c0', accent: '#f0d060', trim: '#ffffff', head: 'hood' },
     stats: {
       maxHp: 115, maxMana: 95, attackDamage: 7, attackCooldown: 0.46,
-      manaRegen: 9, projectileSpeed: 380,
+      projectileSpeed: 380,
     },
     tree: [
       node('c_pass', 'Renewal', 'PASSIVE — On kill: heal both heroes a little (per rank)', { passive: true, maxRank: 4 }),
       node('c_heal', 'Blessing', '+25% Heal power', { maxRank: 4, mods: { healPower: 0.25 } }),
       node('c_aura', 'Wide Grace', '+15% Aura radius', { maxRank: 3, mods: { auraRadius: 0.15 } }),
       node('c_rev', 'Guardian Angel', 'Revive allies 20% faster', { maxRank: 2, mods: { reviveSpeed: 0.2 } }),
-      node('c_mana', 'Faith', '+15 Max Mana & regen', { maxRank: 3, stats: { maxMana: 15, manaRegen: 1.5 } }),
+      node('c_mana', 'Faith', '+15 Max Mana', { maxRank: 3, stats: { maxMana: 15 } }),
       node('c_hp', 'Sanctuary', '+12 Max HP', { maxRank: 3, stats: { maxHp: 12 } }),
       node('c_dmg', 'Smiting Light', '+6% Damage', { maxRank: 3, stats: { damageMult: 0.06 } }),
     ],
@@ -147,7 +147,7 @@ export const CLASSES = {
     art: { body: '#c0c0cc', accent: '#e8c34a', trim: '#ffffff', head: 'helm' },
     stats: {
       maxHp: 150, maxMana: 65, armor: 5, weaponType: 'melee', attackRange: 60,
-      attackCooldown: 0.5, attackDamage: 15, manaRegen: 6,
+      attackCooldown: 0.5, attackDamage: 15,
     },
     tree: [
       node('p_pass', 'Retribution', 'PASSIVE — On kill: holy heal to both heroes (per rank)', { passive: true, maxRank: 4 }),
@@ -166,7 +166,7 @@ export const CLASSES = {
     art: { body: '#204a80', accent: '#80c0ff', trim: '#e0f4ff', head: 'hat' },
     stats: {
       maxHp: 90, maxMana: 90, attackDamage: 8, attackCooldown: 0.5,
-      manaRegen: 8, projectileSpeed: 380,
+      projectileSpeed: 380,
     },
     tree: [
       node('i_pass', 'Frostbite', 'PASSIVE — On kill: a chilling burst slows nearby foes (per rank)', { passive: true, maxRank: 4 }),
