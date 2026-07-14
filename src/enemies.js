@@ -119,23 +119,23 @@ export class Enemy {
     const nx = dx / dist, ny = dy / dist;
     const phasing = this.behavior === 'phasing' || this.behavior === 'boss_phasing';
 
-    // LOS aggro: become alert when a player is visible; stay alert briefly after losing sight.
-    if (!this.alert) {
-      const LOS_RANGE = 320;
-      if (dist <= LOS_RANGE && game.map.lineClear(this.x, this.y, target.x, target.y)) {
-        this.alert = true;
-      }
-    } else if (this.alertTimer <= 0) {
-      // lose sight check — remain alert for 3s after last clear LOS
-      if (game.map.lineClear(this.x, this.y, target.x, target.y)) {
-        this.alertTimer = 3;
+    // Phasing enemies always hunt the nearest player — no LOS needed.
+    if (!phasing) {
+      // LOS aggro: become alert when a player is visible; stay alert briefly after losing sight.
+      if (!this.alert) {
+        const LOS_RANGE = 320;
+        if (dist <= LOS_RANGE && game.map.lineClear(this.x, this.y, target.x, target.y)) {
+          this.alert = true;
+        }
       } else if (this.alertTimer <= 0) {
-        // lost sight and grace period expired — go idle
-        this.alert = false;
+        if (game.map.lineClear(this.x, this.y, target.x, target.y)) {
+          this.alertTimer = 3;
+        } else if (this.alertTimer <= 0) {
+          this.alert = false;
+        }
       }
+      if (!this.alert) return; // idle: stand still until spotted
     }
-
-    if (!this.alert) return; // idle: stand still until spotted
 
     const ranged = ['ranged', 'caster', 'boss_ranged'].includes(this.behavior);
     let move = { x: 0, y: 0 };
