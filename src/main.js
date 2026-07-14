@@ -175,6 +175,7 @@ function checkFloorProgress() {
   }
   if (game.enemies.length === 0 && !game.awaitingBoss && !game.stairsActive) {
     game.stairsActive = true;
+    playSfx('floor_clear');
     setMessage('Floor cleared! Reach the stairs ▼ together', 3.5);
   }
   if (game.stairsActive) {
@@ -234,15 +235,15 @@ function init() {
   ctx = canvas.getContext('2d');
   ui.initUI(controller);
   game.phase = Phase.TITLE;
-  preloadAudio();
-  // Browsers require a user gesture before audio can play.
-  // On first interaction, resume the audio context and fade the title music in.
-  const startTitleMusic = () => {
-    resumeAudio();
+  // Start music as soon as audio buffers are loaded. Browsers that enforce
+  // autoplay policy will suspend the AudioContext until the first user gesture;
+  // the unlock listener below resumes it so music begins immediately on touch.
+  preloadAudio().then(() => {
     playMusic('dungeon', { fadeIn: 2.5 });
-  };
-  canvas.addEventListener('click', startTitleMusic, { once: true });
-  document.addEventListener('keydown', startTitleMusic, { once: true });
+  });
+  const unlockAudio = () => { resumeAudio(); };
+  document.addEventListener('click', unlockAudio, { once: true });
+  document.addEventListener('keydown', unlockAudio, { once: true });
   requestAnimationFrame(frame);
 }
 
