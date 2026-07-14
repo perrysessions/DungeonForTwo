@@ -166,7 +166,7 @@ function checkFloorProgress() {
     game.enemies.push(boss);
     game.awaitingBoss = false;
     setMessage(`${boss.name} awakens!`, 3.5);
-    playMusic('boss');
+    playMusic('boss', { loop: false });
     addShake(14);
     for (let i = 0; i < 40; i++) {
       const a = Math.random() * Math.PI * 2, s = 60 + Math.random() * 140;
