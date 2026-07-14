@@ -43,8 +43,17 @@ function initSettings() {
   const restartYes    = document.getElementById('restart-yes');
   const restartNo     = document.getElementById('restart-no');
 
-  const open  = () => { modal.classList.remove('hidden'); restartArea.classList.add('hidden'); };
-  const close = () => modal.classList.add('hidden');
+  const open = () => {
+    const inRun = game.phase === Phase.PLAYING || game.phase === Phase.SHOP;
+    restartBtn.style.display = inRun ? '' : 'none';
+    restartArea.classList.add('hidden');
+    modal.classList.remove('hidden');
+    if (inRun) game.paused = true;
+  };
+  const close = () => {
+    modal.classList.add('hidden');
+    game.paused = false;
+  };
 
   btn.addEventListener('click', open);
   closeBtn.addEventListener('click', close);
@@ -68,21 +77,6 @@ function initSettings() {
   restartBtn.addEventListener('click', () => restartArea.classList.remove('hidden'));
   restartNo.addEventListener('click',  () => restartArea.classList.add('hidden'));
   restartYes.addEventListener('click', () => { close(); ctrl.onRestart(); });
-
-  // Hide restart button when not in an active run
-  const _origOpen = open;
-  els._settingsOpen = () => {
-    const inRun = game.phase === Phase.PLAYING || game.phase === Phase.SHOP;
-    restartBtn.style.display = inRun ? '' : 'none';
-    restartArea.classList.add('hidden');
-    _origOpen();
-  };
-  btn.removeEventListener('click', open);
-  btn.addEventListener('click', els._settingsOpen);
-  document.removeEventListener('keydown', open);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { modal.classList.contains('hidden') ? els._settingsOpen() : close(); }
-  });
 }
 
 export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false] }; }

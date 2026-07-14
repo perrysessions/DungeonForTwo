@@ -31,7 +31,8 @@ export const game = {
   map: null,         // current Dungeon
   camera: { x: 0, y: 0 },
   stairsActive: false,
-  awaitingBoss: false, // boss floor: boss held back until adds are dead
+  awaitingBoss: false,
+  paused: false, // boss floor: boss held back until adds are dead
   time: 0,           // seconds elapsed (accumulated fixed steps)
   message: '',       // transient banner (e.g. "Floor cleared!")
   messageTimer: 0,
@@ -54,4 +55,5 @@ export function resetRunState() {
   game.floaters = [];
   game.particles = [];
   game.stairsActive = false;
+  game.paused = false;
 }

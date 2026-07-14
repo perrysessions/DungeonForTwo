@@ -18,7 +18,7 @@ sfxGain.gain.value = 0.7;
 sfxGain.connect(masterGain);
 
 musicGain = ctx.createGain();
-musicGain.gain.value = 0.35;
+musicGain.gain.value = 0.25;
 musicGain.connect(masterGain);
 
 const SFX_FILES = {
@@ -71,12 +71,12 @@ export function playSfx(name, volume = 1) {
   src.start();
 }
 
-export function playMusic(name, { fadeIn = 0, volume = 0.35 } = {}) {
+export function playMusic(name, { fadeIn = 0, volume = 0.25, loop = true } = {}) {
   if (currentTrack === name) return;
-  _startMusic(name, fadeIn, volume);
+  _startMusic(name, fadeIn, volume, loop);
 }
 
-function _startMusic(name, fadeIn = 0, volume = 0.35) {
+function _startMusic(name, fadeIn = 0, volume = 0.25, loop = true) {
   stopMusic();
   currentTrack = name;
   if (ctx.state === 'suspended') ctx.resume();
@@ -84,7 +84,7 @@ function _startMusic(name, fadeIn = 0, volume = 0.35) {
   if (!url || !buffers[url]) return;
   musicSource = ctx.createBufferSource();
   musicSource.buffer = buffers[url];
-  musicSource.loop = true;
+  musicSource.loop = loop;
   musicSource.connect(musicGain);
   if (fadeIn > 0) {
     musicGain.gain.setValueAtTime(0, ctx.currentTime);
@@ -111,7 +111,7 @@ export function fadeOutMusic(duration = 1.0) {
   setTimeout(() => stopMusic(), duration * 1000);
 }
 
-export function fadeOutThenIn(name, outDuration = 1.2, inDuration = 2.0, volume = 0.35) {
+export function fadeOutThenIn(name, outDuration = 1.2, inDuration = 2.0, volume = 0.25) {
   if (!musicSource) { playMusic(name, { fadeIn: inDuration, volume }); return; }
   fadeOutMusic(outDuration);
   setTimeout(() => _startMusic(name, inDuration, volume), outDuration * 1000 + 50);

@@ -190,7 +190,7 @@ function checkFloorProgress() {
   }
   if (game.players.length && game.players.every(p => p.downed)) {
     game.phase = Phase.GAME_OVER;
-    playMusic('death');
+    playMusic('death', { loop: false });
   }
 }
 
@@ -219,7 +219,7 @@ function frame(now) {
 
   input.beginFrame();
   ui.update(dt);
-  if (game.phase === Phase.PLAYING) simulate(dt);
+  if (game.phase === Phase.PLAYING && !game.paused) simulate(dt);
 
   if (game.map) render(ctx);
   game.time += dt;
