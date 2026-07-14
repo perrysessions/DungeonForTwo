@@ -16,10 +16,16 @@ const ARCHETYPES = [
 ];
 
 const BOSSES = {
-  5: { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 420, dmg: 20, speed: 78, radius: 22 },
-  10: { key: 'bonelord', name: 'Bone Lord', color: '#e8e8d0', behavior: 'boss_ranged', hp: 820, dmg: 22, speed: 60, radius: 24, shootSpeed: 260, shootColor: '#fff0c0' },
-  15: { key: 'wraithqueen', name: 'Wraith Queen', color: '#5fe0d0', behavior: 'boss_phasing', hp: 1500, dmg: 26, speed: 100, radius: 24, shootSpeed: 300, shootColor: '#a0ffe0' },
-  20: { key: 'devourer', name: 'The Devourer', color: '#a02060', behavior: 'boss_ranged', hp: 3200, dmg: 34, speed: 74, radius: 30, shootSpeed: 320, shootColor: '#ff60a0' },
+  3:  { key: 'trollwarchief', name: 'Troll Warchief', color: '#6aaf3a', behavior: 'heavy', hp: 260, dmg: 14, speed: 68, radius: 20,
+        minionDef: 'goblin', minionCount: 2, minionInterval: 9 },
+  5:  { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 420, dmg: 20, speed: 78, radius: 22,
+        minionDef: 'goblin', minionCount: 3, minionInterval: 8 },
+  10: { key: 'bonelord', name: 'Bone Lord', color: '#e8e8d0', behavior: 'boss_ranged', hp: 820, dmg: 22, speed: 60, radius: 24, shootSpeed: 260, shootColor: '#fff0c0',
+        minionDef: 'skeleton', minionCount: 2, minionInterval: 10 },
+  15: { key: 'wraithqueen', name: 'Wraith Queen', color: '#5fe0d0', behavior: 'boss_phasing', hp: 1500, dmg: 26, speed: 100, radius: 24, shootSpeed: 300, shootColor: '#a0ffe0',
+        minionDef: 'wraith', minionCount: 2, minionInterval: 9 },
+  20: { key: 'devourer', name: 'The Devourer', color: '#a02060', behavior: 'boss_ranged', hp: 3200, dmg: 34, speed: 74, radius: 30, shootSpeed: 320, shootColor: '#ff60a0',
+        minionDef: 'cultist', minionCount: 3, minionInterval: 7 },
 };
 
 export class Enemy {
@@ -52,6 +58,9 @@ export class Enemy {
     // Bosses and phasing enemies are always alert; others must gain LOS first.
     this.alert = isBoss || def.behavior === 'phasing' || def.behavior === 'boss_phasing';
     this.alertTimer = 0; // keeps alert briefly after losing LOS
+    // Boss-only fields
+    this.phase2 = false;
+    this.minionTimer = (def.minionInterval || 10) * 0.5; // first wave comes sooner
     // rewards — scaled down since there are ~3x as many enemies now, so the
     // per-floor totals of xp/gold/loot stay about the same (just harder).
     const REWARD_SCALE = 1 / 3;
@@ -81,6 +90,26 @@ export class Enemy {
       speedFactor = 1 - this.slow.factor;
       this.slow.time -= dt;
       if (this.slow.time <= 0) this.slow = null;
+    }
+
+    // Boss phase 2 enrage and minion spawning
+    if (this.isBoss && this.def.minionDef) {
+      this.minionTimer -= dt;
+      const interval = this.phase2
+        ? (this.def.minionInterval || 10) * 0.55
+        : (this.def.minionInterval || 10);
+      if (this.minionTimer <= 0) {
+        this.minionTimer = interval;
+        this._spawnMinions();
+      }
+      if (!this.phase2 && this.hp <= this.maxHp * 0.5) {
+        this.phase2 = true;
+        this.speed = Math.round(this.speed * 1.4);
+        this.dmg = Math.round(this.dmg * 1.35);
+        this.shootSpeed = Math.round((this.shootSpeed || 240) * 1.25);
+        this.minionTimer = 0; // immediate minion wave on enrage
+        game._bossEnrage = true; // picked up by main.js for the message
+      }
     }
 
     const target = this._nearestPlayer();
@@ -187,6 +216,32 @@ export class Enemy {
     }
   }
 
+  _spawnMinions() {
+    const minionKey = this.def.minionDef;
+    const archetype = ARCHETYPES.find(a => a.key === minionKey) || ARCHETYPES[0];
+    const count = this.phase2
+      ? Math.ceil((this.def.minionCount || 2) * 1.5)
+      : (this.def.minionCount || 2);
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i / count) + rand() * 0.5;
+      const dist = this.radius + 40 + rand() * 20;
+      const mx = this.x + Math.cos(angle) * dist;
+      const my = this.y + Math.sin(angle) * dist;
+      const e = new Enemy(archetype, game.floor, mx, my, false);
+      e.alert = true; // summoned enemies are immediately aggressive
+      game.enemies.push(e);
+    }
+    // visual burst
+    for (let i = 0; i < 16; i++) {
+      const a = rand() * Math.PI * 2, s = 50 + rand() * 100;
+      game.particles.push({
+        x: this.x, y: this.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+        life: 0.4 + rand() * 0.3, color: this.color, r: 3 + rand() * 3,
+        block: true, drag: 0.88,
+      });
+    }
+  }
+
   _nearestPlayer() {
     let best = null, bd = 1e9;
     for (const p of game.players) {
@@ -199,7 +254,7 @@ export class Enemy {
 }
 
 export function isBossFloor(floor) {
-  return floor % 5 === 0 && !!BOSSES[floor];
+  return !!BOSSES[floor];
 }
 
 // Populate a floor. On boss floors this spawns ONLY the smaller adds — the boss

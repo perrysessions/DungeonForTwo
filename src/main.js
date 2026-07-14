@@ -146,6 +146,12 @@ function updatePickups(dt) {
 
 function checkFloorProgress() {
   game.enemies = game.enemies.filter(e => !e.dead);
+  if (game._bossEnrage) {
+    game._bossEnrage = false;
+    const boss = game.enemies.find(e => e.isBoss);
+    setMessage(boss ? `${boss.name} ENRAGES!` : 'ENRAGE!', 3.0);
+    addShake(18);
+  }
   if (game.enemies.length === 0 && game.awaitingBoss) {
     // Adds are dead — summon the boss with a dramatic entrance far from players.
     const boss = spawnBoss(game.floor, game.map, game.players);
