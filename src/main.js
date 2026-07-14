@@ -18,7 +18,11 @@ let ctx;
 
 const controller = {
   onStart() { game.phase = Phase.MODE_SELECT; },
-  onModeChosen(n) { game.numPlayers = n; ui.resetClassSelect(); game.phase = Phase.CLASS_SELECT; },
+  onModeChosen(n) {
+    game.numPlayers = n;
+    document.getElementById('panel-right').classList.toggle('hidden-panel', n === 1);
+    ui.resetClassSelect(); game.phase = Phase.CLASS_SELECT;
+  },
   onClassChosen(keys) { startRun(keys); },
   onDescend() { descend(); },
   onRestart() { restart(); },
@@ -71,6 +75,7 @@ function restart() {
   closeShop();
   ui.closeInventories();
   ui.resetClassSelect();
+  document.getElementById('panel-right').classList.remove('hidden-panel');
   game.phase = Phase.TITLE;
   stopMusic();
 }

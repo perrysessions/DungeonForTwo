@@ -110,8 +110,10 @@ html, body {
 /* ---------- stage / canvas ---------- */
 #stage {
   position: relative;
-  flex: 0 1 auto;
+  flex: 1 1 0;
+  min-width: 0;
   display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
 #canvas {
   background: #0c0a12;
@@ -119,12 +121,15 @@ html, body {
   image-rendering: crisp-edges;
   border: 3px solid var(--panel-border);
   border-radius: 6px;
-  max-width: 100%;
-  max-height: calc(100vh - 20px);
+  /* Fill available width; height follows aspect ratio, capped at viewport */
+  width: 100%;
+  height: auto;
   aspect-ratio: 768 / 576;
-  width: 768px;
-  height: 576px;
+  max-height: calc(100vh - 20px);
 }
+
+/* In 1-player mode the right panel is hidden */
+#panel-right.hidden-panel { display: none; }
 
 /* ---------- overlays ---------- */
 #overlay {
