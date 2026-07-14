@@ -1,6 +1,7 @@
 // Player entity: stats, XP/level, gold, inventory/equipment, downed/revive.
 import { BASE_STATS, defaultMods, POINTS_PER_LEVEL } from './classes.js';
 import { addShake } from './state.js';
+import { playSfx } from './audio.js';
 
 const INV_CAP = 16;
 
@@ -110,6 +111,7 @@ export class Player {
       this.hp = this.stats.maxHp; // full heal on level up
       this.mana = this.stats.maxMana;
       this._leveledUp = true;
+      playSfx('level_up');
     }
   }
 
@@ -163,6 +165,7 @@ export class Player {
     this.hitFlash = 0.15;
     this.invuln = 0.4;
     addShake(this.hp <= 0 ? 9 : 5);
+    playSfx('player_hit', 0.6);
     if (this.hp <= 0) {
       this.hp = 0;
       this.downed = true;

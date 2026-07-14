@@ -79,6 +79,8 @@ html, body {
 .statgrid b { font-size: 12px; color: var(--ink); }
 .statgrid span { font-size: 9px; color: var(--ink-dim); }
 .hint { color: var(--ink-dim); font-size: 11px; margin-top: 8px; }
+.credit { color: var(--ink-dim); font-size: 9px; margin-top: 14px; opacity: 0.5; }
+.credit a { color: var(--ink-dim); }
 .flashmsg { color: #ff8080; font-size: 12px; margin: 4px 0; }
 
 /* inventory / skills */

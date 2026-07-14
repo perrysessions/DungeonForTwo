@@ -306,6 +306,7 @@ function titleHTML() {
     </div>
     <p class="hint">Attacks auto-aim at the nearest enemy.</p>
     <p class="blink big">Press an Attack key to begin</p>
+    <p class="credit">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a> · License: BJKRXJSISMJN0J4T</p>
   </div>`;
 }
 

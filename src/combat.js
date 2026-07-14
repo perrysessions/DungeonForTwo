@@ -1,5 +1,6 @@
 // Combat: basic attacks, projectiles, class abilities, status effects, minions, damage.
 import { game, addShake } from './state.js';
+import { playSfx } from './audio.js';
 import { rand, randRange, chance } from './rng.js';
 import { rollLoot, generateEquipment, makePotion, tierForFloor, RARITIES } from './items.js';
 
@@ -93,7 +94,8 @@ export function damageEnemy(enemy, amount, opts = {}) {
   if (enemy.dead) return;
   enemy.hp -= amount;
   enemy.hitFlash = 0.12;
-  enemy.alert = true; // being hit always reveals the player
+  enemy.alert = true;
+  if (amount > 0) playSfx('hit', 0.4);
   if (amount > 0)
     spawnFloater(enemy.x, enemy.y - enemy.radius, String(amount), opts.crit ? '#ffe23a' : '#ffffff', opts.crit);
   if (opts.knockback && opts.dir) {
@@ -118,6 +120,7 @@ function killEnemy(enemy, source) {
   enemy.dead = true;
   deathBurst(enemy);
   addShake(enemy.isBoss ? 12 : 3.2);
+  playSfx(enemy.isBoss ? 'floor_clear' : 'hit', enemy.isBoss ? 1.0 : 0.5);
   // Gold drop -> pickup.
   const gpos = safePos(enemy.x, enemy.y);
   game.pickups.push({
@@ -293,6 +296,7 @@ export function useAbility(player) {
   if (id === 'dash') cd *= (1 - player.mods.dashCd);
   cd *= (1 - (player.mods.castSpeed || 0));
   player.abilityTimer = cd;
+  playSfx(['cleave','dash','smite'].includes(id) ? 'sword_ability' : 'ability');
   ABILITIES[id](player);
   return true;
 }

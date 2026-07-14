@@ -12,6 +12,7 @@ import {
 } from './combat.js';
 import { render, updateCamera, clampToView } from './render.js';
 import { openShop, closeShop } from './shop.js';
+import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx } from './audio.js';
 
 let ctx;
 
@@ -29,6 +30,7 @@ function startRun(keys) {
   ui.closeInventories();
   generateFloor();
   game.phase = Phase.PLAYING;
+  playMusic('dungeon');
 }
 
 function generateFloor() {
@@ -70,6 +72,7 @@ function restart() {
   ui.closeInventories();
   ui.resetClassSelect();
   game.phase = Phase.TITLE;
+  stopMusic();
 }
 
 // ---- per-player control ----
@@ -137,8 +140,8 @@ function updatePickups(dt) {
       if (d < bd) { bd = d; best = p; }
     }
     if (best && bd < best.radius + pk.r + 6) {
-      if (pk.kind === 'gold') { best.gold += pk.amount; pk.dead = true; }
-      else if (best.addItem(pk.item)) pk.dead = true;
+      if (pk.kind === 'gold') { best.gold += pk.amount; pk.dead = true; playSfx('pickup_gold', 0.5); }
+      else if (best.addItem(pk.item)) { pk.dead = true; playSfx('pickup_item', 0.6); }
     }
   }
   game.pickups = game.pickups.filter(p => !p.dead && p.life > 0);
@@ -158,6 +161,7 @@ function checkFloorProgress() {
     game.enemies.push(boss);
     game.awaitingBoss = false;
     setMessage(`${boss.name} awakens!`, 3.5);
+    playMusic('boss');
     addShake(14);
     for (let i = 0; i < 40; i++) {
       const a = Math.random() * Math.PI * 2, s = 60 + Math.random() * 140;
@@ -179,12 +183,13 @@ function checkFloorProgress() {
     const bothAlive = game.players.every(p => !p.downed);
     const bothAtStairs = game.players.every(p => Math.hypot(p.x - sx, p.y - sy) < TILE * 1.15);
     if (bothAlive && bothAtStairs) {
-      if (game.floor >= MAX_FLOORS) game.phase = Phase.WIN;
-      else { openShop(); game.phase = Phase.SHOP; }
+      if (game.floor >= MAX_FLOORS) { game.phase = Phase.WIN; stopMusic(); }
+      else { openShop(); game.phase = Phase.SHOP; playMusic('dungeon'); }
     }
   }
   if (game.players.length && game.players.every(p => p.downed)) {
     game.phase = Phase.GAME_OVER;
+    playMusic('death');
   }
 }
 
@@ -229,6 +234,10 @@ function init() {
   ctx = canvas.getContext('2d');
   ui.initUI(controller);
   game.phase = Phase.TITLE;
+  preloadAudio();
+  // Browsers require a user gesture before audio can play.
+  canvas.addEventListener('click', resumeAudio, { once: true });
+  document.addEventListener('keydown', resumeAudio, { once: true });
   requestAnimationFrame(frame);
 }
 
