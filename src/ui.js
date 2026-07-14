@@ -5,6 +5,7 @@ import { input, KEYMAPS } from './input.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
+import { setMusicVolume, setSfxVolume } from './audio.js';
 
 const P_COLOR = ['#5aa9ff', '#ff8a4a'];
 let els = {};
@@ -26,6 +27,62 @@ export function initUI(controller) {
   els.right = document.getElementById('panel-right');
   els.overlay = document.getElementById('overlay');
   els.panels = [els.left, els.right];
+  initSettings();
+}
+
+function initSettings() {
+  const modal     = document.getElementById('settings-modal');
+  const btn       = document.getElementById('settings-btn');
+  const closeBtn  = document.getElementById('settings-close');
+  const volMusic  = document.getElementById('vol-music');
+  const volMusicV = document.getElementById('vol-music-val');
+  const volSfx    = document.getElementById('vol-sfx');
+  const volSfxV   = document.getElementById('vol-sfx-val');
+  const restartBtn    = document.getElementById('restart-btn');
+  const restartArea   = document.getElementById('restart-confirm');
+  const restartYes    = document.getElementById('restart-yes');
+  const restartNo     = document.getElementById('restart-no');
+
+  const open  = () => { modal.classList.remove('hidden'); restartArea.classList.add('hidden'); };
+  const close = () => modal.classList.add('hidden');
+
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { modal.classList.contains('hidden') ? open() : close(); }
+  });
+
+  volMusic.addEventListener('input', () => {
+    const v = Number(volMusic.value);
+    volMusicV.textContent = v + '%';
+    setMusicVolume(v / 100);
+  });
+  volSfx.addEventListener('input', () => {
+    const v = Number(volSfx.value);
+    volSfxV.textContent = v + '%';
+    setSfxVolume(v / 100);
+  });
+
+  restartBtn.addEventListener('click', () => restartArea.classList.remove('hidden'));
+  restartNo.addEventListener('click',  () => restartArea.classList.add('hidden'));
+  restartYes.addEventListener('click', () => { close(); ctrl.onRestart(); });
+
+  // Hide restart button when not in an active run
+  const _origOpen = open;
+  els._settingsOpen = () => {
+    const inRun = game.phase === Phase.PLAYING || game.phase === Phase.SHOP;
+    restartBtn.style.display = inRun ? '' : 'none';
+    restartArea.classList.add('hidden');
+    _origOpen();
+  };
+  btn.removeEventListener('click', open);
+  btn.addEventListener('click', els._settingsOpen);
+  document.removeEventListener('keydown', open);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { modal.classList.contains('hidden') ? els._settingsOpen() : close(); }
+  });
 }
 
 export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false] }; }

@@ -120,3 +120,13 @@ export function fadeOutThenIn(name, outDuration = 1.2, inDuration = 2.0, volume 
 export function resumeAudio() {
   if (ctx.state === 'suspended') ctx.resume();
 }
+
+export function setMusicVolume(v) {
+  // Only set if not currently mid-fade (cancel any scheduled ramps first).
+  musicGain.gain.cancelScheduledValues(ctx.currentTime);
+  musicGain.gain.setValueAtTime(v, ctx.currentTime);
+}
+
+export function setSfxVolume(v) {
+  sfxGain.gain.setValueAtTime(v, ctx.currentTime);
+}

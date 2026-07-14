@@ -12,6 +12,32 @@
     <main id="stage">
       <canvas id="canvas" width="768" height="576"></canvas>
       <div id="overlay" class="hidden"></div>
+      <button id="settings-btn" title="Settings (Esc)">⚙</button>
+      <div id="settings-modal" class="hidden">
+        <div id="settings-panel">
+          <h2>Settings</h2>
+          <div class="setting-row">
+            <label>Music Volume</label>
+            <input type="range" id="vol-music" min="0" max="100" value="35">
+            <span id="vol-music-val">35%</span>
+          </div>
+          <div class="setting-row">
+            <label>SFX Volume</label>
+            <input type="range" id="vol-sfx" min="0" max="100" value="70">
+            <span id="vol-sfx-val">70%</span>
+          </div>
+          <hr>
+          <div id="restart-area">
+            <button id="restart-btn">Restart Run</button>
+            <div id="restart-confirm" class="hidden">
+              <p>Abandon this run and start over?</p>
+              <button id="restart-yes">Yes, restart</button>
+              <button id="restart-no">Cancel</button>
+            </div>
+          </div>
+          <button id="settings-close">Close</button>
+        </div>
+      </div>
     </main>
     <aside id="panel-right" class="panel"></aside>
   </div>
