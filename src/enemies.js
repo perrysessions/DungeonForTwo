@@ -224,9 +224,15 @@ export class Enemy {
       : (this.def.minionCount || 2);
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i / count) + rand() * 0.5;
-      const dist = this.radius + 40 + rand() * 20;
-      const mx = this.x + Math.cos(angle) * dist;
-      const my = this.y + Math.sin(angle) * dist;
+      // Walk outward from boss until we find an open tile, up to 160px out.
+      let mx = this.x, my = this.y;
+      for (let r = this.radius + 16; r <= 160; r += 8) {
+        const cx = this.x + Math.cos(angle) * r;
+        const cy = this.y + Math.sin(angle) * r;
+        if (!game.map.worldSolid(cx, cy)) { mx = cx; my = cy; break; }
+      }
+      // If still solid (fully walled in), skip this minion.
+      if (game.map.worldSolid(mx, my)) continue;
       const e = new Enemy(archetype, game.floor, mx, my, false);
       e.alert = true; // summoned enemies are immediately aggressive
       game.enemies.push(e);
