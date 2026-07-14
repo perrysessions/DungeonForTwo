@@ -93,6 +93,7 @@ export function damageEnemy(enemy, amount, opts = {}) {
   if (enemy.dead) return;
   enemy.hp -= amount;
   enemy.hitFlash = 0.12;
+  enemy.alert = true; // being hit always reveals the player
   if (amount > 0)
     spawnFloater(enemy.x, enemy.y - enemy.radius, String(amount), opts.crit ? '#ffe23a' : '#ffffff', opts.crit);
   if (opts.knockback && opts.dir) {

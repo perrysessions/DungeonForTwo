@@ -49,6 +49,9 @@ export class Enemy {
     this.hitFlash = 0;
     this.wobble = rand() * Math.PI * 2;
     this.dead = false;
+    // Bosses and phasing enemies are always alert; others must gain LOS first.
+    this.alert = isBoss || def.behavior === 'phasing' || def.behavior === 'boss_phasing';
+    this.alertTimer = 0; // keeps alert briefly after losing LOS
     // rewards — scaled down since there are ~3x as many enemies now, so the
     // per-floor totals of xp/gold/loot stay about the same (just harder).
     const REWARD_SCALE = 1 / 3;
@@ -64,6 +67,7 @@ export class Enemy {
     if (this.hitFlash > 0) this.hitFlash -= dt;
     if (this.contactTimer > 0) this.contactTimer -= dt;
     if (this.shootTimer > 0) this.shootTimer -= dt;
+    if (this.alertTimer > 0) this.alertTimer -= dt;
 
     // status effects
     let speedFactor = 1;
@@ -86,6 +90,24 @@ export class Enemy {
     const nx = dx / dist, ny = dy / dist;
     const phasing = this.behavior === 'phasing' || this.behavior === 'boss_phasing';
 
+    // LOS aggro: become alert when a player is visible; stay alert briefly after losing sight.
+    if (!this.alert) {
+      const LOS_RANGE = 320;
+      if (dist <= LOS_RANGE && game.map.lineClear(this.x, this.y, target.x, target.y)) {
+        this.alert = true;
+      }
+    } else if (this.alertTimer <= 0) {
+      // lose sight check — remain alert for 3s after last clear LOS
+      if (game.map.lineClear(this.x, this.y, target.x, target.y)) {
+        this.alertTimer = 3;
+      } else if (this.alertTimer <= 0) {
+        // lost sight and grace period expired — go idle
+        this.alert = false;
+      }
+    }
+
+    if (!this.alert) return; // idle: stand still until spotted
+
     const ranged = ['ranged', 'caster', 'boss_ranged'].includes(this.behavior);
     let move = { x: 0, y: 0 };
     if (ranged) {
@@ -100,19 +122,45 @@ export class Enemy {
     } else {
       move = { x: nx, y: ny };
       if (this.behavior === 'fast') {
-        // erratic wobble
         this.wobble += dt * 6;
         move.x += Math.cos(this.wobble) * 0.5;
         move.y += Math.sin(this.wobble) * 0.5;
       }
     }
 
+    // Separation: nudge away from nearby enemies to prevent clumping.
+    let sepX = 0, sepY = 0;
+    for (const other of game.enemies) {
+      if (other === this || other.dead) continue;
+      const ox = this.x - other.x, oy = this.y - other.y;
+      const od = Math.hypot(ox, oy) || 1;
+      const minDist = this.radius + other.radius + 4;
+      if (od < minDist) {
+        const push = (minDist - od) / minDist;
+        sepX += (ox / od) * push;
+        sepY += (oy / od) * push;
+      }
+    }
+    move.x += sepX * 1.2;
+    move.y += sepY * 1.2;
+
     const spd = this.speed * speedFactor;
     let mvx = move.x * spd * dt, mvy = move.y * spd * dt;
     if (phasing) { this.x += mvx; this.y += mvy; }
     else {
-      if (!game.map.worldSolid(this.x + mvx, this.y)) this.x += mvx;
-      if (!game.map.worldSolid(this.x, this.y + mvy)) this.y += mvy;
+      const canX = !game.map.worldSolid(this.x + mvx, this.y);
+      const canY = !game.map.worldSolid(this.x, this.y + mvy);
+      if (canX) this.x += mvx; else {
+        // slide along wall by trying a perpendicular nudge
+        this.wobble += dt * 4;
+        const slide = Math.sign(mvy || Math.cos(this.wobble)) * spd * dt * 0.6;
+        if (!game.map.worldSolid(this.x, this.y + slide)) this.y += slide;
+      }
+      if (canY) this.y += mvy; else {
+        this.wobble += dt * 4;
+        const slide = Math.sign(mvx || Math.sin(this.wobble)) * spd * dt * 0.6;
+        if (!game.map.worldSolid(this.x + slide, this.y)) this.x += slide;
+      }
     }
 
     // contact damage
