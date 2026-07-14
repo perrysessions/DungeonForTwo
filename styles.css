@@ -29,7 +29,8 @@ html, body {
 /* ---------- side panels ---------- */
 .panel {
   width: 250px;
-  flex: 0 0 250px;
+  flex: 0 1 250px;
+  min-width: 120px;
   background: var(--panel-bg);
   border: 3px solid var(--panel-border);
   border-radius: 6px;
@@ -137,10 +138,12 @@ html, body {
 
 /* ---------- overlays ---------- */
 #overlay {
-  position: absolute; inset: 0;
+  /* Cover the full viewport so cards aren't clipped by side panels */
+  position: fixed; inset: 0;
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
   pointer-events: none;
+  z-index: 50;
 }
 #overlay.hidden { display: none; }
 .card {
@@ -148,8 +151,8 @@ html, body {
   border: 3px solid var(--panel-border);
   border-radius: 8px;
   padding: 24px 28px;
-  max-width: 92%;
-  max-height: 96%;
+  max-width: min(92vw, 700px);
+  max-height: 92vh;
   overflow-y: auto;
   text-align: center;
 }
