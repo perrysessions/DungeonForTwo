@@ -9,7 +9,7 @@ export const BASE_STATS = {
   weaponType: 'ranged',
 };
 
-export const POINTS_PER_LEVEL = 3;
+export const POINTS_PER_LEVEL = 1;
 
 // Default ability modifiers every player carries; skill nodes add to these.
 export function defaultMods() {

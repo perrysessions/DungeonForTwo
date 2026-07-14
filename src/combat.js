@@ -1,7 +1,7 @@
 // Combat: basic attacks, projectiles, class abilities, status effects, minions, damage.
 import { game, addShake } from './state.js';
 import { rand, randRange, chance } from './rng.js';
-import { rollLoot } from './items.js';
+import { rollLoot, generateEquipment, makePotion, tierForFloor, RARITIES } from './items.js';
 
 function safePos(x, y) {
   if (!game.map.worldSolid(x, y)) return { x, y };
@@ -125,12 +125,32 @@ function killEnemy(enemy, source) {
     vx: randRange(-40, 40), vy: randRange(-40, 40), life: 30, r: 6,
   });
   // Loot.
-  for (const d of rollLoot(game.floor, enemy.tierRank || 1)) {
-    const ipos = safePos(enemy.x + randRange(-8, 8), enemy.y + randRange(-8, 8));
-    game.pickups.push({
-      kind: 'item', item: d.item, x: ipos.x, y: ipos.y,
-      vx: randRange(-30, 30), vy: randRange(-30, 30), life: 40, r: 8,
-    });
+  if (enemy.isBoss) {
+    // Guaranteed: 2 equipment drops (rarity boosted by floor) + 1 potion.
+    const floor = game.floor;
+    const tier = tierForFloor(floor);
+    // Pick a forced rarity skewed toward higher tiers based on floor depth.
+    const bossRarityKey = () => {
+      const r = rand();
+      if (floor >= 14 && r < 0.35) return 'mythic';
+      if (floor >= 9  && r < 0.50) return 'legendary';
+      if (floor >= 5  && r < 0.65) return 'rare';
+      if (r < 0.55) return 'uncommon';
+      return 'common';
+    };
+    for (let i = 0; i < 2; i++) {
+      const item = generateEquipment(tier, floor, bossRarityKey());
+      const ipos = safePos(enemy.x + randRange(-20, 20), enemy.y + randRange(-20, 20));
+      game.pickups.push({ kind: 'item', item, x: ipos.x, y: ipos.y, vx: randRange(-40, 40), vy: randRange(-40, 40), life: 60, r: 8 });
+    }
+    const potion = makePotion(rand() < 0.6 ? 'health' : 'mana');
+    const ppos = safePos(enemy.x + randRange(-20, 20), enemy.y + randRange(-20, 20));
+    game.pickups.push({ kind: 'item', item: potion, x: ppos.x, y: ppos.y, vx: randRange(-40, 40), vy: randRange(-40, 40), life: 60, r: 8 });
+  } else {
+    for (const d of rollLoot(game.floor, enemy.tierRank || 1)) {
+      const ipos = safePos(enemy.x + randRange(-8, 8), enemy.y + randRange(-8, 8));
+      game.pickups.push({ kind: 'item', item: d.item, x: ipos.x, y: ipos.y, vx: randRange(-30, 30), vy: randRange(-30, 30), life: 40, r: 8 });
+    }
   }
   // XP: full to killer, small share to the other living player.
   if (source && source.gainXp) {
