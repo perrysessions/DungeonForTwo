@@ -12,7 +12,7 @@ import {
 } from './combat.js';
 import { render, updateCamera, clampToView } from './render.js';
 import { openShop, closeShop } from './shop.js';
-import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx } from './audio.js';
+import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx, fadeOutThenIn } from './audio.js';
 
 let ctx;
 
@@ -30,7 +30,7 @@ function startRun(keys) {
   ui.closeInventories();
   generateFloor();
   game.phase = Phase.PLAYING;
-  playMusic('dungeon');
+  fadeOutThenIn('dungeon', 1.0, 2.0);
 }
 
 function generateFloor() {
@@ -236,8 +236,13 @@ function init() {
   game.phase = Phase.TITLE;
   preloadAudio();
   // Browsers require a user gesture before audio can play.
-  canvas.addEventListener('click', resumeAudio, { once: true });
-  document.addEventListener('keydown', resumeAudio, { once: true });
+  // On first interaction, resume the audio context and fade the title music in.
+  const startTitleMusic = () => {
+    resumeAudio();
+    playMusic('dungeon', { fadeIn: 2.5 });
+  };
+  canvas.addEventListener('click', startTitleMusic, { once: true });
+  document.addEventListener('keydown', startTitleMusic, { once: true });
   requestAnimationFrame(frame);
 }
 

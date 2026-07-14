@@ -71,8 +71,12 @@ export function playSfx(name, volume = 1) {
   src.start();
 }
 
-export function playMusic(name) {
+export function playMusic(name, { fadeIn = 0, volume = 0.35 } = {}) {
   if (currentTrack === name) return;
+  _startMusic(name, fadeIn, volume);
+}
+
+function _startMusic(name, fadeIn = 0, volume = 0.35) {
   stopMusic();
   currentTrack = name;
   if (ctx.state === 'suspended') ctx.resume();
@@ -82,6 +86,12 @@ export function playMusic(name) {
   musicSource.buffer = buffers[url];
   musicSource.loop = true;
   musicSource.connect(musicGain);
+  if (fadeIn > 0) {
+    musicGain.gain.setValueAtTime(0, ctx.currentTime);
+    musicGain.gain.linearRampToValueAtTime(volume, ctx.currentTime + fadeIn);
+  } else {
+    musicGain.gain.setValueAtTime(volume, ctx.currentTime);
+  }
   musicSource.start();
 }
 
@@ -95,8 +105,16 @@ export function stopMusic() {
 
 export function fadeOutMusic(duration = 1.0) {
   if (!musicSource) return;
-  musicGain.gain.setTargetAtTime(0, ctx.currentTime, duration / 3);
-  setTimeout(() => { stopMusic(); musicGain.gain.value = 0.35; }, duration * 1000);
+  musicGain.gain.cancelScheduledValues(ctx.currentTime);
+  musicGain.gain.setValueAtTime(musicGain.gain.value, ctx.currentTime);
+  musicGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+  setTimeout(() => stopMusic(), duration * 1000);
+}
+
+export function fadeOutThenIn(name, outDuration = 1.2, inDuration = 2.0, volume = 0.35) {
+  if (!musicSource) { playMusic(name, { fadeIn: inDuration, volume }); return; }
+  fadeOutMusic(outDuration);
+  setTimeout(() => _startMusic(name, inDuration, volume), outDuration * 1000 + 50);
 }
 
 export function resumeAudio() {
