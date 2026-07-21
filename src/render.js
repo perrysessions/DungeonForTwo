@@ -52,6 +52,7 @@ export function render(ctx) {
 
   ctx.restore();
   drawBanner(ctx);
+  drawComboText(ctx);
 }
 
 function drawTiles(ctx, th) {
@@ -454,5 +455,21 @@ function drawBanner(ctx) {
   ctx.fillText(game.message, VIEW_W / 2 + 2, 62);
   ctx.fillStyle = '#ffd060';
   ctx.fillText(game.message, VIEW_W / 2, 60);
+  ctx.restore();
+}
+
+function drawComboText(ctx) {
+  if (!game.comboText || game.comboText.alpha <= 0) return;
+  const ct = game.comboText;
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, ct.alpha);
+  ctx.font = 'bold 26px monospace';
+  ctx.textAlign = 'center';
+  // Shadow
+  ctx.fillStyle = '#000';
+  ctx.fillText(ct.label, VIEW_W / 2 + 2, VIEW_H / 2 - 58);
+  // Text: orange-red for flair
+  ctx.fillStyle = '#ff9020';
+  ctx.fillText(ct.label, VIEW_W / 2, VIEW_H / 2 - 60);
   ctx.restore();
 }

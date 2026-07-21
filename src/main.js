@@ -31,6 +31,11 @@ const controller = {
 function startRun(keys) {
   game.players = keys.slice(0, game.numPlayers).map((k, i) => new Player(i, CLASSES[k]));
   game.floor = 1;
+  game.runTime = 0;
+  game.comboBonusTotal = 0;
+  game.comboTimer = 0;
+  game.comboCount = 0;
+  game.comboText = null;
   ui.closeInventories();
   generateFloor();
   game.phase = Phase.PLAYING;
@@ -200,6 +205,15 @@ function checkFloorProgress() {
 }
 
 function simulate(dt) {
+  game.runTime += dt;
+  if (game.comboTimer > 0) {
+    game.comboTimer -= dt;
+    if (game.comboTimer <= 0) game.comboCount = 0;
+  }
+  if (game.comboText) {
+    game.comboText.alpha -= dt * 1.2;
+    if (game.comboText.alpha <= 0) game.comboText = null;
+  }
   for (const p of game.players) p.updateTimers(dt);
   for (let pi = 0; pi < game.players.length; pi++) {
     const p = game.players[pi];
@@ -214,6 +228,7 @@ function simulate(dt) {
   updateCamera();
   checkFloorProgress();
 }
+
 
 // ---- main loop (variable dt, clamped) ----
 let last = performance.now();

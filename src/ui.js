@@ -1,15 +1,36 @@
 // DOM UI: side panels (P1 left / P2 right), inventory+skill overlays,
 // mode-select / class-select / shop / title / game-over screens + input handling.
-import { game, Phase, MAX_FLOORS } from './state.js';
+import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
 import { setMusicVolume, setSfxVolume } from './audio.js';
 
+// ---------- Local High Score Board ----------
+const HS_KEY = 'dungeon2_scores';
+const MAX_SCORES = 5;
+
+function loadScores() {
+  try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; }
+}
+function saveScore(entry) {
+  const scores = loadScores();
+  scores.push(entry);
+  scores.sort((a, b) => b.score - a.score);
+  scores.splice(MAX_SCORES);
+  localStorage.setItem(HS_KEY, JSON.stringify(scores));
+  return scores;
+}
+function fmtTime(s) {
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
 const P_COLOR = ['#5aa9ff', '#ff8a4a'];
 let els = {};
 let ctrl = {};
+let lastOverlayPhase = null;
 
 // per-player inventory overlay state
 const inv = [
@@ -208,6 +229,9 @@ function handleShop() {
 }
 
 function handleEndScreen() {
+  // Only restart when name input is not focused
+  const nameInput = document.getElementById('hs-name');
+  if (nameInput && document.activeElement === nameInput) return;
   if (input.actionPressed(0, 'attack') || input.actionPressed(1, 'attack')) ctrl.onRestart();
 }
 
@@ -325,14 +349,23 @@ function renderPanels() {
 
 function renderOverlay() {
   const o = els.overlay;
-  if (game.phase === Phase.PLAYING) { o.classList.add('hidden'); o.innerHTML = ''; return; }
+  if (game.phase === Phase.PLAYING) {
+    o.classList.add('hidden'); o.innerHTML = '';
+    lastOverlayPhase = null;
+    return;
+  }
   o.classList.remove('hidden');
+  // End screens have interactive elements (name input) — only render once per phase entry.
+  const isEnd = game.phase === Phase.GAME_OVER || game.phase === Phase.WIN;
+  if (isEnd && lastOverlayPhase === game.phase) return;
+  lastOverlayPhase = game.phase;
+
   if (game.phase === Phase.TITLE) o.innerHTML = titleHTML();
   else if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
   else if (game.phase === Phase.CLASS_SELECT) o.innerHTML = classSelectHTML();
   else if (game.phase === Phase.SHOP) { o.innerHTML = shopHTML(); scrollShop(); }
-  else if (game.phase === Phase.GAME_OVER) o.innerHTML = endHTML(false);
-  else if (game.phase === Phase.WIN) o.innerHTML = endHTML(true);
+  else if (game.phase === Phase.GAME_OVER) { o.innerHTML = endHTML(false); bindEndScreenButtons(); }
+  else if (game.phase === Phase.WIN) { o.innerHTML = endHTML(true); bindEndScreenButtons(); }
 }
 
 function scrollShop() {
@@ -432,10 +465,57 @@ function shopHTML() {
 
 function endHTML(win) {
   const best = Math.max(...game.players.map(p => p.level), 1);
+  const score = calcScore();
+  const scores = loadScores();
+  const rank = scores.filter(s => s.score > score).length + 1;
+  const isTopScore = rank <= MAX_SCORES;
+
+  const scoresHTML = scores.length === 0 ? '<p style="color:var(--ink-dim);font-size:12px">No scores yet</p>' :
+    `<table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:6px">
+      <tr style="color:var(--ink-dim)"><th style="text-align:left;padding:2px 6px">#</th><th style="text-align:left;padding:2px 6px">Name</th><th style="text-align:right;padding:2px 6px">Score</th><th style="text-align:right;padding:2px 6px">Floor</th><th style="text-align:right;padding:2px 6px">Time</th></tr>
+      ${scores.map((s, i) => `<tr style="${s._new ? 'color:#ffd060' : ''}"><td style="padding:2px 6px">${i + 1}</td><td style="padding:2px 6px">${s.name}</td><td style="text-align:right;padding:2px 6px">${s.score.toLocaleString()}</td><td style="text-align:right;padding:2px 6px">${s.floor}</td><td style="text-align:right;padding:2px 6px">${fmtTime(s.time)}</td></tr>`).join('')}
+    </table>`;
+
   return `<div class="card">
     <h1 style="color:${win ? '#7bff9b' : '#ff6060'}">${win ? 'VICTORY!' : 'YOU FELL'}</h1>
-    <p class="sub">${win ? `You cleared all ${MAX_FLOORS} floors of the dungeon!` : `${game.numPlayers === 1 ? 'Your hero fell' : 'Both heroes fell'} on floor ${game.floor}.`}</p>
-    <p>Highest hero level reached: <b>${best}</b></p>
-    <p class="blink big">Press an Attack key to play again</p>
+    <p class="sub">${win ? `All ${MAX_FLOORS} floors cleared!` : `${game.numPlayers === 1 ? 'Your hero fell' : 'Both heroes fell'} on floor ${game.floor}.`}</p>
+    <p style="font-size:22px;margin:6px 0">Score: <b style="color:#ffd060">${score.toLocaleString()}</b></p>
+    <p style="font-size:12px;color:var(--ink-dim)">Floor ${game.floor} · ${fmtTime(game.runTime)} · Lv ${best} · Combo bonus: ${game.comboBonusTotal.toLocaleString()}</p>
+    ${isTopScore ? `<div style="margin:12px 0 8px">
+      <p style="font-size:13px;margin:0 0 6px;color:#7bff9b">Top ${MAX_SCORES} score! Enter your name:</p>
+      <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+        <input id="hs-name" maxlength="5" style="width:80px;font-size:18px;text-align:center;text-transform:uppercase;font-family:monospace;background:#1c1730;border:2px solid var(--panel-border);color:#fff;padding:4px;border-radius:4px" placeholder="NAME" />
+        <button id="hs-save" style="font-family:monospace;font-size:13px;background:#1c1730;border:2px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:4px;cursor:pointer">Save</button>
+      </div>
+    </div>` : ''}
+    <div style="margin:14px 0 10px;border-top:1px solid var(--panel-border);padding-top:10px">
+      <p style="font-size:12px;color:var(--ink-dim);margin:0 0 4px">— Hall of Records —</p>
+      ${scoresHTML}
+    </div>
+    <p class="blink big" style="margin-top:10px">Press Attack to play again</p>
   </div>`;
+}
+
+export function bindEndScreenButtons() {
+  const saveBtn = document.getElementById('hs-save');
+  const nameInput = document.getElementById('hs-name');
+  if (!saveBtn || !nameInput) return;
+  const doSave = () => {
+    let name = nameInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+    if (!name) name = '????';
+    const score = calcScore();
+    const classes = game.players.map(p => p.cls?.name || '?').join('/');
+    const entry = { name, score, floor: game.floor, time: Math.round(game.runTime), classes, _new: true };
+    const updated = saveScore(entry);
+    // Re-render end screen with updated scores marked
+    const o = document.getElementById('overlay');
+    if (o) {
+      const win = game.phase === Phase.WIN;
+      o.innerHTML = endHTML(win);
+      bindEndScreenButtons();
+    }
+  };
+  saveBtn.addEventListener('click', doSave);
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSave(); });
+  nameInput.focus();
 }

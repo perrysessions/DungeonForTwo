@@ -121,6 +121,19 @@ function killEnemy(enemy, source) {
   deathBurst(enemy);
   addShake(enemy.isBoss ? 12 : 3.2);
   playSfx(enemy.isBoss ? 'floor_clear' : 'hit', enemy.isBoss ? 1.0 : 0.5);
+  // Combo tracking
+  if (!enemy.isBoss) {
+    game.comboTimer = 1.8; // window resets on each kill
+    game.comboCount = (game.comboCount || 0) + 1;
+    if (game.comboCount >= 2) {
+      let bonus = 0, label = '';
+      if (game.comboCount === 2) { bonus = 200; label = 'DOUBLE KILL'; }
+      else if (game.comboCount === 3) { bonus = 500; label = 'TRIPLE KILL'; }
+      else { bonus = 1000; label = `RAMPAGE ×${game.comboCount}`; }
+      game.comboBonusTotal = (game.comboBonusTotal || 0) + bonus;
+      game.comboText = { label: `+${bonus} ${label}`, alpha: 1.0 };
+    }
+  }
   // Gold drop -> pickup.
   const gpos = safePos(enemy.x, enemy.y);
   game.pickups.push({

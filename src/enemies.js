@@ -222,6 +222,10 @@ export class Enemy {
     const count = this.phase2
       ? Math.ceil((this.def.minionCount || 2) * 1.5)
       : (this.def.minionCount || 2);
+    // Cap total live minions so the boss can't infinitely stack them.
+    const cap = this.phase2 ? (this.def.minionCount || 2) * 3 : (this.def.minionCount || 2) * 2;
+    const live = game.enemies.filter(e => !e.dead && !e.isBoss).length;
+    if (live >= cap) return;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i / count) + rand() * 0.5;
       // Walk outward from boss until we find an open tile, up to 160px out.

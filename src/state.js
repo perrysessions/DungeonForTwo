@@ -32,15 +32,28 @@ export const game = {
   camera: { x: 0, y: 0 },
   stairsActive: false,
   awaitingBoss: false,
-  paused: false, // boss floor: boss held back until adds are dead
+  paused: false,
   time: 0,           // seconds elapsed (accumulated fixed steps)
+  runTime: 0,        // seconds elapsed during active play (for scoring)
   message: '',       // transient banner (e.g. "Floor cleared!")
   messageTimer: 0,
+  // Scoring
+  comboTimer: 0,     // seconds remaining in current kill combo window
+  comboCount: 0,     // kills in current combo streak
+  comboBonusTotal: 0,// accumulated combo bonus for the run
+  comboText: null,   // { label, alpha } for canvas combo display
 };
 
 export function setMessage(text, seconds = 2.5) {
   game.message = text;
   game.messageTimer = seconds;
+}
+
+export function calcScore() {
+  const BASE_TIME = 40 * 60; // 40-minute baseline
+  const timeFactor = Math.max(0.2, BASE_TIME / Math.max(game.runTime, 1));
+  const base = Math.round(game.floor * timeFactor * 500);
+  return base + (game.comboBonusTotal || 0);
 }
 
 export function addShake(amount) {
@@ -56,4 +69,7 @@ export function resetRunState() {
   game.particles = [];
   game.stairsActive = false;
   game.paused = false;
+  game.comboTimer = 0;
+  game.comboCount = 0;
+  // comboBonusTotal and runTime persist across floors — reset only at full restart
 }
