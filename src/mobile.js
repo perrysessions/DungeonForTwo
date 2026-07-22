@@ -15,9 +15,6 @@ export function initMobileControls() {
       <div id="joy-base"><div id="joy-knob"></div></div>
     </div>
     <div id="btn-zone">
-      <div class="m-row top-row">
-        <button class="mbtn" id="mb-inventory">BAG</button>
-      </div>
       <div class="m-row mid-row">
         <button class="mbtn" id="mb-interact">USE</button>
         <button class="mbtn ability" id="mb-ability">SKL</button>
@@ -93,10 +90,9 @@ function setupJoystick() {
 // ---- Action buttons ----
 function setupButtons() {
   const map = {
-    'mb-attack':    'attack',
-    'mb-ability':   'ability',
-    'mb-interact':  'interact',
-    'mb-inventory': 'inventory',
+    'mb-attack':   'attack',
+    'mb-ability':  'ability',
+    'mb-interact': 'interact',
   };
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);

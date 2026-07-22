@@ -130,6 +130,8 @@ function handleInventory(pi) {
   const st = inv[pi];
   const p = game.players[pi];
   if (!p) return;
+  // Inventory panel is hidden on mobile — don't let it open and block movement.
+  if (isMobile) { st.open = false; return; }
   if (input.actionPressed(pi, 'inventory')) {
     st.open = !st.open;
     if (st.open) { st.tab = p.skillPoints > 0 ? 'skills' : 'items'; st.itemCur = 0; st.skillCur = 0; }
