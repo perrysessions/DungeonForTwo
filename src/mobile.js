@@ -1,8 +1,8 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-
-export const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+import { mobilePickClass } from './ui.js';
+export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
 export function initMobileControls() {
@@ -115,11 +115,19 @@ export function updateMobileControls(phase) {
 }
 
 // Tapping the overlay card during menus acts as "attack / confirm".
+// Tapping a class card specifically picks that class.
 function setupMenuTap() {
   const overlay = document.getElementById('overlay');
   overlay.addEventListener('touchstart', e => {
-    // Only fire if the menu overlay is visible (not hidden)
     if (overlay.classList.contains('hidden')) return;
+    // Check if a class card was tapped
+    const card = e.target.closest('[data-cls-idx]');
+    if (card) {
+      const idx = parseInt(card.dataset.clsIdx, 10);
+      mobilePickClass(idx);
+      return;
+    }
+    // Generic confirm (title, game over, etc.)
     touch.attack = true;
     setTimeout(() => { touch.attack = false; }, 80);
   }, { passive: true });

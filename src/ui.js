@@ -2,7 +2,7 @@
 // mode-select / class-select / shop / title / game-over screens + input handling.
 import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
-import { isMobile } from './mobile.js';
+import { isMobile } from './detect.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
@@ -102,6 +102,13 @@ function initSettings() {
 }
 
 export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false] }; }
+
+// Mobile: tap a class card to instantly pick and confirm it for P1.
+export function mobilePickClass(idx) {
+  cs.cursor[0] = idx;
+  cs.confirmed[0] = true;
+  ctrl.onClassChosen([CLASS_LIST[idx].key]);
+}
 export function closeInventories() { inv[0].open = inv[1].open = false; }
 export function isCapturing(pi) { return inv[pi].open; }
 
@@ -428,7 +435,7 @@ function classSelectHTML() {
       marks.push(`<span class="pmark ${cs.confirmed[pi] ? 'lock' : ''}" style="background:${P_COLOR[pi]}">P${pi + 1}${cs.confirmed[pi] ? '✓' : ''}</span>`);
     }
     const a = c.art;
-    return `<div class="clscard">
+    return `<div class="clscard" data-cls-idx="${i}">
       <div class="swatch" style="background:${a.body};border-color:${a.trim}"></div>
       <div class="cname">${c.name}</div>
       <div class="cability">${c.abilityName}</div>

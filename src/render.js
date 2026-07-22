@@ -1,6 +1,6 @@
 // Canvas rendering: camera, tiles, pixel-art entities, projectiles, fx, floaters.
 import { game, TILE, VIEW_W, VIEW_H, calcScore } from './state.js';
-import { isMobile } from './mobile.js';
+import { isMobile } from './detect.js';
 
 const FLOOR_THEMES = [
   { floor: '#2a2438', wall: '#191426', wallTop: '#3a3050', accent: '#4a3b6b' },
