@@ -59,7 +59,7 @@ function setupJoystick() {
   const knob = document.getElementById('joy-knob');
 
   zone.addEventListener('touchstart', e => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const t = e.changedTouches[0];
     joyId = t.identifier;
     joyActive = true;
@@ -176,9 +176,9 @@ function setupButtons() {
   });
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);
-    btn.addEventListener('touchstart', e => { e.preventDefault(); touch[action] = true; },  { passive: false });
-    btn.addEventListener('touchend',   e => { e.preventDefault(); touch[action] = false; }, { passive: false });
-    btn.addEventListener('touchcancel',e => { e.preventDefault(); touch[action] = false; }, { passive: false });
+    btn.addEventListener('touchstart', e => { if (e.cancelable) e.preventDefault(); touch[action] = true; },  { passive: false });
+    btn.addEventListener('touchend',   e => { if (e.cancelable) e.preventDefault(); touch[action] = false; }, { passive: false });
+    btn.addEventListener('touchcancel',e => { if (e.cancelable) e.preventDefault(); touch[action] = false; }, { passive: false });
   }
 }
 
