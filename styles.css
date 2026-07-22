@@ -15,6 +15,8 @@ html, body {
   font-family: "Courier New", ui-monospace, monospace;
   height: 100%;
   overflow: hidden;
+  /* iOS safe areas (notch / home bar) */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #game-root {
@@ -275,11 +277,12 @@ html, body {
   /* Hide side panels entirely on touch devices */
   #panel-left, #panel-right { display: none !important; }
   #game-root { padding: 0; gap: 0; }
-  #stage { width: 100vw; height: 100vh; }
+  /* dvh = dynamic viewport height (excludes iOS browser chrome) */
+  #stage { width: 100vw; height: 100dvh; }
   /* Fill screen edge to edge — canvas.width is set wider by mobile.js */
   #canvas {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     max-width: none;
     max-height: none;
     aspect-ratio: unset;
