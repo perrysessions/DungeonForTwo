@@ -305,11 +305,20 @@ html, body {
     box-shadow: 4px 0 20px rgba(0,0,0,0.7);
     touch-action: manipulation;
   }
-  .rows {
+  /* Let the whole panel scroll as one unit; rows don't need their own scroll container */
+  #panel-left.mobile-panel-open .rows {
+    max-height: none;
+    overflow: visible;
+  }
+  /* iOS Safari: click doesn't fire on divs in scroll containers without cursor:pointer */
+  #panel-left .row,
+  #panel-left .tabs span {
+    cursor: pointer;
+  }
+  /* Shop overlay scrolls on small screens */
+  #overlay {
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    overflow-y: scroll;
-    touch-action: pan-y;
-    max-height: calc(100dvh - 80px);
   }
 }
 

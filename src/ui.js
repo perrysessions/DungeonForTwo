@@ -1,6 +1,6 @@
 // DOM UI: side panels (P1 left / P2 right), inventory+skill overlays,
 // mode-select / class-select / shop / title / game-over screens + input handling.
-import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
+import { game, Phase, MAX_FLOORS, calcScore, setMessage } from './state.js';
 import { input, KEYMAPS } from './input.js';
 import { isMobile } from './detect.js';
 import { CLASS_LIST } from './classes.js';
@@ -111,13 +111,16 @@ export function mobileBuyShopItem(idx) {
   const p = game.players[0];
   if (!shop || !p) return;
   shop.cursor[0] = idx;
-  const res = buy(p, shop.stock[idx]);
+  const item = shop.stock[idx];
+  const res = buy(p, item);
   if (res.ok) {
+    const name = item.name;
     shop.stock.splice(idx, 1);
     for (let k = 0; k < 2; k++) {
       if (shop.cursor[k] > idx) shop.cursor[k]--;
       shop.cursor[k] = Math.max(0, Math.min(shop.cursor[k], Math.max(0, shop.stock.length - 1)));
     }
+    setMessage(`Bought ${name}!`, 1.5);
   } else flashPanel(0, res.reason);
 }
 
@@ -138,20 +141,26 @@ export function mobileTapInvRow(idx, tab, action) {
     const n = p.inventory.length;
     if (n === 0 || idx >= n) return;
     if (action === 'sell') {
+      const name = p.inventory[idx].name;
       p.gold += sellValue(p.inventory[idx]);
       p.inventory.splice(idx, 1);
       st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
-    } else if (st.itemCur === idx) {
-      // already selected — use/equip on second tap
-      p.useItem(p.inventory[idx]);
-      st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
+      setMessage(`Sold ${name}`, 1.2);
     } else {
+      // Mobile: tap immediately uses/equips — no two-tap selection step
+      const item = p.inventory[idx];
       st.itemCur = idx;
+      p.useItem(item);
+      st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
+      setMessage(`Equipped ${item.name}`, 1.2);
     }
   } else {
     st.skillCur = idx;
     const node = p.cls.tree[idx];
-    if (node && p.canBuy(node)) p.buySkill(node);
+    if (node && p.canBuy(node)) {
+      p.buySkill(node);
+      setMessage(`Learned ${node.name}`, 1.2);
+    }
   }
 }
 
@@ -359,7 +368,7 @@ function invSection(pi) {
       return `<div class="row ${sel ? 'sel' : ''}" data-row-idx="${i}" data-row-tab="items"><div class="rowmain">` +
         `<span class="ico">${it.icon || '❔'}</span>` +
         `<span style="color:${it.color || '#fff'}">${it.name}</span></div>` +
-        `<small>${rarityTag(it)}${it.desc || ''}${sel ? ` · ${isMobile ? 'tap again to use' : `${keyName(pi, 'attack')}:${action}`}` : ''}</small>${sellBtn}</div>`;
+        `<small>${rarityTag(it)}${it.desc || ''}${sel && !isMobile ? ` · ${keyName(pi, 'attack')}:${action}` : ''}</small>${sellBtn}</div>`;
     }).join('');
   } else {
     body = p.cls.tree.map((node, i) => {
