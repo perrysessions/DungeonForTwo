@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, setMobileInvTab } from './ui.js';
+import { mobilePickClass, setMobileInvTab, mobileTapInvRow } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -117,16 +117,31 @@ function setupButtons() {
     }, { passive: false });
   }
 
-  // Tap on Items/Skills tab labels to switch tabs
-  document.getElementById('panel-left').addEventListener('touchstart', e => {
+  // Tap on panel: switch tabs or activate rows
+  const panel = document.getElementById('panel-left');
+  let touchStartY = 0;
+  panel.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  panel.addEventListener('touchend', e => {
+    // Ignore if finger moved significantly (it was a scroll)
+    if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 10) return;
+
     const span = e.target.closest('.tabs span');
-    if (!span) return;
-    e.preventDefault();
-    // Find which tab was tapped by its text content
-    const label = span.textContent.trim().toLowerCase();
-    // Directly set tab via exported setter
-    setMobileInvTab(label.startsWith('item') ? 'items' : 'skills');
-  }, { passive: false });
+    if (span) {
+      const label = span.textContent.trim().toLowerCase();
+      setMobileInvTab(label.startsWith('item') ? 'items' : 'skills');
+      return;
+    }
+
+    const row = e.target.closest('[data-row-idx]');
+    if (row) {
+      const idx = parseInt(row.dataset.rowIdx, 10);
+      const tab = row.dataset.rowTab;
+      mobileTapInvRow(idx, tab);
+    }
+  }, { passive: true });
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);
     btn.addEventListener('touchstart', e => { e.preventDefault(); touch[action] = true; },  { passive: false });

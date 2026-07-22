@@ -106,6 +106,24 @@ export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, f
 // Mobile: tap a class card to instantly pick and confirm it for P1.
 export function setMobileInvTab(tab) { inv[0].tab = tab; }
 
+export function mobileTapInvRow(idx, tab) {
+  const st = inv[0];
+  const p = game.players[0];
+  if (!p) return;
+  if (tab === 'items') {
+    st.itemCur = idx;
+    const n = p.inventory.length;
+    if (n > 0 && idx < n) {
+      p.useItem(p.inventory[idx]);
+      st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
+    }
+  } else {
+    st.skillCur = idx;
+    const node = p.cls.tree[idx];
+    if (node && p.canBuy(node)) p.buySkill(node);
+  }
+}
+
 export function mobilePickClass(idx) {
   cs.cursor[0] = idx;
   cs.confirmed[0] = true;
@@ -306,7 +324,7 @@ function invSection(pi) {
     else body = p.inventory.map((it, i) => {
       const sel = i === Math.min(st.itemCur, p.inventory.length - 1);
       const action = it.slot === 'consumable' ? 'use' : 'equip';
-      return `<div class="row ${sel ? 'sel' : ''}"><div class="rowmain">` +
+      return `<div class="row ${sel ? 'sel' : ''}" data-row-idx="${i}" data-row-tab="items"><div class="rowmain">` +
         `<span class="ico">${it.icon || '❔'}</span>` +
         `<span style="color:${it.color || '#fff'}">${it.name}</span></div>` +
         `<small>${rarityTag(it)}${it.desc || ''}${sel ? ` · ${keyName(pi, 'attack')}:${action} · ${keyName(pi, 'interact')}:sell ${sellValue(it)}g` : ''}</small></div>`;
@@ -318,7 +336,7 @@ function invSection(pi) {
       const can = p.canBuy(node);
       const cost = node.cost > 1 ? ` <span class="cost">(${node.cost} SP)</span>` : '';
       const badge = node.passive ? `<span class="pbadge">PASSIVE</span> ` : '';
-      return `<div class="row ${sel ? 'sel' : ''} ${can ? 'buyable' : ''} ${node.passive ? 'passive' : ''}"><div class="rowmain">` +
+      return `<div class="row ${sel ? 'sel' : ''} ${can ? 'buyable' : ''} ${node.passive ? 'passive' : ''}" data-row-idx="${i}" data-row-tab="skills"><div class="rowmain">` +
         `<span class="ico">${node.passive ? '★' : '✦'}</span><span>${badge}${node.name} <b>${rank}/${node.maxRank}</b>${cost}</span></div>` +
         `<small>${node.desc}${sel && can ? ' · buy' : (rank >= node.maxRank ? ' · maxed' : '')}</small></div>`;
     }).join('');
