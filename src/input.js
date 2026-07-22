@@ -34,24 +34,41 @@ window.addEventListener('keyup', (e) => {
 });
 window.addEventListener('blur', () => { down.clear(); });
 
+// Touch state written by mobile.js; read here for P1 (pi=0).
+export const touch = {
+  move: { x: 0, y: 0 },   // normalized joystick vector
+  attack: false,
+  ability: false,
+  interact: false,
+  inventory: false,
+  // edge-trigger tracking
+  _prev: { attack: false, ability: false, interact: false, inventory: false },
+  _just: { attack: false, ability: false, interact: false, inventory: false },
+};
+
 export const input = {
-  // Call once at the start of each fixed update.
   beginFrame() {
     justPressed = justBuffer;
     justBuffer = new Set();
+    // Compute touch edge triggers
+    for (const k of ['attack', 'ability', 'interact', 'inventory']) {
+      touch._just[k] = touch[k] && !touch._prev[k];
+      touch._prev[k] = touch[k];
+    }
   },
   isDown: (code) => down.has(code),
   justPressed: (code) => justPressed.has(code),
 
-  // Per-player helpers keyed by action name.
   actionDown(pi, action) {
+    if (pi === 0 && touch[action]) return true;
     return down.has(KEYMAPS[pi][action]);
   },
   actionPressed(pi, action) {
+    if (pi === 0 && touch._just[action]) return true;
     return justPressed.has(KEYMAPS[pi][action]);
   },
-  // Normalized movement vector for a player.
   moveVector(pi) {
+    if (pi === 0 && (touch.move.x !== 0 || touch.move.y !== 0)) return touch.move;
     const m = KEYMAPS[pi];
     let x = 0, y = 0;
     if (down.has(m.left)) x -= 1;

@@ -13,6 +13,7 @@ import {
 import { render, updateCamera, clampToView } from './render.js';
 import { openShop, closeShop } from './shop.js';
 import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx, fadeOutThenIn } from './audio.js';
+import { initMobileControls, updateMobileControls, isMobile } from './mobile.js';
 
 let ctx;
 
@@ -239,6 +240,7 @@ function frame(now) {
 
   input.beginFrame();
   ui.update(dt);
+  updateMobileControls(game.phase);
   if (game.phase === Phase.PLAYING && !game.paused) simulate(dt);
 
   if (game.map) render(ctx);
@@ -254,6 +256,7 @@ function init() {
   const canvas = document.getElementById('canvas');
   ctx = canvas.getContext('2d');
   ui.initUI(controller);
+  initMobileControls();
   game.phase = Phase.TITLE;
   // Start music as soon as audio buffers are loaded. Browsers that enforce
   // autoplay policy will suspend the AudioContext until the first user gesture;

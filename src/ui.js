@@ -2,6 +2,7 @@
 // mode-select / class-select / shop / title / game-over screens + input handling.
 import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
+import { isMobile } from './mobile.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
@@ -395,6 +396,11 @@ function titleHTML() {
 }
 
 function modeSelectHTML() {
+  if (isMobile) {
+    // On mobile: skip the selection screen, auto-select 1P
+    setTimeout(() => ctrl.onModeChosen(1), 0);
+    return '<div class="card"><p>Loading…</p></div>';
+  }
   const opt = (n, label, desc) => `<div class="modecard ${ms.sel === n ? 'sel' : ''}">
     <div class="modenum">${n}P</div><div class="modelabel">${label}</div><div class="modedesc">${desc}</div></div>`;
   return `<div class="card">

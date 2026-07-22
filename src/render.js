@@ -1,5 +1,6 @@
 // Canvas rendering: camera, tiles, pixel-art entities, projectiles, fx, floaters.
 import { game, TILE, VIEW_W, VIEW_H, calcScore } from './state.js';
+import { isMobile } from './mobile.js';
 
 const FLOOR_THEMES = [
   { floor: '#2a2438', wall: '#191426', wallTop: '#3a3050', accent: '#4a3b6b' },
@@ -51,6 +52,7 @@ export function render(ctx) {
   drawFloaters(ctx);
 
   ctx.restore();
+  drawMobileStats(ctx);
   drawHUD(ctx);
   drawBanner(ctx);
   drawComboText(ctx);
@@ -444,6 +446,34 @@ function drawFloaters(ctx) {
     ctx.fillText(f.text, f.x, f.y);
   }
   ctx.globalAlpha = 1;
+}
+
+function drawMobileStats(ctx) {
+  if (!isMobile || !game.players.length) return;
+  const p = game.players[0];
+  if (!p) return;
+  const x = 8, barW = 120, barH = 10;
+  ctx.save();
+  ctx.globalAlpha = 0.85;
+  // HP bar
+  let y = 8;
+  ctx.fillStyle = '#111';
+  ctx.fillRect(x, y, barW, barH);
+  ctx.fillStyle = '#e0463c';
+  ctx.fillRect(x, y, barW * Math.max(0, p.hp / p.stats.maxHp), barH);
+  ctx.fillStyle = '#fff';
+  ctx.font = '8px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText(`HP ${Math.ceil(p.hp)}/${Math.round(p.stats.maxHp)}`, x + 2, y + 8);
+  // MP bar
+  y += barH + 3;
+  ctx.fillStyle = '#111';
+  ctx.fillRect(x, y, barW, barH);
+  ctx.fillStyle = '#3c7be0';
+  ctx.fillRect(x, y, barW * Math.max(0, p.mana / p.stats.maxMana), barH);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`MP ${Math.ceil(p.mana)}/${Math.round(p.stats.maxMana)}`, x + 2, y + 8);
+  ctx.restore();
 }
 
 function drawHUD(ctx) {
