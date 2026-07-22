@@ -276,8 +276,14 @@ html, body {
   #panel-left, #panel-right { display: none !important; }
   #game-root { padding: 0; gap: 0; }
   #stage { width: 100vw; height: 100vh; }
-  #canvas { width: 100%; height: 100%; max-width: none; max-height: none;
-            object-fit: contain; }
+  /* Height-constrained in landscape: let width follow aspect ratio */
+  #canvas {
+    height: 100vh;
+    width: auto;
+    max-width: 100vw;
+    max-height: none;
+    aspect-ratio: 768 / 576;
+  }
   #settings-btn { display: none; }
 
   /* Show rotate message in portrait */
