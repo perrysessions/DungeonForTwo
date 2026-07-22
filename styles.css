@@ -276,13 +276,13 @@ html, body {
   #panel-left, #panel-right { display: none !important; }
   #game-root { padding: 0; gap: 0; }
   #stage { width: 100vw; height: 100vh; }
-  /* Height-constrained in landscape: let width follow aspect ratio */
+  /* Fill the full screen — slight stretch is acceptable on mobile */
   #canvas {
+    width: 100vw;
     height: 100vh;
-    width: auto;
-    max-width: 100vw;
+    max-width: none;
     max-height: none;
-    aspect-ratio: 768 / 576;
+    aspect-ratio: unset;
   }
   #settings-btn { display: none; }
 
