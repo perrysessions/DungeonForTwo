@@ -50,10 +50,16 @@ export function setMessage(text, seconds = 2.5) {
 }
 
 export function calcScore() {
-  const BASE_TIME = 40 * 60; // 40-minute baseline
-  const timeFactor = Math.max(0.2, BASE_TIME / Math.max(game.runTime, 1));
-  const base = Math.round(game.floor * timeFactor * 500);
-  return base + (game.comboBonusTotal || 0);
+  // Only award points for floors actually cleared (not the one you died on).
+  const floorsCleared = Math.max(0, game.floor - 1);
+  const base = floorsCleared * 1000;
+  // Speed bonus only kicks in if you cleared at least one floor.
+  // Capped at 1.5× so a slow clear still beats a fast death.
+  const BASE_TIME = 30 * 60;
+  const speedBonus = floorsCleared > 0
+    ? Math.round(base * Math.min(1.5, BASE_TIME / Math.max(game.runTime, 1)) * 0.5)
+    : 0;
+  return base + speedBonus + (game.comboBonusTotal || 0);
 }
 
 export function addShake(amount) {

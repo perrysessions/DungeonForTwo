@@ -145,6 +145,9 @@ html, body {
   pointer-events: none;
   z-index: 50;
 }
+#overlay .card {
+  pointer-events: auto;
+}
 #overlay.hidden { display: none; }
 .card {
   background: rgba(16, 12, 26, 0.96);
