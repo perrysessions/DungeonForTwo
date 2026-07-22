@@ -228,7 +228,7 @@ export function passiveOnKill(player, enemy) {
     case 'n_pass': { // Undying Legion — free wraith minion every few kills
       player._passiveKills = (player._passiveKills || 0) + 1;
       const need = Math.max(2, 6 - rank);
-      if (player._passiveKills >= need) { player._passiveKills = 0; spawnFreeMinion(player, rank); }
+      if (player._passiveKills >= need) { player._passiveKills = 0; spawnFreeMinion(player); }
       break;
     }
   }
@@ -415,14 +415,14 @@ function makeMinion(owner) {
   };
 }
 
-// Necromancer "Undying Legion" passive minion: stronger, distinct color, ignores cap.
-function spawnFreeMinion(owner, rank) {
-  const dmg = Math.round(owner.stats.attackDamage * (0.8 + 0.15 * rank) * owner.stats.damageMult);
-  const hp = Math.round(60 * (1 + 0.2 * rank) + owner.level * 5);
+// Necromancer "Undying Legion" passive minion: same stats as skill minions, distinct color, ignores cap.
+function spawnFreeMinion(owner) {
+  const dmg = Math.round(owner.stats.attackDamage * (0.6 + owner.mods.minionDmg) * owner.stats.damageMult);
+  const hp = Math.round(40 * (1 + owner.mods.minionHp) + owner.level * 4);
   const ox = randRange(-18, 18), oy = randRange(-18, 18);
   game.minions.push({
     owner, x: owner.x + ox, y: owner.y + oy,
-    hp, maxHp: hp, dmg, radius: 10, attackTimer: 0, life: 24, color: '#c060ff', free: true,
+    hp, maxHp: hp, dmg, radius: 9, attackTimer: 0, life: 24, color: '#c060ff', free: true,
     orbitAngle: Math.atan2(oy, ox),
   });
   spawnParticles(owner.x, owner.y, '#c060ff', 12, 100);
