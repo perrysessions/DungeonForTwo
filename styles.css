@@ -315,6 +315,11 @@ html, body {
   #panel-left .tabs span {
     cursor: pointer;
   }
+  /* Shop list: let the overlay scroll instead of a nested scroll container */
+  .shoplist { max-height: none; overflow: visible; }
+  /* Shop rows need cursor:pointer for iOS click-in-scroll-container fix */
+  .shoprow { cursor: pointer; }
+
   /* Shop / menu overlays: start at top, scroll freely, full pointer-events */
   #overlay {
     align-items: flex-start;

@@ -576,8 +576,8 @@ function shopHTML() {
     const canAfford = (game.players[0]?.gold ?? 0) >= it.price;
     const buyBtn = sel && isMobile
       ? canAfford
-        ? `<button data-buy-shop-idx="${i}" style="font-size:11px;padding:3px 10px;margin-top:5px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;cursor:pointer">BUY 💰${it.price}</button>`
-        : `<small style="color:#ff6060;display:block;margin-top:4px">Need 💰${it.price - game.players[0].gold} more</small>`
+        ? `<button data-buy-shop-idx="${i}" style="font-size:11px;padding:3px 12px;margin-top:5px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;cursor:pointer;white-space:nowrap">BUY ${it.price}g</button>`
+        : `<small style="color:#ff6060;display:block;margin-top:4px">Need ${it.price - game.players[0].gold}g more</small>`
       : '';
     return `<div class="shoprow ${sel ? 'sel' : ''}" data-shop-idx="${i}">
       <span class="ico">${it.icon || '❔'}</span>
