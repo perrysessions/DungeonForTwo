@@ -29,13 +29,19 @@ export function initMobileControls() {
       </div>
     </div>
   `;
-  // Expand canvas to fill the screen width without stretching
-  const canvas = document.getElementById('canvas');
-  const mobileW = Math.round(576 * (window.innerWidth / window.innerHeight));
-  canvas.width = mobileW;
-  setViewW(mobileW);
-
   document.getElementById('stage').appendChild(overlay);
+
+  // Expand canvas to fill the screen width without stretching.
+  // Defer so the browser has finished laying out the viewport (avoids stretch on cold load).
+  const canvas = document.getElementById('canvas');
+  function applyMobileW() {
+    const mobileW = Math.round(576 * (window.innerWidth / window.innerHeight));
+    canvas.width = mobileW;
+    setViewW(mobileW);
+  }
+  requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
+  window.addEventListener('resize', applyMobileW, { passive: true });
+  window.addEventListener('orientationchange', () => setTimeout(applyMobileW, 100), { passive: true });
 
   setupJoystick();
   setupButtons();
@@ -117,17 +123,12 @@ function setupButtons() {
     }, { passive: false });
   }
 
-  // Tap on panel: switch tabs or activate rows
+  // Tap on panel: switch tabs or activate rows.
+  // Use 'click' instead of touchend — iOS scroll containers suppress touchend on scroll,
+  // but click is only fired on genuine taps (never on scroll), no threshold needed.
+  // touch-action: manipulation (set in CSS on .mobile-panel-open) removes the 300ms delay.
   const panel = document.getElementById('panel-left');
-  let touchStartY = 0;
-  panel.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-
-  panel.addEventListener('touchend', e => {
-    // Ignore if finger moved significantly (it was a scroll)
-    if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 20) return;
-
+  panel.addEventListener('click', e => {
     const span = e.target.closest('.tabs span');
     if (span) {
       const label = span.textContent.trim().toLowerCase();
@@ -143,7 +144,7 @@ function setupButtons() {
     if (row) {
       mobileTapInvRow(parseInt(row.dataset.rowIdx, 10), row.dataset.rowTab);
     }
-  }, { passive: true });
+  });
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);
     btn.addEventListener('touchstart', e => { e.preventDefault(); touch[action] = true; },  { passive: false });

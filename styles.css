@@ -303,6 +303,7 @@ html, body {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     box-shadow: 4px 0 20px rgba(0,0,0,0.7);
+    touch-action: manipulation;
   }
   .rows {
     -webkit-overflow-scrolling: touch;
