@@ -169,13 +169,16 @@ export function mobileTapInvRow(idx, tab, action) {
       p.inventory.splice(idx, 1);
       st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
       mobileToast(`Sold ${name}`);
-    } else {
-      // Mobile: tap immediately uses/equips — no two-tap selection step
+    } else if (action === 'equip') {
       const item = p.inventory[idx];
       st.itemCur = idx;
       p.useItem(item);
       st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
-      mobileToast(`Equipped ${item.name}`);
+      const label = item.slot === 'consumable' ? 'Used' : 'Equipped';
+      mobileToast(`${label} ${item.name}`);
+    } else {
+      // Tap selects only — EQUIP/USE and SELL buttons appear on selected row
+      st.itemCur = (st.itemCur === idx) ? -1 : idx;
     }
   } else {
     if (action === 'buy') {
@@ -391,11 +394,17 @@ function invSection(pi) {
     else body = p.inventory.map((it, i) => {
       const sel = i === Math.min(st.itemCur, p.inventory.length - 1);
       const action = it.slot === 'consumable' ? 'use' : 'equip';
-      const sellBtn = sel && isMobile ? `<button data-sell-idx="${i}" style="font-size:10px;padding:2px 7px;margin-top:3px;background:#3a1010;border:1px solid #c03030;color:#ff8080;border-radius:3px;font-family:monospace">SELL ${sellValue(it)}g</button>` : '';
+      const actionLabel = it.slot === 'consumable' ? 'USE' : 'EQUIP';
+      const btns = sel && isMobile
+        ? `<div style="display:flex;gap:6px;margin-top:5px">` +
+          `<button data-equip-idx="${i}" style="font-size:11px;padding:3px 10px;background:#1c2238;border:2px solid #5580cc;color:#aac4ff;border-radius:4px;font-family:monospace;cursor:pointer">${actionLabel}</button>` +
+          `<button data-sell-idx="${i}" style="font-size:11px;padding:3px 10px;background:#2a1010;border:2px solid #c03030;color:#ff8080;border-radius:4px;font-family:monospace;cursor:pointer">SELL ${sellValue(it)}g</button>` +
+          `</div>`
+        : '';
       return `<div class="row ${sel ? 'sel' : ''}" data-row-idx="${i}" data-row-tab="items"><div class="rowmain">` +
         `<span class="ico">${it.icon || '❔'}</span>` +
         `<span style="color:${it.color || '#fff'}">${it.name}</span></div>` +
-        `<small>${rarityTag(it)}${it.desc || ''}${sel && !isMobile ? ` · ${keyName(pi, 'attack')}:${action}` : ''}</small>${sellBtn}</div>`;
+        `<small>${rarityTag(it)}${it.desc || ''}${sel && !isMobile ? ` · ${keyName(pi, 'attack')}:${action}` : ''}</small>${btns}</div>`;
     }).join('');
   } else {
     body = p.cls.tree.map((node, i) => {

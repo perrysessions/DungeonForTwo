@@ -137,6 +137,9 @@ function setupButtons() {
     }
 
     // Buttons nested inside rows must be checked before the row itself
+    const equipBtn = e.target.closest('[data-equip-idx]');
+    if (equipBtn) { mobileTapInvRow(parseInt(equipBtn.dataset.equipIdx, 10), 'items', 'equip'); return; }
+
     const sellBtn = e.target.closest('[data-sell-idx]');
     if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
 
