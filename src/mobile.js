@@ -126,7 +126,7 @@ function setupButtons() {
 
   panel.addEventListener('touchend', e => {
     // Ignore if finger moved significantly (it was a scroll)
-    if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 10) return;
+    if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 20) return;
 
     const span = e.target.closest('.tabs span');
     if (span) {
@@ -135,11 +135,13 @@ function setupButtons() {
       return;
     }
 
+    // Must check sell BEFORE row — sell button is nested inside a [data-row-idx] element
+    const sellBtn = e.target.closest('[data-sell-idx]');
+    if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
+
     const row = e.target.closest('[data-row-idx]');
     if (row) {
-      const idx = parseInt(row.dataset.rowIdx, 10);
-      const tab = row.dataset.rowTab;
-      mobileTapInvRow(idx, tab);
+      mobileTapInvRow(parseInt(row.dataset.rowIdx, 10), row.dataset.rowTab);
     }
   }, { passive: true });
   for (const [id, action] of Object.entries(map)) {
