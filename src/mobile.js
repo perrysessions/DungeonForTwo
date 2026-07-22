@@ -116,6 +116,11 @@ export function toggleMobilePanel() {
     backdrop.addEventListener('click', () => toggleMobilePanel());
   }
   backdrop.style.display = open ? '' : 'none';
+  // While the bag panel is open, disable pointer-events on the shop overlay so
+  // it doesn't intercept taps that should go to the panel (z-index doesn't fully
+  // prevent this on iOS Safari when the overlay has pointer-events:auto).
+  const overlay = document.getElementById('overlay');
+  if (overlay) overlay.style.pointerEvents = open ? 'none' : '';
   // force panel re-render so close button appears/disappears immediately
   invalidatePanelCache();
 }
