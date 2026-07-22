@@ -378,19 +378,23 @@ function scrollShop() {
 }
 
 function titleHTML() {
-  return `<div class="card title">
-    <h1>DUNGEON&nbsp;FOR&nbsp;TWO</h1>
-    <p class="sub">A local co-op pixel roguelike · descend ${MAX_FLOORS} floors</p>
-    <div class="controls two">
+  const controls = isMobile
+    ? `<p style="font-size:13px;margin:10px 0">Joystick to move · ATK · SKL · USE · BAG</p>`
+    : `<div class="controls two">
       <div><h3 style="color:${P_COLOR[0]}">Player 1</h3>
         <div>Move: <b>W A S D</b></div><div>Attack: <b>Space</b></div>
         <div>Ability: <b>E</b></div><div>Interact/Revive: <b>Q</b></div><div>Inventory: <b>R</b></div></div>
       <div><h3 style="color:${P_COLOR[1]}">Player 2</h3>
         <div>Move: <b>Arrow Keys</b></div><div>Attack: <b>/</b></div>
         <div>Ability: <b>'</b></div><div>Interact/Revive: <b>;</b></div><div>Inventory: <b>P</b></div></div>
-    </div>
+    </div>`;
+  const prompt = isMobile ? 'Tap to begin' : 'Press an Attack key to begin';
+  return `<div class="card title">
+    <h1>DUNGEON&nbsp;FOR&nbsp;TWO</h1>
+    <p class="sub">A local co-op pixel roguelike · descend ${MAX_FLOORS} floors</p>
+    ${controls}
     <p class="hint">Attacks auto-aim at the nearest enemy.</p>
-    <p class="blink big">Press an Attack key to begin</p>
+    <p class="blink big">${prompt}</p>
     <p class="credit">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a> · License: BJKRXJSISMJN0J4T</p>
   </div>`;
 }

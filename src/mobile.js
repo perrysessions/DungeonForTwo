@@ -31,6 +31,7 @@ export function initMobileControls() {
 
   setupJoystick();
   setupButtons();
+  setupMenuTap();
 }
 
 // ---- Joystick ----
@@ -105,11 +106,25 @@ function setupButtons() {
   }
 }
 
-// Show/hide the controls depending on game phase (hide during overlays).
+// Show/hide the controls depending on game phase.
 export function updateMobileControls(phase) {
   if (!isMobile) return;
   const el = document.getElementById('mobile-controls');
   if (!el) return;
-  const visible = phase === 'PLAYING' || phase === 'SHOP';
-  el.style.display = visible ? 'flex' : 'none';
+  const inGame = phase === 'PLAYING';
+  // Show joystick+buttons only while actually playing
+  document.getElementById('joy-zone').style.display = inGame ? '' : 'none';
+  document.getElementById('btn-zone').style.display  = inGame ? '' : 'none';
+  el.style.display = 'flex';
+}
+
+// Tapping the overlay card during menus acts as "attack / confirm".
+function setupMenuTap() {
+  const overlay = document.getElementById('overlay');
+  overlay.addEventListener('touchstart', e => {
+    // Only fire if the menu overlay is visible (not hidden)
+    if (overlay.classList.contains('hidden')) return;
+    touch.attack = true;
+    setTimeout(() => { touch.attack = false; }, 80);
+  }, { passive: true });
 }
