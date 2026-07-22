@@ -136,9 +136,12 @@ function setupButtons() {
       return;
     }
 
-    // Must check sell BEFORE row — sell button is nested inside a [data-row-idx] element
+    // Buttons nested inside rows must be checked before the row itself
     const sellBtn = e.target.closest('[data-sell-idx]');
     if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
+
+    const buySkillBtn = e.target.closest('[data-buy-skill]');
+    if (buySkillBtn) { mobileTapInvRow(parseInt(buySkillBtn.dataset.buySkill, 10), 'skills', 'buy'); return; }
 
     const row = e.target.closest('[data-row-idx]');
     if (row) {

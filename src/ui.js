@@ -169,11 +169,15 @@ export function mobileTapInvRow(idx, tab, action) {
       mobileToast(`Equipped ${item.name}`);
     }
   } else {
-    st.skillCur = idx;
-    const node = p.cls.tree[idx];
-    if (node && p.canBuy(node)) {
-      p.buySkill(node);
-      mobileToast(`Learned ${node.name}`);
+    if (action === 'buy') {
+      const node = p.cls.tree[idx];
+      if (node && p.canBuy(node)) {
+        p.buySkill(node);
+        mobileToast(`Learned ${node.name}`);
+      }
+    } else {
+      // Tap selects only — BUY button appears on selected row to confirm
+      st.skillCur = (st.skillCur === idx) ? -1 : idx;
     }
   }
 }
@@ -391,9 +395,12 @@ function invSection(pi) {
       const can = p.canBuy(node);
       const cost = node.cost > 1 ? ` <span class="cost">(${node.cost} SP)</span>` : '';
       const badge = node.passive ? `<span class="pbadge">PASSIVE</span> ` : '';
+      const buyBtn = sel && can && isMobile
+        ? `<button data-buy-skill="${i}" style="font-size:11px;padding:3px 10px;margin-top:5px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;cursor:pointer">BUY (${node.cost} SP)</button>`
+        : '';
       return `<div class="row ${sel ? 'sel' : ''} ${can ? 'buyable' : ''} ${node.passive ? 'passive' : ''}" data-row-idx="${i}" data-row-tab="skills"><div class="rowmain">` +
         `<span class="ico">${node.passive ? '★' : '✦'}</span><span>${badge}${node.name} <b>${rank}/${node.maxRank}</b>${cost}</span></div>` +
-        `<small>${node.desc}${sel && can ? ' · buy' : (rank >= node.maxRank ? ' · maxed' : '')}</small></div>`;
+        `<small>${node.desc}${sel && !isMobile && can ? ' · buy' : (rank >= node.maxRank ? ' · maxed' : '')}</small>${buyBtn}</div>`;
     }).join('');
   }
   return `<div class="inv-open">${tabs}<div class="rows">${body}</div>` +
@@ -406,32 +413,39 @@ function keyName(pi, action) {
     .replace('Slash', '/').replace('Quote', "'").replace('Semicolon', ';');
 }
 
+const _panelCache = ['', ''];
 function renderPanels() {
   for (let pi = 0; pi < 2; pi++) {
     const p = game.players[pi];
     const el = els.panels[pi];
+    let html;
     if (!p) {
       const inactive = game.numPlayers === 1 && pi === 1 && game.phase !== Phase.TITLE && game.phase !== Phase.MODE_SELECT;
-      el.innerHTML = `<div class="pnl-head" style="color:${P_COLOR[pi]}">Player ${pi + 1}</div>` +
+      html = `<div class="pnl-head" style="color:${P_COLOR[pi]}">Player ${pi + 1}</div>` +
         (inactive ? `<div class="empty">Not in game — 1-player mode</div>` : '');
-      continue;
+    } else {
+      if (panelFlashT[pi] > 0) panelFlashT[pi] -= 1 / 60;
+      const status = p.downed ? `<span class="downed">DOWNED</span>` : '';
+      html =
+        `<div class="pnl-head" style="color:${P_COLOR[pi]}">P${pi + 1} · ${p.cls.name} <b>Lv ${p.level}</b> ${status}</div>` +
+        bar('HP', Math.round(p.hp), p.stats.maxHp, '#e0463c') +
+        bar('MP', Math.round(p.mana), p.stats.maxMana, '#3c7be0') +
+        bar('XP', p.xp, p.xpNext, '#e0c23c') +
+        `<div class="stat"><span>💰 ${p.gold}</span>` +
+        (p.skillPoints > 0 ? `<span class="blink">★ ${p.skillPoints} SP</span>` : '<span></span>') + `</div>` +
+        eqLine(p) +
+        statsSummary(p) +
+        (panelFlashT[pi] > 0 ? `<div class="flashmsg">${panelFlash[pi]}</div>` : '') +
+        invSection(pi);
     }
-    if (panelFlashT[pi] > 0) panelFlashT[pi] -= 1 / 60;
-    const status = p.downed ? `<span class="downed">DOWNED</span>` : '';
-    el.innerHTML =
-      `<div class="pnl-head" style="color:${P_COLOR[pi]}">P${pi + 1} · ${p.cls.name} <b>Lv ${p.level}</b> ${status}</div>` +
-      bar('HP', p.hp, p.stats.maxHp, '#e0463c') +
-      bar('MP', p.mana, p.stats.maxMana, '#3c7be0') +
-      bar('XP', p.xp, p.xpNext, '#e0c23c') +
-      `<div class="stat"><span>💰 ${p.gold}</span>` +
-      (p.skillPoints > 0 ? `<span class="blink">★ ${p.skillPoints} SP</span>` : '<span></span>') + `</div>` +
-      eqLine(p) +
-      statsSummary(p) +
-      (panelFlashT[pi] > 0 ? `<div class="flashmsg">${panelFlash[pi]}</div>` : '') +
-      invSection(pi);
-    if (inv[pi].open) {
-      const sel = el.querySelector('.row.sel');
-      if (sel) sel.scrollIntoView({ block: 'nearest' });
+    // Only replace DOM when HTML actually changed — constant thrashing breaks tap events on iOS
+    if (html !== _panelCache[pi]) {
+      el.innerHTML = html;
+      _panelCache[pi] = html;
+      if (p && inv[pi].open) {
+        const sel = el.querySelector('.row.sel');
+        if (sel) sel.scrollIntoView({ block: 'nearest' });
+      }
     }
   }
 }
