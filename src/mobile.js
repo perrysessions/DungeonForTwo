@@ -21,7 +21,6 @@ export function initMobileControls() {
         <button class="mbtn" id="mb-inventory">BAG</button>
       </div>
       <div class="m-row mid-row">
-        <button class="mbtn" id="mb-interact">USE</button>
         <button class="mbtn ability" id="mb-ability">SKL</button>
       </div>
       <div class="m-row bot-row">
@@ -107,9 +106,8 @@ function setupJoystick() {
 // ---- Action buttons ----
 function setupButtons() {
   const map = {
-    'mb-attack':   'attack',
-    'mb-ability':  'ability',
-    'mb-interact': 'interact',
+    'mb-attack':  'attack',
+    'mb-ability': 'ability',
   };
   // BAG toggles the panel as a floating overlay
   const bagBtn = document.getElementById('mb-inventory');
@@ -165,16 +163,9 @@ export function updateMobileControls(phase) {
   const el = document.getElementById('mobile-controls');
   if (!el) return;
   const inGame = phase === 'PLAYING';
-  const inShop = phase === 'SHOP';
-  // Joystick only during combat; btn-zone also shown in shop so BAG is reachable
+  // Show joystick+buttons only while actually playing
   document.getElementById('joy-zone').style.display = inGame ? '' : 'none';
-  document.getElementById('btn-zone').style.display  = (inGame || inShop) ? '' : 'none';
-  // In shop, hide ATK/SKL/USE — only BAG is useful
-  const combatBtns = ['mb-attack', 'mb-ability', 'mb-interact'];
-  combatBtns.forEach(id => {
-    const b = document.getElementById(id);
-    if (b) b.style.display = inShop ? 'none' : '';
-  });
+  document.getElementById('btn-zone').style.display  = inGame ? '' : 'none';
   el.style.display = 'flex';
 }
 
@@ -183,6 +174,8 @@ function setupMenuTap() {
   const overlay = document.getElementById('overlay');
   overlay.addEventListener('touchstart', e => {
     if (overlay.classList.contains('hidden')) return;
+    // Let settings button and modal handle their own events
+    if (e.target.closest('#settings-btn') || e.target.closest('#settings-modal')) return;
 
     // Class select card
     const clsCard = e.target.closest('[data-cls-idx]');
@@ -198,6 +191,13 @@ function setupMenuTap() {
 
     // Shop: ready button
     if (e.target.id === 'mobile-ready-btn') { mobileShopReady(); return; }
+
+    // Shop: bag button
+    if (e.target.id === 'mobile-bag-btn') {
+      const panel = document.getElementById('panel-left');
+      panel.classList.toggle('mobile-panel-open');
+      return;
+    }
 
     // Inventory sell button
     const sellBtn = e.target.closest('[data-sell-idx]');

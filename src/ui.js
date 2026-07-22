@@ -590,7 +590,12 @@ function shopHTML() {
     const p = game.players[pi];
     status.push(`<span style="color:${P_COLOR[pi]}">P${pi + 1} 💰${p.gold} · ${shop.ready[pi] ? 'READY ✓' : 'shopping'}</span>`);
   }
-  const mobileReadyBtn = isMobile ? `<button id="mobile-ready-btn" style="margin-top:10px;width:100%;padding:10px;font-size:15px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${game.shop?.ready[0] ? '✓ READY — tap to unready' : 'READY TO DESCEND'}</button>` : '';
+  const mobileReadyBtn = isMobile
+    ? `<div style="display:flex;gap:8px;margin-top:10px">` +
+      `<button id="mobile-bag-btn" style="flex:0 0 auto;padding:10px 18px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦 BAG</button>` +
+      `<button id="mobile-ready-btn" style="flex:1;padding:10px;font-size:15px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${game.shop?.ready[0] ? '✓ READY — tap to unready' : 'READY TO DESCEND'}</button>` +
+      `</div>`
+    : '';
   return `<div class="card wide shop">
     <h2>Shop — Floor ${game.floor} cleared!</h2>
     <p class="sub">${isMobile ? 'Tap to select · tap BUY to purchase · ' : '↕ browse · Attack to buy · Interact to ready up · '}open Inventory to equip/sell</p>
