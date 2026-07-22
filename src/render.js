@@ -1,5 +1,5 @@
 // Canvas rendering: camera, tiles, pixel-art entities, projectiles, fx, floaters.
-import { game, TILE, VIEW_W, VIEW_H } from './state.js';
+import { game, TILE, VIEW_W, VIEW_H, calcScore } from './state.js';
 
 const FLOOR_THEMES = [
   { floor: '#2a2438', wall: '#191426', wallTop: '#3a3050', accent: '#4a3b6b' },
@@ -51,6 +51,7 @@ export function render(ctx) {
   drawFloaters(ctx);
 
   ctx.restore();
+  drawHUD(ctx);
   drawBanner(ctx);
   drawComboText(ctx);
 }
@@ -443,6 +444,28 @@ function drawFloaters(ctx) {
     ctx.fillText(f.text, f.x, f.y);
   }
   ctx.globalAlpha = 1;
+}
+
+function drawHUD(ctx) {
+  if (game.phase !== 'PLAYING' && game.phase !== 'SHOP') return;
+  const t = game.runTime || 0;
+  const m = Math.floor(t / 60), s = Math.floor(t % 60);
+  const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+  const scoreStr = calcScore().toLocaleString();
+
+  ctx.save();
+  ctx.font = 'bold 13px monospace';
+  ctx.textAlign = 'center';
+  // subtle dark pill background
+  const text = `⏱ ${timeStr}   ★ ${scoreStr}`;
+  const tw = ctx.measureText(text).width;
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.beginPath();
+  ctx.roundRect(VIEW_W / 2 - tw / 2 - 10, 6, tw + 20, 20, 5);
+  ctx.fill();
+  ctx.fillStyle = '#c8c0d8';
+  ctx.fillText(text, VIEW_W / 2, 20);
+  ctx.restore();
 }
 
 function drawBanner(ctx) {
