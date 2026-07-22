@@ -394,10 +394,9 @@ function invSection(pi) {
     else body = p.inventory.map((it, i) => {
       const sel = i === Math.min(st.itemCur, p.inventory.length - 1);
       const action = it.slot === 'consumable' ? 'use' : 'equip';
-      const actionLabel = it.slot === 'consumable' ? 'USE' : 'EQUIP';
       const btns = sel && isMobile
         ? `<div style="display:flex;gap:6px;margin-top:5px">` +
-          `<button data-equip-idx="${i}" style="font-size:11px;padding:3px 10px;background:#1c2238;border:2px solid #5580cc;color:#aac4ff;border-radius:4px;font-family:monospace;cursor:pointer">${actionLabel}</button>` +
+          `<button data-equip-idx="${i}" style="font-size:11px;padding:3px 10px;background:#1c2238;border:2px solid #5580cc;color:#aac4ff;border-radius:4px;font-family:monospace;cursor:pointer">EQUIP</button>` +
           `<button data-sell-idx="${i}" style="font-size:11px;padding:3px 10px;background:#2a1010;border:2px solid #c03030;color:#ff8080;border-radius:4px;font-family:monospace;cursor:pointer">SELL ${sellValue(it)}g</button>` +
           `</div>`
         : '';

@@ -153,6 +153,7 @@ function updatePickups(dt) {
     if (best && bd < best.radius + pk.r + 6) {
       if (pk.kind === 'gold') { best.gold += pk.amount; pk.dead = true; playSfx('pickup_gold', 0.5); }
       else if (best.addItem(pk.item)) { pk.dead = true; playSfx('pickup_item', 0.6); }
+      else if (!game._invFullMsg) { setMessage('Inventory full!', 2); game._invFullMsg = true; setTimeout(() => { game._invFullMsg = false; }, 4000); }
     }
   }
   game.pickups = game.pickups.filter(p => !p.dead && p.life > 0);

@@ -165,9 +165,16 @@ export function updateMobileControls(phase) {
   const el = document.getElementById('mobile-controls');
   if (!el) return;
   const inGame = phase === 'PLAYING';
-  // Show joystick+buttons only while actually playing
+  const inShop = phase === 'SHOP';
+  // Joystick only during combat; btn-zone also shown in shop so BAG is reachable
   document.getElementById('joy-zone').style.display = inGame ? '' : 'none';
-  document.getElementById('btn-zone').style.display  = inGame ? '' : 'none';
+  document.getElementById('btn-zone').style.display  = (inGame || inShop) ? '' : 'none';
+  // In shop, hide ATK/SKL/USE — only BAG is useful
+  const combatBtns = ['mb-attack', 'mb-ability', 'mb-interact'];
+  combatBtns.forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.style.display = inShop ? 'none' : '';
+  });
   el.style.display = 'flex';
 }
 
