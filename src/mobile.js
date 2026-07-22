@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, setMobileInvTab, mobileTapInvRow } from './ui.js';
+import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileShopReady } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -162,20 +162,28 @@ export function updateMobileControls(phase) {
   el.style.display = 'flex';
 }
 
-// Tapping the overlay card during menus acts as "attack / confirm".
-// Tapping a class card specifically picks that class.
+// Tap delegation on the overlay covers all menu screens.
 function setupMenuTap() {
   const overlay = document.getElementById('overlay');
   overlay.addEventListener('touchstart', e => {
     if (overlay.classList.contains('hidden')) return;
-    // Check if a class card was tapped
-    const card = e.target.closest('[data-cls-idx]');
-    if (card) {
-      const idx = parseInt(card.dataset.clsIdx, 10);
-      mobilePickClass(idx);
-      return;
-    }
-    // Generic confirm (title, game over, etc.)
+
+    // Class select card
+    const clsCard = e.target.closest('[data-cls-idx]');
+    if (clsCard) { mobilePickClass(parseInt(clsCard.dataset.clsIdx, 10)); return; }
+
+    // Shop: buy row
+    const shopRow = e.target.closest('[data-shop-idx]');
+    if (shopRow) { mobileBuyShopItem(parseInt(shopRow.dataset.shopIdx, 10)); return; }
+
+    // Shop: ready button
+    if (e.target.id === 'mobile-ready-btn') { mobileShopReady(); return; }
+
+    // Inventory sell button
+    const sellBtn = e.target.closest('[data-sell-idx]');
+    if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
+
+    // Generic confirm: title, game over, win
     touch.attack = true;
     setTimeout(() => { touch.attack = false; }, 80);
   }, { passive: true });
