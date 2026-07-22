@@ -420,7 +420,10 @@ function invSection(pi) {
         `<small>${node.desc}${sel && !isMobile && can ? ' · buy' : (rank >= node.maxRank ? ' · maxed' : '')}</small>${buyBtn}</div>`;
     }).join('');
   }
-  return `<div class="inv-open">${tabs}<div class="rows">${body}</div>` +
+  const closeBtn = isMobile && game.phase === Phase.SHOP
+    ? `<button data-panel-close style="width:100%;margin-bottom:8px;padding:6px;background:#1a0d0d;border:2px solid #c03030;color:#ff8080;border-radius:4px;font-family:monospace;font-size:12px;cursor:pointer">✕ CLOSE BAG</button>`
+    : '';
+  return `<div class="inv-open">${closeBtn}${tabs}<div class="rows">${body}</div>` +
     `<div class="hint">↕ move · ↔ tab · [${keyName(pi, 'attack')}] use/buy · [${keyName(pi, 'interact')}] sell · [${keyName(pi, 'inventory')}] close</div></div>`;
 }
 
@@ -431,6 +434,7 @@ function keyName(pi, action) {
 }
 
 const _panelCache = ['', ''];
+export function invalidatePanelCache() { _panelCache[0] = _panelCache[1] = ''; }
 function renderPanels() {
   for (let pi = 0; pi < 2; pi++) {
     const p = game.players[pi];

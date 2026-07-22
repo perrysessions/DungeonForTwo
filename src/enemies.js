@@ -195,8 +195,15 @@ export class Enemy {
     // contact damage
     if (dist <= this.radius + target.radius + 2 && this.contactTimer <= 0) {
       this.contactTimer = 0.8;
-      const dealt = target.takeDamage(this.dmg);
-      if (dealt) spawnFloater(target.x, target.y - 18, String(dealt), '#ff6060');
+      if (target.takeDamage) {
+        const dealt = target.takeDamage(this.dmg);
+        if (dealt) spawnFloater(target.x, target.y - 18, String(dealt), '#ff6060');
+      } else {
+        // minion target
+        target.hp -= this.dmg;
+        spawnFloater(target.x, target.y - 14, String(this.dmg), '#ff9040');
+        if (target.hp <= 0) target.life = 0;
+      }
     }
   }
 
@@ -258,6 +265,11 @@ export class Enemy {
       if (p.downed) continue;
       const d = Math.hypot(p.x - this.x, p.y - this.y);
       if (d < bd) { bd = d; best = p; }
+    }
+    // also consider player minions — enemies attack whichever is closer
+    for (const m of game.minions) {
+      const d = Math.hypot(m.x - this.x, m.y - this.y);
+      if (d < bd) { bd = d; best = m; }
     }
     return best;
   }

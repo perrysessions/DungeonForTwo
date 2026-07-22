@@ -407,9 +407,11 @@ const ABILITIES = {
 function makeMinion(owner) {
   const dmg = Math.round(owner.stats.attackDamage * (0.6 + owner.mods.minionDmg) * owner.stats.damageMult);
   const hp = Math.round(40 * (1 + owner.mods.minionHp) + owner.level * 4);
+  const ox = randRange(-16, 16), oy = randRange(-16, 16);
   return {
-    owner, x: owner.x + randRange(-16, 16), y: owner.y + randRange(-16, 16),
+    owner, x: owner.x + ox, y: owner.y + oy,
     hp, maxHp: hp, dmg, radius: 9, attackTimer: 0, life: 20, color: '#bfeccb', free: false,
+    orbitAngle: Math.atan2(oy, ox),
   };
 }
 
@@ -417,25 +419,33 @@ function makeMinion(owner) {
 function spawnFreeMinion(owner, rank) {
   const dmg = Math.round(owner.stats.attackDamage * (0.8 + 0.15 * rank) * owner.stats.damageMult);
   const hp = Math.round(60 * (1 + 0.2 * rank) + owner.level * 5);
+  const ox = randRange(-18, 18), oy = randRange(-18, 18);
   game.minions.push({
-    owner, x: owner.x + randRange(-18, 18), y: owner.y + randRange(-18, 18),
+    owner, x: owner.x + ox, y: owner.y + oy,
     hp, maxHp: hp, dmg, radius: 10, attackTimer: 0, life: 24, color: '#c060ff', free: true,
+    orbitAngle: Math.atan2(oy, ox),
   });
   spawnParticles(owner.x, owner.y, '#c060ff', 12, 100);
 }
+
+const MINION_ORBIT_RADIUS = 75;
+const MINION_DETECT_RANGE = 210;
 
 export function updateMinions(dt) {
   for (const m of game.minions) {
     m.life -= dt;
     if (m.attackTimer > 0) m.attackTimer -= dt;
-    // find nearest enemy
-    let target = null, best = 1e9;
+
+    // find nearest enemy with LOS within detection range
+    let target = null, best = MINION_DETECT_RANGE;
     for (const e of game.enemies) {
       if (e.dead) continue;
       const d = Math.hypot(e.x - m.x, e.y - m.y);
-      if (d < best) { best = d; target = e; }
+      if (d < best && game.map.lineClear(m.x, m.y, e.x, e.y)) { best = d; target = e; }
     }
+
     if (target) {
+      // attack mode: charge the enemy
       const n = normalize(target.x - m.x, target.y - m.y);
       if (best > m.radius + target.radius + 2) {
         const nx = m.x + n.x * 120 * dt, ny = m.y + n.y * 120 * dt;
@@ -445,10 +455,21 @@ export function updateMinions(dt) {
         damageEnemy(target, m.dmg, { source: m.owner });
       }
     } else {
-      // follow owner
-      const n = normalize(m.owner.x - m.x, m.owner.y - m.y);
-      const d = Math.hypot(m.owner.x - m.x, m.owner.y - m.y);
-      if (d > 40) { m.x += n.x * 100 * dt; m.y += n.y * 100 * dt; }
+      // orbit mode: circle the owner at MINION_ORBIT_RADIUS
+      m.orbitAngle = (m.orbitAngle || 0) + 0.5 * dt;
+      const tx = m.owner.x + Math.cos(m.orbitAngle) * MINION_ORBIT_RADIUS;
+      const ty = m.owner.y + Math.sin(m.orbitAngle) * MINION_ORBIT_RADIUS;
+      const dx = tx - m.x, dy = ty - m.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 8) {
+        const spd = Math.min(dist * 3, 110);
+        const nx = m.x + (dx / dist) * spd * dt;
+        const ny = m.y + (dy / dist) * spd * dt;
+        if (!game.map.worldSolid(nx, ny)) { m.x = nx; m.y = ny; }
+        else if (!game.map.worldSolid(nx, m.y)) { m.x = nx; }
+        else if (!game.map.worldSolid(m.x, ny)) { m.y = ny; }
+        else { m.orbitAngle += 0.8 * dt; } // unstick by advancing angle
+      }
     }
   }
   game.minions = game.minions.filter(m => m.life > 0 && m.hp > 0);

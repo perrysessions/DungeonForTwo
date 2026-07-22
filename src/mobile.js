@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady } from './ui.js';
+import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -104,7 +104,7 @@ function setupJoystick() {
 }
 
 // ---- Panel open/close with backdrop ----
-function toggleMobilePanel() {
+export function toggleMobilePanel() {
   const panel = document.getElementById('panel-left');
   const open = !panel.classList.contains('mobile-panel-open');
   panel.classList.toggle('mobile-panel-open', open);
@@ -116,6 +116,8 @@ function toggleMobilePanel() {
     backdrop.addEventListener('click', () => toggleMobilePanel());
   }
   backdrop.style.display = open ? '' : 'none';
+  // force panel re-render so close button appears/disappears immediately
+  invalidatePanelCache();
 }
 
 // ---- Action buttons ----
@@ -141,6 +143,8 @@ function setupButtons() {
   // touch-action: manipulation (set in CSS on .mobile-panel-open) removes the 300ms delay.
   const panel = document.getElementById('panel-left');
   panel.addEventListener('click', e => {
+    if (e.target.closest('[data-panel-close]')) { toggleMobilePanel(); return; }
+
     const span = e.target.closest('.tabs span');
     if (span) {
       const label = span.textContent.trim().toLowerCase();
