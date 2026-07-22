@@ -290,6 +290,17 @@ html, body {
   @media (orientation: portrait) {
     #rotate-msg { display: flex; }
   }
+
+  /* Panel floats as overlay when BAG is open */
+  #panel-left.mobile-panel-open {
+    display: block !important;
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px; height: 100vh;
+    z-index: 40;
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.7);
+  }
 }
 
 /* ---------- mobile control overlay ---------- */

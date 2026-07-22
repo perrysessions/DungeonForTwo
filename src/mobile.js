@@ -2,6 +2,7 @@
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
 import { mobilePickClass } from './ui.js';
+import { isMobile } from './detect.js';
 export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
@@ -15,6 +16,9 @@ export function initMobileControls() {
       <div id="joy-base"><div id="joy-knob"></div></div>
     </div>
     <div id="btn-zone">
+      <div class="m-row top-row">
+        <button class="mbtn" id="mb-inventory">BAG</button>
+      </div>
       <div class="m-row mid-row">
         <button class="mbtn" id="mb-interact">USE</button>
         <button class="mbtn ability" id="mb-ability">SKL</button>
@@ -94,6 +98,17 @@ function setupButtons() {
     'mb-ability':  'ability',
     'mb-interact': 'interact',
   };
+  // BAG toggles the panel as a floating overlay
+  const bagBtn = document.getElementById('mb-inventory');
+  if (bagBtn) {
+    bagBtn.addEventListener('touchstart', e => {
+      e.preventDefault();
+      touch.inventory = true;
+      setTimeout(() => { touch.inventory = false; }, 80);
+      const panel = document.getElementById('panel-left');
+      panel.classList.toggle('mobile-panel-open');
+    }, { passive: false });
+  }
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);
     btn.addEventListener('touchstart', e => { e.preventDefault(); touch[action] = true; },  { passive: false });

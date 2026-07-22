@@ -137,8 +137,12 @@ function handleInventory(pi) {
   const st = inv[pi];
   const p = game.players[pi];
   if (!p) return;
-  // Inventory panel is hidden on mobile — don't let it open and block movement.
-  if (isMobile) { st.open = false; return; }
+  // On mobile the panel floats as an overlay; sync open state with panel visibility.
+  if (isMobile) {
+    const panel = document.getElementById('panel-left');
+    st.open = panel?.classList.contains('mobile-panel-open') || false;
+    if (!st.open) return;
+  }
   if (input.actionPressed(pi, 'inventory')) {
     st.open = !st.open;
     if (st.open) { st.tab = p.skillPoints > 0 ? 'skills' : 'items'; st.itemCur = 0; st.skillCur = 0; }
