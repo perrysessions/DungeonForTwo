@@ -104,6 +104,8 @@ function initSettings() {
 export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false] }; }
 
 // Mobile: tap a class card to instantly pick and confirm it for P1.
+export function setMobileInvTab(tab) { inv[0].tab = tab; }
+
 export function mobilePickClass(idx) {
   cs.cursor[0] = idx;
   cs.confirmed[0] = true;

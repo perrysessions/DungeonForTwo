@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass } from './ui.js';
+import { mobilePickClass, setMobileInvTab } from './ui.js';
 import { isMobile } from './detect.js';
 export { isMobile } from './detect.js';
 
@@ -109,6 +109,17 @@ function setupButtons() {
       panel.classList.toggle('mobile-panel-open');
     }, { passive: false });
   }
+
+  // Tap on Items/Skills tab labels to switch tabs
+  document.getElementById('panel-left').addEventListener('touchstart', e => {
+    const span = e.target.closest('.tabs span');
+    if (!span) return;
+    e.preventDefault();
+    // Find which tab was tapped by its text content
+    const label = span.textContent.trim().toLowerCase();
+    // Directly set tab via exported setter
+    setMobileInvTab(label.startsWith('item') ? 'items' : 'skills');
+  }, { passive: false });
   for (const [id, action] of Object.entries(map)) {
     const btn = document.getElementById(id);
     btn.addEventListener('touchstart', e => { e.preventDefault(); touch[action] = true; },  { passive: false });
