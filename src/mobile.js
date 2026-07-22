@@ -3,6 +3,7 @@
 import { touch } from './input.js';
 import { mobilePickClass, setMobileInvTab } from './ui.js';
 import { isMobile } from './detect.js';
+import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
@@ -28,6 +29,12 @@ export function initMobileControls() {
       </div>
     </div>
   `;
+  // Expand canvas to fill the screen width without stretching
+  const canvas = document.getElementById('canvas');
+  const mobileW = Math.round(576 * (window.innerWidth / window.innerHeight));
+  canvas.width = mobileW;
+  setViewW(mobileW);
+
   document.getElementById('stage').appendChild(overlay);
 
   setupJoystick();
