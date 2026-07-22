@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileShopReady } from './ui.js';
+import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -178,7 +178,11 @@ function setupMenuTap() {
     const clsCard = e.target.closest('[data-cls-idx]');
     if (clsCard) { mobilePickClass(parseInt(clsCard.dataset.clsIdx, 10)); return; }
 
-    // Shop: buy row
+    // Shop: confirm buy button
+    const buyShopBtn = e.target.closest('[data-buy-shop-idx]');
+    if (buyShopBtn) { mobileConfirmBuyShopItem(parseInt(buyShopBtn.dataset.buyShopIdx, 10)); return; }
+
+    // Shop: tap row to select
     const shopRow = e.target.closest('[data-shop-idx]');
     if (shopRow) { mobileBuyShopItem(parseInt(shopRow.dataset.shopIdx, 10)); return; }
 

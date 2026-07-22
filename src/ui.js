@@ -121,6 +121,13 @@ function mobileToast(msg) {
 }
 
 export function mobileBuyShopItem(idx) {
+  // Tap to select only — BUY button confirms the purchase
+  const shop = game.shop;
+  if (!shop) return;
+  shop.cursor[0] = (shop.cursor[0] === idx) ? -1 : idx;
+}
+
+export function mobileConfirmBuyShopItem(idx) {
   const shop = game.shop;
   const p = game.players[0];
   if (!shop || !p) return;
@@ -135,7 +142,9 @@ export function mobileBuyShopItem(idx) {
       shop.cursor[k] = Math.max(0, Math.min(shop.cursor[k], Math.max(0, shop.stock.length - 1)));
     }
     mobileToast(`Bought ${name}!`);
-  } else flashPanel(0, res.reason);
+  } else {
+    mobileToast(res.reason);
+  }
 }
 
 export function mobileShopReady() {
@@ -554,12 +563,19 @@ function shopHTML() {
     const marks = [];
     for (let pi = 0; pi < active; pi++) if (!inv[pi].open && shop.cursor[pi] === i)
       marks.push(`<span class="pmark" style="background:${P_COLOR[pi]}">P${pi + 1}</span>`);
-    return `<div class="shoprow ${marks.length ? 'sel' : ''}" data-shop-idx="${i}">
+    const sel = marks.length > 0;
+    const canAfford = (game.players[0]?.gold ?? 0) >= it.price;
+    const buyBtn = sel && isMobile
+      ? canAfford
+        ? `<button data-buy-shop-idx="${i}" style="font-size:11px;padding:3px 10px;margin-top:5px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;cursor:pointer">BUY 💰${it.price}</button>`
+        : `<small style="color:#ff6060;display:block;margin-top:4px">Need 💰${it.price - game.players[0].gold} more</small>`
+      : '';
+    return `<div class="shoprow ${sel ? 'sel' : ''}" data-shop-idx="${i}">
       <span class="ico">${it.icon || '❔'}</span>
       <span class="iname" style="color:${it.color || '#fff'}">${it.name}</span>
       <span class="idesc">${rarityTag(it)}${it.desc || ''}</span>
       <span class="iprice">💰${it.price}</span>
-      <span class="imk">${marks.join('')}</span></div>`;
+      <span class="imk">${marks.join('')}</span>${buyBtn}</div>`;
   }).join('');
   const status = [];
   for (let pi = 0; pi < active; pi++) {
@@ -569,7 +585,7 @@ function shopHTML() {
   const mobileReadyBtn = isMobile ? `<button id="mobile-ready-btn" style="margin-top:10px;width:100%;padding:10px;font-size:15px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${game.shop?.ready[0] ? '✓ READY — tap to unready' : 'READY TO DESCEND'}</button>` : '';
   return `<div class="card wide shop">
     <h2>Shop — Floor ${game.floor} cleared!</h2>
-    <p class="sub">${isMobile ? 'Tap to buy · ' : '↕ browse · Attack to buy · Interact to ready up · '}open Inventory to equip/sell</p>
+    <p class="sub">${isMobile ? 'Tap to select · tap BUY to purchase · ' : '↕ browse · Attack to buy · Interact to ready up · '}open Inventory to equip/sell</p>
     <div class="shoplist">${rows}</div>
     <p class="statusline">${status.join(' &nbsp;|&nbsp; ')}</p>
     ${mobileReadyBtn}
