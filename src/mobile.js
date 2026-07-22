@@ -103,6 +103,21 @@ function setupJoystick() {
   zone.addEventListener('touchcancel', endJoy, { passive: false });
 }
 
+// ---- Panel open/close with backdrop ----
+function toggleMobilePanel() {
+  const panel = document.getElementById('panel-left');
+  const open = !panel.classList.contains('mobile-panel-open');
+  panel.classList.toggle('mobile-panel-open', open);
+  let backdrop = document.getElementById('mobile-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'mobile-backdrop';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', () => toggleMobilePanel());
+  }
+  backdrop.style.display = open ? '' : 'none';
+}
+
 // ---- Action buttons ----
 function setupButtons() {
   const map = {
@@ -116,8 +131,7 @@ function setupButtons() {
       e.preventDefault();
       touch.inventory = true;
       setTimeout(() => { touch.inventory = false; }, 80);
-      const panel = document.getElementById('panel-left');
-      panel.classList.toggle('mobile-panel-open');
+      toggleMobilePanel();
     }, { passive: false });
   }
 
@@ -193,11 +207,10 @@ function setupMenuTap() {
     if (e.target.id === 'mobile-ready-btn') { mobileShopReady(); return; }
 
     // Shop: bag button
-    if (e.target.id === 'mobile-bag-btn') {
-      const panel = document.getElementById('panel-left');
-      panel.classList.toggle('mobile-panel-open');
-      return;
-    }
+    if (e.target.id === 'mobile-bag-btn') { toggleMobilePanel(); return; }
+
+    // Shop: settings button
+    if (e.target.id === 'mobile-settings-btn') { document.getElementById('settings-btn').click(); return; }
 
     // Inventory sell button
     const sellBtn = e.target.closest('[data-sell-idx]');

@@ -300,12 +300,17 @@ html, body {
   }
 
   /* Panel floats as overlay when BAG is open */
+  #mobile-backdrop {
+    position: fixed; inset: 0; z-index: 55;
+    background: rgba(0,0,0,0.45);
+    display: none;
+  }
   #panel-left.mobile-panel-open {
     display: block !important;
     position: fixed;
     top: 0; left: 0;
     width: 260px; height: 100dvh;
-    z-index: 40;
+    z-index: 60;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     box-shadow: 4px 0 20px rgba(0,0,0,0.7);

@@ -483,7 +483,11 @@ function renderOverlay() {
   if (game.phase === Phase.TITLE) o.innerHTML = titleHTML();
   else if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
   else if (game.phase === Phase.CLASS_SELECT) o.innerHTML = classSelectHTML();
-  else if (game.phase === Phase.SHOP) { o.innerHTML = shopHTML(); scrollShop(); }
+  else if (game.phase === Phase.SHOP) {
+    // Don't stomp the overlay while settings modal is open
+    if (!document.getElementById('settings-modal').classList.contains('hidden')) return;
+    o.innerHTML = shopHTML(); scrollShop();
+  }
   else if (game.phase === Phase.GAME_OVER) { o.innerHTML = endHTML(false); bindEndScreenButtons(); }
   else if (game.phase === Phase.WIN) { o.innerHTML = endHTML(true); bindEndScreenButtons(); }
 }
@@ -592,8 +596,9 @@ function shopHTML() {
   }
   const mobileReadyBtn = isMobile
     ? `<div style="display:flex;gap:8px;margin-top:10px">` +
-      `<button id="mobile-bag-btn" style="flex:0 0 auto;padding:10px 18px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦 BAG</button>` +
+      `<button id="mobile-bag-btn" style="flex:0 0 auto;padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦</button>` +
       `<button id="mobile-ready-btn" style="flex:1;padding:10px;font-size:15px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${game.shop?.ready[0] ? '✓ READY — tap to unready' : 'READY TO DESCEND'}</button>` +
+      `<button id="mobile-settings-btn" style="flex:0 0 auto;padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c1c;border:2px solid #4a4060;color:#aaa;border-radius:6px;cursor:pointer">⚙</button>` +
       `</div>`
     : '';
   return `<div class="card wide shop">
