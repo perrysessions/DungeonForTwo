@@ -1,6 +1,6 @@
 // DOM UI: side panels (P1 left / P2 right), inventory+skill overlays,
 // mode-select / class-select / shop / title / game-over screens + input handling.
-import { game, Phase, MAX_FLOORS, calcScore, setMessage } from './state.js';
+import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
 import { isMobile } from './detect.js';
 import { CLASS_LIST } from './classes.js';
@@ -106,6 +106,20 @@ export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, f
 // Mobile: tap a class card to instantly pick and confirm it for P1.
 export function setMobileInvTab(tab) { inv[0].tab = tab; }
 
+let _toastTimer = null;
+function mobileToast(msg) {
+  let el = document.getElementById('mobile-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'mobile-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
 export function mobileBuyShopItem(idx) {
   const shop = game.shop;
   const p = game.players[0];
@@ -120,7 +134,7 @@ export function mobileBuyShopItem(idx) {
       if (shop.cursor[k] > idx) shop.cursor[k]--;
       shop.cursor[k] = Math.max(0, Math.min(shop.cursor[k], Math.max(0, shop.stock.length - 1)));
     }
-    setMessage(`Bought ${name}!`, 1.5);
+    mobileToast(`Bought ${name}!`);
   } else flashPanel(0, res.reason);
 }
 
@@ -145,21 +159,21 @@ export function mobileTapInvRow(idx, tab, action) {
       p.gold += sellValue(p.inventory[idx]);
       p.inventory.splice(idx, 1);
       st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
-      setMessage(`Sold ${name}`, 1.2);
+      mobileToast(`Sold ${name}`);
     } else {
       // Mobile: tap immediately uses/equips — no two-tap selection step
       const item = p.inventory[idx];
       st.itemCur = idx;
       p.useItem(item);
       st.itemCur = Math.min(st.itemCur, Math.max(0, p.inventory.length - 1));
-      setMessage(`Equipped ${item.name}`, 1.2);
+      mobileToast(`Equipped ${item.name}`);
     }
   } else {
     st.skillCur = idx;
     const node = p.cls.tree[idx];
     if (node && p.canBuy(node)) {
       p.buySkill(node);
-      setMessage(`Learned ${node.name}`, 1.2);
+      mobileToast(`Learned ${node.name}`);
     }
   }
 }

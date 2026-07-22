@@ -315,11 +315,29 @@ html, body {
   #panel-left .tabs span {
     cursor: pointer;
   }
-  /* Shop overlay scrolls on small screens */
+  /* Shop / menu overlays: start at top, scroll freely, full pointer-events */
   #overlay {
+    align-items: flex-start;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    pointer-events: auto;
+    padding: 10px 8px;
   }
+  #overlay .card {
+    max-height: none;
+    width: 100%;
+  }
+  /* Toast notification for buy/equip/sell feedback */
+  #mobile-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.88); color: #7bff9b;
+    padding: 7px 18px; border-radius: 20px;
+    font-size: 13px; font-family: "Courier New", monospace;
+    pointer-events: none; z-index: 200;
+    opacity: 0; transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  #mobile-toast.show { opacity: 1; }
 }
 
 /* ---------- mobile control overlay ---------- */
