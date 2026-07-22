@@ -225,10 +225,9 @@ export function passiveOnKill(player, enemy) {
       if (passiveId === 'p_pass') spawnParticles(player.x, player.y, '#ffe680', 6, 80);
       break;
     }
-    case 'n_pass': { // Undying Legion — free wraith minion every few kills
-      player._passiveKills = (player._passiveKills || 0) + 1;
-      const need = Math.max(2, 6 - rank);
-      if (player._passiveKills >= need) { player._passiveKills = 0; spawnFreeMinion(player); }
+    case 'n_pass': { // Undying Legion — chance per kill to spawn a free wraith minion
+      const chance = [0, 0.07, 0.14, 0.21, 0.30][rank] || 0;
+      if (Math.random() < chance) spawnFreeMinion(player);
       break;
     }
   }
