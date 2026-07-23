@@ -11,6 +11,7 @@ import { setMusicVolume, setSfxVolume } from './audio.js';
 // ---------- Local High Score Board ----------
 const HS_KEY = 'dungeon2_scores';
 const MAX_SCORES = 5;
+let _scoreSaved = false;
 
 function loadScores() {
   try { return JSON.parse(localStorage.getItem(HS_KEY)) || []; } catch { return []; }
@@ -101,7 +102,7 @@ function initSettings() {
   restartYes.addEventListener('click', () => { close(); ctrl.onRestart(); });
 }
 
-export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false], _detail: false }; }
+export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false], _detail: false }; _scoreSaved = false; }
 
 // Mobile: tap a class card to instantly pick and confirm it for P1.
 export function setMobileInvTab(tab) { inv[0].tab = tab; }
@@ -720,8 +721,8 @@ function endHTML(win) {
 
   const scoresHTML = scores.length === 0 ? '<p style="color:var(--ink-dim);font-size:12px">No scores yet</p>' :
     `<table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:6px">
-      <tr style="color:var(--ink-dim)"><th style="text-align:left;padding:2px 6px">#</th><th style="text-align:left;padding:2px 6px">Name</th><th style="text-align:right;padding:2px 6px">Score</th><th style="text-align:right;padding:2px 6px">Floor</th><th style="text-align:right;padding:2px 6px">Time</th></tr>
-      ${scores.map((s, i) => `<tr style="${s._new ? 'color:#ffd060' : ''}"><td style="padding:2px 6px">${i + 1}</td><td style="padding:2px 6px">${s.name}</td><td style="text-align:right;padding:2px 6px">${s.score.toLocaleString()}</td><td style="text-align:right;padding:2px 6px">${s.floor}</td><td style="text-align:right;padding:2px 6px">${fmtTime(s.time)}</td></tr>`).join('')}
+      <tr style="color:var(--ink-dim)"><th style="text-align:left;padding:2px 6px">#</th><th style="text-align:left;padding:2px 6px">Name</th><th style="text-align:left;padding:2px 6px">Class</th><th style="text-align:right;padding:2px 6px">Score</th><th style="text-align:right;padding:2px 6px">Flr</th><th style="text-align:right;padding:2px 6px">Time</th></tr>
+      ${scores.map((s, i) => `<tr style="${s._new ? 'color:#ffd060' : ''}"><td style="padding:2px 6px">${i + 1}</td><td style="padding:2px 6px">${s.name}</td><td style="padding:2px 6px;color:#aaaaff">${s.classes || '—'}</td><td style="text-align:right;padding:2px 6px">${s.score.toLocaleString()}</td><td style="text-align:right;padding:2px 6px">${s.floor}</td><td style="text-align:right;padding:2px 6px">${fmtTime(s.time)}</td></tr>`).join('')}
     </table>`;
 
   return `<div class="card">
@@ -729,7 +730,7 @@ function endHTML(win) {
     <p class="sub">${win ? `All ${MAX_FLOORS} floors cleared!` : `${game.numPlayers === 1 ? 'Your hero fell' : 'Both heroes fell'} on floor ${game.floor}.`}</p>
     <p style="font-size:22px;margin:6px 0">Score: <b style="color:#ffd060">${score.toLocaleString()}</b></p>
     <p style="font-size:12px;color:var(--ink-dim)">Floor ${game.floor} · ${fmtTime(game.runTime)} · Lv ${best} · Combo bonus: ${game.comboBonusTotal.toLocaleString()}</p>
-    ${isTopScore ? `<div style="margin:12px 0 8px">
+    ${isTopScore && !_scoreSaved ? `<div style="margin:12px 0 8px">
       <p style="font-size:13px;margin:0 0 6px;color:#7bff9b">Top ${MAX_SCORES} score! Enter your name:</p>
       <div style="display:flex;gap:8px;justify-content:center;align-items:center">
         <input id="hs-name" maxlength="5" style="width:80px;font-size:18px;text-align:center;text-transform:uppercase;font-family:monospace;background:#1c1730;border:2px solid var(--panel-border);color:#fff;padding:4px;border-radius:4px" placeholder="NAME" />
@@ -749,8 +750,10 @@ export function bindEndScreenButtons() {
   const nameInput = document.getElementById('hs-name');
   if (!saveBtn || !nameInput) return;
   const doSave = () => {
+    if (_scoreSaved) return;
     let name = nameInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
     if (!name) name = '????';
+    _scoreSaved = true;
     const score = calcScore();
     const classes = game.players.map(p => p.cls?.name || '?').join('/');
     const entry = { name, score, floor: game.floor, time: Math.round(game.runTime), classes, _new: true };
