@@ -533,12 +533,7 @@ function scrollShop() {
 
 function titleHTML() {
   const controls = isMobile
-    ? `<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0">
-        ${['⬆️ Joystick','⚔️ ATK','✨ SKL','🎒 BAG'].map(b =>
-          `<span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,220,100,0.3);border-radius:6px;padding:5px 10px;font-size:12px;color:#e8d87a">${b}</span>`
-        ).join('')}
-      </div>
-      <p style="font-size:12px;margin:4px 0;color:#8080a0">Auto-aim · tap skills to spend SP · bag to manage gear</p>`
+    ? `<p style="font-size:12px;margin:4px 0;color:#8080a0">Auto-aim · tap skills to spend SP · bag to manage gear</p>`
     : `<div class="controls two">
       <div><h3 style="color:${P_COLOR[0]}">Player 1</h3>
         <div>Move: <b>W A S D</b></div><div>Attack: <b>Space</b></div>
@@ -551,12 +546,8 @@ function titleHTML() {
     ? `A solo dungeon adventure · descend ${MAX_FLOORS} floors`
     : `A local co-op pixel roguelike · descend ${MAX_FLOORS} floors`;
   const prompt = isMobile ? '▶ Tap to begin' : 'Press an Attack key to begin';
-  const deco = `<div style="display:flex;justify-content:center;gap:18px;font-size:22px;margin:10px 0;opacity:0.55">
-    ${'⚔️ 🗡️ 💀 🏹 🪄 🛡️ 💎 🔥'.split(' ').join('</span><span>')}
-  </div>`.replace('⚔️', '<span>⚔️').replace('🔥', '🔥</span>');
   return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px">
-    <div style="font-size:11px;letter-spacing:3px;color:#9070c0;text-transform:uppercase;margin-bottom:6px">⚔ Dungeon For Two ⚔</div>
-    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:2px;text-shadow:0 0 24px #c080ff88,0 0 6px #c080ff44">DUNGEON<br><span style="color:#e8d87a;text-shadow:0 0 24px #ffe06088,0 0 8px #ffe06044">FOR TWO</span></h1>
+    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:3px;color:#c080ff;text-shadow:0 0 28px #c080ffaa,0 0 8px #c080ff55;text-transform:uppercase">⚔ Dungeon For Two ⚔</h1>
     <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">${subtitle}</p>
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
     ${controls}
