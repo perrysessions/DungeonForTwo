@@ -533,7 +533,7 @@ function scrollShop() {
 
 function titleHTML() {
   const controls = isMobile
-    ? `<p style="font-size:12px;margin:4px 0;color:#8080a0">Auto-aim · tap skills to spend SP · bag to manage gear</p>`
+    ? `<p style="font-size:13px;margin:4px 0;color:#b0a0cc">Unlock unique class skills. Find epic, legendary and mythical items.</p>`
     : `<div class="controls two">
       <div><h3 style="color:${P_COLOR[0]}">Player 1</h3>
         <div>Move: <b>W A S D</b></div><div>Attack: <b>Space</b></div>
@@ -543,7 +543,7 @@ function titleHTML() {
         <div>Ability: <b>'</b></div><div>Interact/Revive: <b>;</b></div><div>Inventory: <b>P</b></div></div>
     </div>`;
   const subtitle = isMobile
-    ? `A solo dungeon adventure · descend ${MAX_FLOORS} floors`
+    ? `A dungeon adventure game · two player co-op available on desktop`
     : `A local co-op pixel roguelike · descend ${MAX_FLOORS} floors`;
   const prompt = isMobile ? '▶ Tap to begin' : 'Press an Attack key to begin';
   return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px">
