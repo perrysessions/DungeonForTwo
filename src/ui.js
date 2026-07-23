@@ -558,16 +558,39 @@ function modeSelectHTML() {
   </div>`;
 }
 
+function classSpriteSVG(a) {
+  const skin = '#e8c9a0';
+  let headgear = '';
+  if (a.head === 'helm') {
+    headgear = `<rect x="7" y="6" width="12" height="5" fill="${a.accent}"/>
+                <rect x="7" y="11" width="2" height="4" fill="${a.accent}"/>`;
+  } else if (a.head === 'hat') {
+    headgear = `<rect x="6" y="9" width="14" height="3" fill="${a.body}"/>
+                <rect x="10" y="2" width="6" height="8" fill="${a.body}"/>`;
+  } else if (a.head === 'hood') {
+    headgear = `<rect x="7" y="5" width="12" height="6" fill="${a.body}"/>`;
+  }
+  return `<svg viewBox="0 0 26 36" width="36" height="46" style="display:block;margin:0 auto 4px;image-rendering:pixelated">
+    <rect x="7" y="27" width="4" height="7" fill="#2a2a30"/>
+    <rect x="15" y="27" width="4" height="7" fill="#2a2a30"/>
+    <rect x="6" y="15" width="14" height="12" fill="${a.body}"/>
+    <rect x="6" y="15" width="14" height="3" fill="${a.trim}"/>
+    <rect x="8" y="7" width="10" height="9" fill="${skin}"/>
+    ${headgear}
+    <rect x="18" y="15" width="5" height="5" fill="${a.accent}"/>
+  </svg>`;
+}
+
 function classSelectHTML() {
   const active = game.numPlayers;
+  const hint = isMobile ? 'Tap to select · tap again to confirm' : 'Move to browse · Attack to lock in · Interact to unlock';
   const cards = CLASS_LIST.map((c, i) => {
     const marks = [];
     for (let pi = 0; pi < active; pi++) if (cs.cursor[pi] === i) {
       marks.push(`<span class="pmark ${cs.confirmed[pi] ? 'lock' : ''}" style="background:${P_COLOR[pi]}">P${pi + 1}${cs.confirmed[pi] ? '✓' : ''}</span>`);
     }
-    const a = c.art;
     return `<div class="clscard" data-cls-idx="${i}">
-      <div class="swatch" style="background:${a.body};border-color:${a.trim}"></div>
+      ${classSpriteSVG(c.art)}
       <div class="cname">${c.name}</div>
       <div class="cability">${c.abilityName}</div>
       <div class="cblurb">${c.blurb}</div>
@@ -578,8 +601,8 @@ function classSelectHTML() {
   for (let pi = 0; pi < active; pi++)
     status.push(`<span style="color:${P_COLOR[pi]}">P${pi + 1}: ${cs.confirmed[pi] ? 'READY ✓' : 'choosing…'}</span>`);
   return `<div class="card wide">
-    <h2>Choose Your Class</h2>
-    <p class="sub">Move to browse · Attack to lock in · Interact to unlock</p>
+    <h2 style="margin-bottom:2px">Choose Your Class</h2>
+    <p class="sub" style="margin-bottom:8px">${hint}</p>
     <div class="clsgrid">${cards}</div>
     <p class="statusline">${status.join(' &nbsp; ')}</p>
   </div>`;

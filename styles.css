@@ -343,6 +343,11 @@ html, body {
     max-height: none;
     width: 100%;
   }
+  /* Class select: 2-column grid on mobile so all 8 fit without cutting off */
+  .clsgrid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .clscard { min-height: 0; padding: 8px 6px; }
+  .cblurb { display: none; }
+  .card.wide { padding: 14px 10px; }
   /* Toast notification for buy/equip/sell feedback */
   #mobile-toast {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
