@@ -105,8 +105,9 @@ function initSettings() {
   const hsPanel = document.getElementById('hs-view-panel');
   const hsTable = document.getElementById('hs-view-table');
   hsBtn.addEventListener('click', () => {
-    const hidden = hsPanel.classList.toggle('hidden');
-    hsBtn.textContent = hidden ? 'Hall of Records' : 'Hide Scores';
+    const hidden = hsPanel.style.display === 'none';
+    hsPanel.style.display = hidden ? '' : 'none';
+    hsBtn.textContent = hidden ? 'Hide Scores' : 'Hall of Records';
     if (!hidden) {
       const scores = loadScores();
       hsTable.innerHTML = scores.length === 0
