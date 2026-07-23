@@ -174,8 +174,9 @@ html, body {
 }
 .clscard {
   background: #1c1730; border: 2px solid var(--panel-border); border-radius: 6px;
-  padding: 8px; font-size: 11px; position: relative; min-height: 120px;
+  padding: 8px; font-size: 11px; position: relative; min-height: 120px; cursor: pointer;
 }
+.clscard.sel { border-color: #3baa60; background: #1a2a1a; }
 .swatch { width: 28px; height: 28px; margin: 0 auto 4px; border: 3px solid; border-radius: 4px; }
 .cname { font-weight: bold; font-size: 13px; color: var(--ink); }
 .cability { color: var(--gold); font-size: 11px; margin: 2px 0; }

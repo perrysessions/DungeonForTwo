@@ -195,9 +195,20 @@ export function mobileTapInvRow(idx, tab, action) {
 }
 
 export function mobilePickClass(idx) {
-  cs.cursor[0] = idx;
+  if (cs.cursor[0] === idx && !cs.confirmed[0]) {
+    // second tap on same card = confirm
+    cs.confirmed[0] = true;
+    ctrl.onClassChosen([CLASS_LIST[idx].key]);
+  } else {
+    // first tap = highlight only
+    cs.cursor[0] = idx;
+    cs.confirmed[0] = false;
+  }
+}
+export function mobileConfirmClass() {
+  if (cs.confirmed[0]) return;
   cs.confirmed[0] = true;
-  ctrl.onClassChosen([CLASS_LIST[idx].key]);
+  ctrl.onClassChosen([CLASS_LIST[cs.cursor[0]].key]);
 }
 export function closeInventories() { inv[0].open = inv[1].open = false; }
 export function isCapturing(pi) { return inv[pi].open; }
@@ -589,12 +600,17 @@ function classSelectHTML() {
     for (let pi = 0; pi < active; pi++) if (cs.cursor[pi] === i) {
       marks.push(`<span class="pmark ${cs.confirmed[pi] ? 'lock' : ''}" style="background:${P_COLOR[pi]}">P${pi + 1}${cs.confirmed[pi] ? '✓' : ''}</span>`);
     }
-    return `<div class="clscard" data-cls-idx="${i}">
+    const isSel = cs.cursor[0] === i && marks.length > 0;
+    const confirmBtn = isSel && isMobile && !cs.confirmed[0]
+      ? `<button data-confirm-class style="width:100%;margin-top:6px;padding:5px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;font-size:12px;cursor:pointer">✔ CONFIRM</button>`
+      : '';
+    return `<div class="clscard${isSel ? ' sel' : ''}" data-cls-idx="${i}">
       ${classSpriteSVG(c.art)}
       <div class="cname">${c.name}</div>
       <div class="cability">${c.abilityName}</div>
       <div class="cblurb">${c.blurb}</div>
       <div class="marks">${marks.join('')}</div>
+      ${confirmBtn}
     </div>`;
   }).join('');
   const status = [];

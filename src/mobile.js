@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache } from './ui.js';
+import { mobilePickClass, mobileConfirmClass, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -202,7 +202,9 @@ function setupMenuTap() {
     // Let settings button and modal handle their own events
     if (e.target.closest('#settings-btn') || e.target.closest('#settings-modal')) return;
 
-    // Class select card
+    // Class select: confirm button
+    if (e.target.closest('[data-confirm-class]')) { mobileConfirmClass(); return; }
+    // Class select card: tap to highlight
     const clsCard = e.target.closest('[data-cls-idx]');
     if (clsCard) { mobilePickClass(parseInt(clsCard.dataset.clsIdx, 10)); return; }
 
