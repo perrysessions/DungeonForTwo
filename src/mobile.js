@@ -230,7 +230,8 @@ function setupMenuTap() {
     const sellBtn = e.target.closest('[data-sell-idx]');
     if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
 
-    // Generic confirm: title, game over, win
+    // Generic confirm: title, game over, win — not during class/mode select
+    if (document.getElementById('overlay')?.querySelector('.clsgrid, [data-confirm-class]')) return;
     touch.attack = true;
     setTimeout(() => { touch.attack = false; }, 80);
   }, { passive: true });
