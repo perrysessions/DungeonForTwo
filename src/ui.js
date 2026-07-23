@@ -616,38 +616,54 @@ function classSelectHTML() {
   const status = [];
   for (let pi = 0; pi < active; pi++)
     status.push(`<span style="color:${P_COLOR[pi]}">P${pi + 1}: ${cs.confirmed[pi] ? 'READY ✓' : 'choosing…'}</span>`);
-  let detailSheet = '';
+  // Detail view: replaces grid when INFO is open on mobile
   if (isMobile && cs._detail) {
     const dc = CLASS_LIST[cs.cursor[0]];
     const ds = dc.stats;
     const passive = dc.tree[0];
     const classNodes = dc.tree.slice(1, 4);
     const statChips = [
-      ds.maxHp ? `❤️ ${ds.maxHp} HP` : null,
-      ds.maxMana ? `💧 ${ds.maxMana} MP` : null,
-      ds.moveSpeed ? `👟 ${ds.moveSpeed} spd` : null,
-      ds.armor ? `🛡️ ${ds.armor} armor` : null,
-      ds.critChance ? `⚡ ${Math.round(ds.critChance * 100)}% crit` : null,
+      ds.maxHp ? `❤️ ${ds.maxHp} HP` : '',
+      ds.maxMana ? `💧 ${ds.maxMana} MP` : '',
+      ds.moveSpeed ? `👟 ${ds.moveSpeed} spd` : '',
+      ds.armor ? `🛡️ ${ds.armor} armor` : '',
+      ds.critChance ? `⚡ ${Math.round(ds.critChance * 100)}% crit` : '',
       ds.weaponType === 'melee' ? '⚔️ Melee' : '🏹 Ranged',
     ].filter(Boolean);
-    detailSheet = `<div style="margin-top:10px;padding:12px;background:#12101e;border:1px solid #3a3060;border-radius:6px;font-size:12px;line-height:1.5">
-      <div style="color:#e8d87a;font-weight:bold;margin-bottom:6px">${dc.name} — ${dc.blurb}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
-        ${statChips.map(s => `<span style="background:rgba(255,255,255,0.07);border:1px solid #444;border-radius:4px;padding:2px 7px;color:#ccc">${s}</span>`).join('')}
+    return `<div class="card wide">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button data-detail-class style="flex:1;padding:7px;background:#1a1a2e;border:2px solid #6060aa;color:#aaaaff;border-radius:4px;font-family:monospace;font-size:13px;cursor:pointer">← BACK</button>
+        <button data-confirm-class style="flex:1;padding:7px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;font-size:13px;cursor:pointer">✔ PLAY ${dc.name}</button>
       </div>
-      <div style="color:#aaaaff;font-weight:bold;margin-bottom:2px">✨ ${dc.abilityName} <span style="color:#666;font-weight:normal">(${dc.abilityCost} MP)</span></div>
-      <div style="color:#888;margin-bottom:8px">${dc.blurb}</div>
-      <div style="color:#c8f0d8;font-weight:bold;margin-bottom:2px">★ ${passive.name} <span style="color:#666;font-weight:normal">(passive)</span></div>
-      <div style="color:#888;margin-bottom:8px">${passive.desc.replace('PASSIVE — ', '')}</div>
-      <div style="color:#e8d87a;font-weight:bold;margin-bottom:4px">Skill tree highlights</div>
-      ${classNodes.map(n => `<div style="margin-bottom:3px"><span style="color:#ccc">${n.name}</span> <span style="color:#666">— ${n.desc}</span></div>`).join('')}
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        ${classSpriteSVG(dc.art)}
+        <div>
+          <div style="font-size:18px;font-weight:bold;color:#e8d87a">${dc.name}</div>
+          <div style="color:#aaaaff;font-size:12px">${dc.abilityName} · ${dc.blurb}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">
+        ${statChips.map(s => `<span style="background:rgba(255,255,255,0.07);border:1px solid #444;border-radius:4px;padding:3px 8px;color:#ccc;font-size:12px">${s}</span>`).join('')}
+      </div>
+      <div style="background:#0e0c1a;border:1px solid #2a2040;border-radius:5px;padding:10px;margin-bottom:8px">
+        <div style="color:#aaaaff;font-weight:bold;font-size:13px;margin-bottom:3px">✨ ${dc.abilityName} <span style="color:#666;font-size:11px">${dc.abilityCost} MP</span></div>
+        <div style="color:#999;font-size:12px">${dc.blurb}</div>
+      </div>
+      <div style="background:#0e0c1a;border:1px solid #2a2040;border-radius:5px;padding:10px;margin-bottom:8px">
+        <div style="color:#c8f0d8;font-weight:bold;font-size:13px;margin-bottom:3px">★ ${passive.name} <span style="color:#666;font-size:11px">passive</span></div>
+        <div style="color:#999;font-size:12px">${passive.desc.replace('PASSIVE — ', '')}</div>
+      </div>
+      <div style="color:#e8d87a;font-size:12px;font-weight:bold;margin-bottom:5px">Skill tree</div>
+      ${classNodes.map(n => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1e1c2e;font-size:12px">
+        <span style="color:#ddd">${n.name}</span><span style="color:#666;flex:1;margin-left:8px">${n.desc}</span>
+      </div>`).join('')}
     </div>`;
   }
+
   return `<div class="card wide">
     <h2 style="margin-bottom:2px">Choose Your Class</h2>
     <p class="sub" style="margin-bottom:8px">${hint}</p>
     <div class="clsgrid">${cards}</div>
-    ${detailSheet}
     <p class="statusline">${status.join(' &nbsp; ')}</p>
   </div>`;
 }
