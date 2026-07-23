@@ -511,6 +511,9 @@ function renderOverlay() {
   if (isEnd && lastOverlayPhase === game.phase) return;
   lastOverlayPhase = game.phase;
 
+  const hideSettings = game.phase === Phase.TITLE || game.phase === Phase.CLASS_SELECT || game.phase === Phase.MODE_SELECT;
+  document.getElementById('settings-btn').style.display = hideSettings ? 'none' : '';
+
   if (game.phase === Phase.TITLE) o.innerHTML = titleHTML();
   else if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
   else if (game.phase === Phase.CLASS_SELECT) o.innerHTML = classSelectHTML();
