@@ -131,11 +131,11 @@ export const CLASSES = {
       attackCooldown: 0.3, attackDamage: 11, critChance: 0.15, critMult: 2.4,
     },
     tree: [
-      node('g_pass', 'Killing Spree', 'PASSIVE — On kill: chance to reset Dash + brief speed (per rank)', { passive: true, maxRank: 4 }),
+      node('g_pass', 'Killing Spree', 'PASSIVE — On kill: restore 2 MP per rank (fuels more dashes)', { passive: true, maxRank: 4 }),
       node('g_crit', 'Assassinate', '+4.5% Crit chance', { maxRank: 4, stats: { critChance: 0.045 } }),
       node('g_critd', 'Lethality', '+20% Crit damage', { maxRank: 3, stats: { critMult: 0.2 } }),
       node('g_spd', 'Blur', '+8 Move speed', { maxRank: 4, stats: { moveSpeed: 8 } }),
-      node('g_dash', 'Quick Reflexes', '-12% Dash cooldown', { maxRank: 2, mods: { dashCd: 0.12 } }),
+      node('g_dash', 'Shadowstep', '+20% Dash distance per rank', { maxRank: 2, mods: { dashCd: 0.12 } }),
       node('g_dmg', 'Backstab', '+7% Damage', { maxRank: 4, stats: { damageMult: 0.07 } }),
       node('g_hp', 'Evasion', '+7 Max HP', { maxRank: 3, stats: { maxHp: 7 } }),
     ],

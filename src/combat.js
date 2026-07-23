@@ -191,8 +191,8 @@ export function passiveOnKill(player, enemy) {
       break;
     }
     case 'r_pass': player.momentumT = 3; break; // Momentum — speed burst
-    case 'g_pass': // Killing Spree — chance to reset dash + speed burst
-      if (rand() < 0.12 * rank) player.abilityTimer = 0;
+    case 'g_pass': // Killing Spree — restore MP on kill to fuel more dashes
+      player.mana = Math.min(player.stats.maxMana, player.mana + 2 * rank);
       player.momentumT = 2;
       break;
     case 'f_pass': { // Conflagration — fiery blast at the corpse
@@ -305,7 +305,7 @@ export function useAbility(player) {
   const id = player.cls.ability;
   player.mana -= cost;
   let cd = ABILITY_CD[id] || 1.5;
-  if (id === 'dash') cd *= (1 - player.mods.dashCd);
+  // dashCd mod now controls distance, not cooldown
   cd *= (1 - (player.mods.castSpeed || 0));
   player.abilityTimer = cd;
   playSfx(['cleave','dash','smite'].includes(id) ? 'sword_ability' : 'ability');
@@ -372,9 +372,10 @@ const ABILITIES = {
   },
   dash(player) {
     const f = player.facing;
-    player.dashTimer = 0.22;
+    const distMult = 1 + (player.mods.dashCd || 0);  // dashCd now = distance bonus
+    player.dashTimer = 0.22 * distMult;
     player.dashDir = { ...f };
-    player.invuln = Math.max(player.invuln, 0.24);
+    player.invuln = Math.max(player.invuln, 0.24 * distMult);
     // damage enemies along the dash next few frames handled by dash movement in main;
     // apply an immediate burst hit around path start:
     meleeHit(player, player.stats.attackRange * 1.4, 1.6, { full: true, source: player });
