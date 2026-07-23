@@ -500,6 +500,9 @@ function renderPanels() {
 
 function renderOverlay() {
   const o = els.overlay;
+  const hideSettings = game.phase === Phase.TITLE || game.phase === Phase.CLASS_SELECT || game.phase === Phase.MODE_SELECT;
+  document.getElementById('settings-btn').style.display = hideSettings ? 'none' : '';
+
   if (game.phase === Phase.PLAYING) {
     o.classList.add('hidden'); o.innerHTML = '';
     lastOverlayPhase = null;
@@ -510,9 +513,6 @@ function renderOverlay() {
   const isEnd = game.phase === Phase.GAME_OVER || game.phase === Phase.WIN;
   if (isEnd && lastOverlayPhase === game.phase) return;
   lastOverlayPhase = game.phase;
-
-  const hideSettings = game.phase === Phase.TITLE || game.phase === Phase.CLASS_SELECT || game.phase === Phase.MODE_SELECT;
-  document.getElementById('settings-btn').style.display = hideSettings ? 'none' : '';
 
   if (game.phase === Phase.TITLE) o.innerHTML = titleHTML();
   else if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
