@@ -72,6 +72,15 @@ function initSettings() {
     restartArea.classList.add('hidden');
     modal.classList.remove('hidden');
     if (inRun) game.paused = true;
+    // Populate scores every time settings opens
+    const hsTable = document.getElementById('hs-view-table');
+    const scores = loadScores();
+    hsTable.innerHTML = scores.length === 0
+      ? '<p style="font-size:12px;color:#666;text-align:center">No scores yet</p>'
+      : `<table style="width:100%;font-size:11px;border-collapse:collapse">
+          <tr style="color:#888"><th style="text-align:left;padding:2px 4px">#</th><th style="text-align:left;padding:2px 4px">Name</th><th style="text-align:left;padding:2px 4px">Class</th><th style="text-align:right;padding:2px 4px">Score</th><th style="text-align:right;padding:2px 4px">Flr</th><th style="text-align:right;padding:2px 4px">Time</th></tr>
+          ${scores.map((s, i) => `<tr><td style="padding:2px 4px">${i+1}</td><td style="padding:2px 4px">${s.name}</td><td style="padding:2px 4px;color:#aaaaff">${s.classes||'—'}</td><td style="text-align:right;padding:2px 4px">${s.score.toLocaleString()}</td><td style="text-align:right;padding:2px 4px">${s.floor}</td><td style="text-align:right;padding:2px 4px">${fmtTime(s.time)}</td></tr>`).join('')}
+        </table>`;
   };
   const close = () => {
     modal.classList.add('hidden');
@@ -101,23 +110,6 @@ function initSettings() {
   restartNo.addEventListener('click',  () => restartArea.classList.add('hidden'));
   restartYes.addEventListener('click', () => { close(); ctrl.onRestart(); });
 
-  const hsBtn   = document.getElementById('hs-view-btn');
-  const hsPanel = document.getElementById('hs-view-panel');
-  const hsTable = document.getElementById('hs-view-table');
-  hsBtn.addEventListener('click', () => {
-    const hidden = hsPanel.style.display === 'none';
-    hsPanel.style.display = hidden ? '' : 'none';
-    hsBtn.textContent = hidden ? 'Hide Scores' : 'Hall of Records';
-    if (!hidden) {
-      const scores = loadScores();
-      hsTable.innerHTML = scores.length === 0
-        ? '<p style="font-size:12px;color:#666;text-align:center">No scores yet</p>'
-        : `<table style="width:100%;font-size:11px;border-collapse:collapse">
-            <tr style="color:#888"><th style="text-align:left;padding:2px 4px">#</th><th style="text-align:left;padding:2px 4px">Name</th><th style="text-align:left;padding:2px 4px">Class</th><th style="text-align:right;padding:2px 4px">Score</th><th style="text-align:right;padding:2px 4px">Flr</th><th style="text-align:right;padding:2px 4px">Time</th></tr>
-            ${scores.map((s, i) => `<tr><td style="padding:2px 4px">${i+1}</td><td style="padding:2px 4px">${s.name}</td><td style="padding:2px 4px;color:#aaaaff">${s.classes||'—'}</td><td style="text-align:right;padding:2px 4px">${s.score.toLocaleString()}</td><td style="text-align:right;padding:2px 4px">${s.floor}</td><td style="text-align:right;padding:2px 4px">${fmtTime(s.time)}</td></tr>`).join('')}
-          </table>`;
-    }
-  });
 }
 
 export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false], _detail: false }; _scoreSaved = false; }
