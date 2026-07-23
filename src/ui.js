@@ -506,7 +506,12 @@ function scrollShop() {
 
 function titleHTML() {
   const controls = isMobile
-    ? `<p style="font-size:13px;margin:10px 0">Joystick to move · ATK · SKL · USE · BAG</p>`
+    ? `<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0">
+        ${['⬆️ Joystick','⚔️ ATK','✨ SKL','🎒 BAG'].map(b =>
+          `<span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,220,100,0.3);border-radius:6px;padding:5px 10px;font-size:12px;color:#e8d87a">${b}</span>`
+        ).join('')}
+      </div>
+      <p style="font-size:12px;margin:4px 0;color:#8080a0">Auto-aim · tap skills to spend SP · bag to manage gear</p>`
     : `<div class="controls two">
       <div><h3 style="color:${P_COLOR[0]}">Player 1</h3>
         <div>Move: <b>W A S D</b></div><div>Attack: <b>Space</b></div>
@@ -515,14 +520,22 @@ function titleHTML() {
         <div>Move: <b>Arrow Keys</b></div><div>Attack: <b>/</b></div>
         <div>Ability: <b>'</b></div><div>Interact/Revive: <b>;</b></div><div>Inventory: <b>P</b></div></div>
     </div>`;
-  const prompt = isMobile ? 'Tap to begin' : 'Press an Attack key to begin';
-  return `<div class="card title">
-    <h1>DUNGEON&nbsp;FOR&nbsp;TWO</h1>
-    <p class="sub">A local co-op pixel roguelike · descend ${MAX_FLOORS} floors</p>
+  const subtitle = isMobile
+    ? `A solo dungeon adventure · descend ${MAX_FLOORS} floors`
+    : `A local co-op pixel roguelike · descend ${MAX_FLOORS} floors`;
+  const prompt = isMobile ? '▶ Tap to begin' : 'Press an Attack key to begin';
+  const deco = `<div style="display:flex;justify-content:center;gap:18px;font-size:22px;margin:10px 0;opacity:0.55">
+    ${'⚔️ 🗡️ 💀 🏹 🪄 🛡️ 💎 🔥'.split(' ').join('</span><span>')}
+  </div>`.replace('⚔️', '<span>⚔️').replace('🔥', '🔥</span>');
+  return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px">
+    <div style="font-size:11px;letter-spacing:3px;color:#9070c0;text-transform:uppercase;margin-bottom:6px">⚔ Dungeon For Two ⚔</div>
+    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:2px;text-shadow:0 0 24px #c080ff88,0 0 6px #c080ff44">DUNGEON<br><span style="color:#e8d87a;text-shadow:0 0 24px #ffe06088,0 0 8px #ffe06044">FOR TWO</span></h1>
+    <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">${subtitle}</p>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
     ${controls}
-    <p class="hint">Attacks auto-aim at the nearest enemy.</p>
-    <p class="blink big">${prompt}</p>
-    <p class="credit">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a> · License: BJKRXJSISMJN0J4T</p>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:12px 0 10px"></div>
+    <p class="blink big" style="font-size:18px;margin:8px 0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
+    <p class="credit" style="margin-top:14px">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a></p>
   </div>`;
 }
 
