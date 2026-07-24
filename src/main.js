@@ -271,7 +271,7 @@ function frame(now) {
   ui.update(dt);
   updateMobileControls(game.phase);
   updateFloorTransition(dt);
-  if (game.phase === Phase.PLAYING && !game.paused) simulate(dt);
+  if (game.phase === Phase.PLAYING && !game.paused && !game.floorTransition) simulate(dt);
 
   if (game.map) render(ctx);
   game.time += dt;
