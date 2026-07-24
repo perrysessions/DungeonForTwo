@@ -25,6 +25,7 @@ const controller = {
     ui.resetClassSelect(); game.phase = Phase.CLASS_SELECT;
   },
   onClassChosen(keys) { startRun(keys); },
+  onBackToTitle() { ui.resetClassSelect(); game.phase = Phase.TITLE; },
   onDescend() { descend(); },
   onRestart() { restart(); },
 };

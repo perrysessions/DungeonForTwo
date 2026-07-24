@@ -56,6 +56,7 @@ export function initUI(controller) {
     if (e.target.closest('[data-htp-open]') || e.target.closest('[data-htp-back]')) {
       titleToggleHowTo();
     }
+    if (e.target.closest('[data-cls-back]')) ctrl.onBackToTitle();
   });
 }
 
@@ -216,6 +217,7 @@ export function mobilePickClass(idx) {
   cs.cursor[0] = idx;
   cs.confirmed[0] = false;
 }
+export function mobileBackFromClass() { ctrl.onBackToTitle(); }
 export function mobileConfirmClass() {
   if (cs.confirmed[0]) return;
   cs.confirmed[0] = true;
@@ -552,7 +554,7 @@ function howToPlayHTML() {
        <div style="height:6px"></div>
        ${row('P2 Move', 'Arrow Keys')}${row('P2 Attack', '/')}${row('P2 Ability', "'")}${row('P2 Revive / Interact', ';')}${row('P2 Inventory', 'P')}`;
 
-  return `<div class="card" style="text-align:center;padding:22px 20px;max-width:520px;max-height:80vh;overflow-y:auto">
+  return `<div class="card" style="text-align:center;padding:22px 20px;max-width:520px;max-height:80vh;overflow-y:scroll;-webkit-overflow-scrolling:touch;touch-action:pan-y">
     <button data-htp-back style="float:left;background:none;border:1px solid #5a4a7a;color:#c080ff;font-family:monospace;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer">← Back</button>
     <h2 style="color:#c080ff;letter-spacing:2px;margin:0 0 16px">HOW TO PLAY</h2>
 
@@ -728,7 +730,10 @@ function classSelectHTML() {
   }
 
   return `<div class="card wide">
-    <h2 style="margin-bottom:2px">Choose Your Class</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <button data-cls-back style="background:none;border:1px solid #5a4a7a;color:#9070c0;font-family:monospace;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer">← Back</button>
+      <h2 style="margin:0">Choose Your Class</h2>
+    </div>
     <p class="sub" style="margin-bottom:8px">${hint}</p>
     <div class="clsgrid">${cards}</div>
     <p class="statusline">${status.join(' &nbsp; ')}</p>
