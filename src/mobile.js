@@ -3,7 +3,7 @@
 import { touch } from './input.js';
 import { mobilePickClass, mobileConfirmClass, mobileBackFromClass, mobileToggleClassDetail, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache, titleToggleHowTo } from './ui.js';
 import { isMobile } from './detect.js';
-import { setViewW } from './state.js';
+import { setViewW, setViewH } from './state.js';
 export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
@@ -34,9 +34,15 @@ export function initMobileControls() {
   // Defer so the browser has finished laying out the viewport (avoids stretch on cold load).
   const canvas = document.getElementById('canvas');
   function applyMobileW() {
-    const mobileW = Math.round(576 * (window.innerWidth / window.innerHeight));
+    // Use a target height of 360 (vs default 576) to zoom in ~1.6× on mobile.
+    // Both dimensions scale uniformly so there's no distortion.
+    const TARGET_H = 360;
+    const ratio = window.innerWidth / window.innerHeight;
+    const mobileW = Math.round(TARGET_H * ratio);
     canvas.width = mobileW;
+    canvas.height = TARGET_H;
     setViewW(mobileW);
+    setViewH(TARGET_H);
   }
   requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
   window.addEventListener('resize', applyMobileW, { passive: true });

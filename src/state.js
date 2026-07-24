@@ -2,8 +2,9 @@
 
 export const TILE = 32;
 export let VIEW_W = 768; // canvas logical width (world px shown)
-export const VIEW_H = 576; // canvas logical height
+export let VIEW_H = 576; // canvas logical height
 export function setViewW(w) { VIEW_W = w; }
+export function setViewH(h) { VIEW_H = h; }
 export const MAX_FLOORS = 20;
 
 export const Phase = {
