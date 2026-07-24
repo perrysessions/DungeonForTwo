@@ -263,6 +263,19 @@ html, body {
 #restart-yes:hover { background: #3a1010 !important; }
 #settings-close { margin-top: 16px; width: 100%; }
 
+#rotate-msg {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0c0a12;
+  color: #d8d2e4;
+  font-family: "Courier New", monospace;
+  font-size: 22px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
 /* ---------- mobile ---------- */
 
 @media (pointer: coarse) {
@@ -288,18 +301,9 @@ html, body {
     border: 1px solid var(--panel-border);
   }
 
-  /* Rotate entire page to landscape when in portrait */
+  /* Show rotate message in portrait */
   @media (orientation: portrait) {
-    #game-root {
-      transform: rotate(90deg);
-      transform-origin: top left;
-      width: 100vh;
-      height: 100vw;
-      position: fixed;
-      top: 0;
-      left: 100vw;
-      overflow: hidden;
-    }
+    #rotate-msg { display: flex; }
   }
 
   /* Panel floats as overlay when BAG is open */

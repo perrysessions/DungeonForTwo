@@ -40,15 +40,14 @@ export function initMobileControls() {
   }
   requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
   window.addEventListener('resize', applyMobileW, { passive: true });
-  window.addEventListener('orientationchange', () => {
-    setTimeout(applyMobileW, 100);
-    // Reset joystick so stale move vector doesn't drift the player after rotation
-    joyActive = false;
-    joyId = null;
-    touch.move = { x: 0, y: 0 };
-    touch.attack = false;
-    touch.ability = false;
-  }, { passive: true });
+
+  // Try to lock orientation to landscape on first touch (requires user gesture).
+  // Works on Android Chrome; iOS Safari silently rejects — rotate-msg CSS handles that fallback.
+  document.addEventListener('touchstart', () => {
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      screen.orientation.lock('landscape').catch(() => {});
+    }
+  }, { once: true, passive: true });
 
   setupJoystick();
   setupButtons();
