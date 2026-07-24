@@ -3,12 +3,19 @@ import { game, TILE, VIEW_W, VIEW_H, calcScore } from './state.js';
 import { isMobile } from './detect.js';
 
 const FLOOR_THEMES = [
-  { floor: '#2a2438', wall: '#191426', wallTop: '#3a3050', accent: '#4a3b6b' },
-  { floor: '#243028', wall: '#141c16', wallTop: '#2f4034', accent: '#3b5b46' },
-  { floor: '#302826', wall: '#1a1512', wallTop: '#443832', accent: '#6b5344' },
-  { floor: '#26303a', wall: '#141c24', wallTop: '#324450', accent: '#3b566b' },
+  { floor: '#4a3a28', floor2: '#3e3020', wall: '#2a2220', wallTop: '#3e3430', wallHi: '#5a4e44', wallMoss: '#3a5228', accent: '#6b5344' },
+  { floor: '#2e3a28', floor2: '#263020', wall: '#1e2a1c', wallTop: '#2a3824', wallHi: '#3e5238', wallMoss: '#2a4430', accent: '#3b5b46' },
+  { floor: '#3a2e28', floor2: '#302420', wall: '#221a18', wallTop: '#382e28', wallHi: '#504440', wallMoss: '#3a4028', accent: '#5b4038' },
+  { floor: '#2c3440', floor2: '#242c38', wall: '#181e28', wallTop: '#28303e', wallHi: '#3a4454', wallMoss: '#283848', accent: '#3b566b' },
 ];
 function theme() { return FLOOR_THEMES[(game.floor - 1) % FLOOR_THEMES.length]; }
+
+// Fast integer hash for deterministic per-tile detail
+function tileHash(x, y) {
+  let h = (x * 2246822519 ^ y * 3266489917) >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 0x45d9f3b) >>> 0;
+  return h / 0xffffffff;
+}
 
 export function updateCamera() {
   const ps = game.players;
@@ -116,24 +123,127 @@ function drawTiles(ctx, th) {
   const y0 = Math.max(0, Math.floor(game.camera.y / TILE));
   const x1 = Math.min(map.w, Math.ceil((game.camera.x + VIEW_W) / TILE));
   const y1 = Math.min(map.h, Math.ceil((game.camera.y + VIEW_H) / TILE));
+
   for (let ty = y0; ty < y1; ty++) {
     for (let tx = x0; tx < x1; tx++) {
       const px = tx * TILE, py = ty * TILE;
+      const h = tileHash(tx, ty);
+      const h2 = tileHash(tx + 99, ty + 7);
+      const h3 = tileHash(tx * 3, ty + 13);
+
       if (map.tileAt(tx, ty) === 1) {
-        ctx.fillStyle = th.floor;
+        // --- FLOOR ---
+        // Two-tone checkerboard base
+        ctx.fillStyle = (tx + ty) % 2 === 0 ? th.floor : th.floor2;
         ctx.fillRect(px, py, TILE, TILE);
-        // subtle checker
-        if ((tx + ty) % 2 === 0) {
-          ctx.fillStyle = 'rgba(255,255,255,0.03)';
-          ctx.fillRect(px, py, TILE, TILE);
+
+        // Tile border grout lines
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fillRect(px, py, TILE, 1);
+        ctx.fillRect(px, py, 1, TILE);
+
+        // Random crack on ~20% of tiles
+        if (h < 0.2) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          const cx = px + 6 + Math.floor(h2 * 20);
+          const cy = py + 6 + Math.floor(h3 * 20);
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + (h2 > 0.5 ? 7 : -5), cy + (h3 > 0.5 ? 6 : -4));
+          ctx.stroke();
         }
+
+        // Small pebble on ~12% of tiles
+        if (h > 0.85) {
+          ctx.fillStyle = 'rgba(0,0,0,0.22)';
+          const px2 = px + 4 + Math.floor(h2 * 24);
+          const py2 = py + 4 + Math.floor(h3 * 24);
+          ctx.beginPath(); ctx.ellipse(px2, py2, 3, 2, h * 3, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.beginPath(); ctx.ellipse(px2 - 1, py2 - 1, 1.5, 1, h * 3, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // Shadow cast from wall above
+        if (map.tileAt(tx, ty - 1) !== 1) {
+          ctx.fillStyle = 'rgba(0,0,0,0.35)';
+          ctx.fillRect(px, py, TILE, 7);
+        }
+        // Shadow from wall on left
+        if (map.tileAt(tx - 1, ty) !== 1) {
+          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.fillRect(px, py, 5, TILE);
+        }
+        // Shadow from wall on right
+        if (map.tileAt(tx + 1, ty) !== 1) {
+          ctx.fillStyle = 'rgba(0,0,0,0.12)';
+          ctx.fillRect(px + TILE - 4, py, 4, TILE);
+        }
+
       } else {
-        // wall: draw only if adjacent to a floor (border) for depth
+        // --- WALL ---
         ctx.fillStyle = th.wall;
         ctx.fillRect(px, py, TILE, TILE);
+
+        // Stone block grid — divide each tile into 2×1 brick pattern
+        const brickRow = ty % 2;
+        const brickX = brickRow === 0 ? 0 : TILE / 2;
+        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+        ctx.lineWidth = 1;
+        // Horizontal mortar
+        ctx.beginPath();
+        ctx.moveTo(px, py + TILE / 2); ctx.lineTo(px + TILE, py + TILE / 2);
+        ctx.stroke();
+        // Vertical mortar (offset per row)
+        ctx.beginPath();
+        ctx.moveTo(px + brickX, py); ctx.lineTo(px + brickX, py + TILE / 2);
+        ctx.stroke();
+        const brickX2 = brickRow === 0 ? TILE / 2 : 0;
+        ctx.beginPath();
+        ctx.moveTo(px + brickX2, py + TILE / 2); ctx.lineTo(px + brickX2, py + TILE);
+        ctx.stroke();
+
+        // Highlight top edge of each stone
+        ctx.fillStyle = th.wallHi;
+        ctx.fillRect(px + 1, py + 1, TILE - 2, 2);
+        ctx.fillRect(px + 1, py + TILE / 2 + 1, TILE - 2, 2);
+
+        // Shadow bottom edge
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.fillRect(px, py + TILE / 2 - 2, TILE, 2);
+        ctx.fillRect(px, py + TILE - 2, TILE, 2);
+
+        // Random crack on ~18% of wall tiles
+        if (h < 0.18) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          const cx = px + 4 + Math.floor(h2 * 24);
+          const cy = py + 4 + Math.floor(h3 * 24);
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + (h2 > 0.5 ? 8 : -6), cy + 5);
+          ctx.lineTo(cx + (h2 > 0.5 ? 11 : -9), cy + 10);
+          ctx.stroke();
+        }
+
+        // Moss on walls that are above a floor tile (~30% of eligible)
+        if (map.tileAt(tx, ty + 1) === 1 && h > 0.65) {
+          ctx.fillStyle = th.wallMoss;
+          const mw = 4 + Math.floor(h2 * 8);
+          const mx = px + 2 + Math.floor(h3 * (TILE - mw - 4));
+          ctx.fillRect(mx, py + TILE - 6, mw, 4);
+          // Moss highlight
+          ctx.fillStyle = 'rgba(100,180,80,0.15)';
+          ctx.fillRect(mx, py + TILE - 6, mw, 2);
+        }
+
+        // Facing-wall highlight strip (the "wall top" — bottom edge of wall facing player)
         if (map.tileAt(tx, ty + 1) === 1) {
           ctx.fillStyle = th.wallTop;
-          ctx.fillRect(px, py + TILE - 8, TILE, 8);
+          ctx.fillRect(px, py + TILE - 9, TILE, 9);
+          // Highlight rim
+          ctx.fillStyle = th.wallHi;
+          ctx.fillRect(px, py + TILE - 9, TILE, 2);
         }
       }
     }
@@ -298,6 +408,9 @@ function drawPlayers(ctx) {
     if (p.invuln > 0 && Math.floor(game.time * 20) % 2 === 0) { /* skip draw frame */ }
     else {
       const r = 11;
+      // drop shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath(); ctx.ellipse(x, y + 11, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
       // legs
       ctx.fillStyle = '#2a2a30';
       ctx.fillRect(x - 6, y + 4, 4, 7);
@@ -401,6 +514,9 @@ function drawEnemies(ctx) {
     const fx = Math.round(Math.sin(ft) * 1.2);
     const fy = Math.round(Math.sin(ft * 1.7 + 1.2) * 1.2);
     const x = Math.round(e.x) + fx, y = Math.round(e.y) + fy, r = e.radius;
+    // drop shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath(); ctx.ellipse(x, y + r, r * 0.85, r * 0.32, 0, 0, Math.PI * 2); ctx.fill();
     drawCreature(ctx, e, x, y, r);
     flash(ctx, x - r, y - r, r * 2, r * 2, e.hitFlash);
     if (e.slow) { ctx.fillStyle = 'rgba(120,200,255,0.35)'; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
