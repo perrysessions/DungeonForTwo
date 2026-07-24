@@ -464,25 +464,70 @@ function drawPlayers(ctx) {
       // drop shadow
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.beginPath(); ctx.ellipse(x, y + 11, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
-      // legs
+
+      // --- legs ---
       ctx.fillStyle = '#2a2a30';
       ctx.fillRect(x - 6, y + 4, 4, 7);
       ctx.fillRect(x + 2, y + 4, 4, 7);
-      // body
+      // leg highlight left edge
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x - 6, y + 4, 1, 7);
+      ctx.fillRect(x + 2, y + 4, 1, 7);
+      // leg shadow right/bottom
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.fillRect(x - 3, y + 4, 1, 7);
+      ctx.fillRect(x + 5, y + 4, 1, 7);
+      ctx.fillRect(x - 6, y + 10, 4, 1);
+      ctx.fillRect(x + 2, y + 10, 4, 1);
+
+      // --- body ---
       ctx.fillStyle = a.body;
       ctx.fillRect(x - 7, y - 6, 14, 12);
-      // trim
+      // body left highlight column
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x - 7, y - 6, 2, 12);
+      ctx.fillRect(x - 5, y - 6, 1, 3); // top-left corner extra
+      // body right shadow column
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(x + 5, y - 6, 2, 12);
+      // body bottom shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(x - 7, y + 4, 14, 2);
+
+      // --- trim ---
       ctx.fillStyle = a.trim;
       ctx.fillRect(x - 7, y - 6, 14, 3);
-      // head
+      // trim highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(x - 7, y - 6, 14, 1);
+
+      // --- head (skin) ---
       ctx.fillStyle = '#e8c9a0';
       ctx.fillRect(x - 5, y - 14, 10, 9);
+      // head left highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fillRect(x - 5, y - 14, 2, 9);
+      ctx.fillRect(x - 5, y - 14, 8, 1);
+      // head right shadow
+      ctx.fillStyle = 'rgba(120,80,40,0.4)';
+      ctx.fillRect(x + 3, y - 14, 2, 9);
+      // head bottom shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(x - 5, y - 6, 10, 1);
+      // eyes (dark dots)
+      ctx.fillStyle = '#3a2010';
+      ctx.fillRect(x - 3, y - 11, 2, 2);
+      ctx.fillRect(x + 1, y - 11, 2, 2);
+
       // headgear
       drawHead(ctx, x, y, a);
       // facing weapon indicator
       const f = p.facing;
       ctx.fillStyle = a.accent;
       ctx.fillRect(Math.round(x + f.x * 12 - 2), Math.round(y + f.y * 12 - 2), 5, 5);
+      // weapon highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(Math.round(x + f.x * 12 - 2), Math.round(y + f.y * 12 - 2), 2, 2);
       flash(ctx, x - 7, y - 14, 14, 20, p.hitFlash);
     }
     // swing arc
@@ -503,13 +548,37 @@ function drawHead(ctx, x, y, a) {
     ctx.fillStyle = a.accent;
     ctx.fillRect(x - 6, y - 15, 12, 5);
     ctx.fillRect(x - 6, y - 10, 2, 4);
+    // helm highlight top
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(x - 6, y - 15, 12, 1);
+    ctx.fillRect(x - 6, y - 15, 1, 5);
+    // helm shadow right
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(x + 4, y - 15, 2, 5);
   } else if (a.head === 'hat') {
     ctx.fillStyle = a.body;
-    ctx.fillRect(x - 7, y - 16, 14, 3);
-    ctx.fillRect(x - 3, y - 22, 6, 7);
+    ctx.fillRect(x - 7, y - 16, 14, 3);  // brim
+    ctx.fillRect(x - 3, y - 22, 6, 7);   // crown
+    // brim highlight top
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    ctx.fillRect(x - 7, y - 16, 14, 1);
+    // crown highlight left
+    ctx.fillRect(x - 3, y - 22, 1, 7);
+    ctx.fillRect(x - 3, y - 22, 6, 1);
+    // crown shadow right
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(x + 2, y - 22, 1, 7);
+    ctx.fillRect(x - 3, y - 16, 6, 1);
   } else if (a.head === 'hood') {
     ctx.fillStyle = a.body;
     ctx.fillRect(x - 6, y - 16, 12, 6);
+    // hood highlight left edge + top
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fillRect(x - 6, y - 16, 1, 6);
+    ctx.fillRect(x - 6, y - 16, 12, 1);
+    // hood shadow right
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(x + 4, y - 16, 2, 6);
   }
 }
 
@@ -589,37 +658,116 @@ function drawEnemies(ctx) {
 function drawCreature(ctx, e, x, y, r) {
   ctx.fillStyle = e.color;
   switch (e.key) {
-    case 'slime':
+    case 'slime': {
+      // base blob
       ctx.beginPath(); ctx.ellipse(x, y + 2, r, r * 0.8, 0, 0, Math.PI * 2); ctx.fill();
+      // top highlight sheen
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.beginPath(); ctx.ellipse(x - r * 0.2, y - r * 0.15, r * 0.45, r * 0.28, -0.4, 0, Math.PI * 2); ctx.fill();
+      // right shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath(); ctx.ellipse(x + r * 0.3, y + 4, r * 0.4, r * 0.5, 0.3, 0, Math.PI * 2); ctx.fill();
+      // eyes
       ctx.fillStyle = '#0a2a0a'; ctx.fillRect(x - 5, y - 1, 3, 3); ctx.fillRect(x + 2, y - 1, 3, 3);
+      // eye shine
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillRect(x - 5, y - 1, 1, 1); ctx.fillRect(x + 2, y - 1, 1, 1);
       break;
-    case 'bat':
+    }
+    case 'bat': {
+      // body
       ctx.fillRect(x - 3, y - 3, 6, 8);
+      // wings
       ctx.beginPath();
       ctx.moveTo(x - 3, y); ctx.lineTo(x - r - 3, y - 4); ctx.lineTo(x - 3, y + 3); ctx.fill();
       ctx.moveTo(x + 3, y); ctx.lineTo(x + r + 3, y - 4); ctx.lineTo(x + 3, y + 3); ctx.fill();
+      // wing top highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.beginPath();
+      ctx.moveTo(x - 3, y - 1); ctx.lineTo(x - r, y - 4); ctx.lineTo(x - r + 3, y - 2); ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + 3, y - 1); ctx.lineTo(x + r, y - 4); ctx.lineTo(x + r - 3, y - 2); ctx.closePath(); ctx.fill();
+      // body highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x - 3, y - 3, 2, 5);
+      // body shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(x + 1, y - 3, 2, 8);
       break;
+    }
     case 'wraith':
-    case 'wraithqueen':
+    case 'wraithqueen': {
       ctx.globalAlpha = 0.72;
       ctx.fillRect(x - r + 2, y - r, (r - 2) * 2, r);
       ctx.beginPath();
       for (let i = 0; i < 4; i++) ctx.rect(x - r + 2 + i * (r / 2), y, r / 2 - 1, r * 0.7);
       ctx.fill();
+      // highlight left
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x - r + 2, y - r, 2, r);
+      // shadow right
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(x + r - 4, y - r, 2, r);
       ctx.globalAlpha = 1;
+      // eyes
       ctx.fillStyle = '#e0fff8'; ctx.fillRect(x - 4, y - r + 4, 3, 3); ctx.fillRect(x + 2, y - r + 4, 3, 3);
+      // eye glow
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillRect(x - 4, y - r + 4, 1, 1); ctx.fillRect(x + 2, y - r + 4, 1, 1);
       break;
+    }
     default: {
       // humanoid (goblin, orc, skeleton, cultist, golem, bosses)
+      // legs
       ctx.fillStyle = '#26221c';
       ctx.fillRect(x - r + 2, y + r - 4, 3, 4);
       ctx.fillRect(x + r - 5, y + r - 4, 3, 4);
+      // leg highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(x - r + 2, y + r - 4, 1, 4);
+      ctx.fillRect(x + r - 5, y + r - 4, 1, 4);
+
+      // body
+      const bx = x - r + 1, bw = (r - 1) * 2, by = y - r + 3, bh = Math.round(r * 1.4);
       ctx.fillStyle = e.color;
-      ctx.fillRect(x - r + 1, y - r + 3, (r - 1) * 2, r * 1.4);
-      ctx.fillRect(x - r + 3, y - r - 2, (r - 3) * 2, 7); // head
+      ctx.fillRect(bx, by, bw, bh);
+      // body left highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(bx, by, 2, bh);
+      ctx.fillRect(bx, by, bw, 1);
+      // body right shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(bx + bw - 2, by, 2, bh);
+      // body bottom shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(bx, by + bh - 2, bw, 2);
+
+      // head
+      const hx = x - r + 3, hw = (r - 3) * 2, hy = y - r - 2;
+      ctx.fillStyle = e.color;
+      ctx.fillRect(hx, hy, hw, 7);
+      // head top/left highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.fillRect(hx, hy, hw, 1);
+      ctx.fillRect(hx, hy, 2, 7);
+      // head right shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(hx + hw - 2, hy, 2, 7);
+
+      // eyes
       ctx.fillStyle = '#100808';
       ctx.fillRect(x - 4, y - r + 1, 2, 2); ctx.fillRect(x + 2, y - r + 1, 2, 2);
-      if (e.isBoss) { ctx.fillStyle = '#ffd060'; ctx.fillRect(x - r + 3, y - r - 6, (r - 3) * 2, 3); }
+      // eye shine
+      ctx.fillStyle = 'rgba(255,100,100,0.7)';
+      ctx.fillRect(x - 4, y - r + 1, 1, 1); ctx.fillRect(x + 2, y - r + 1, 1, 1);
+
+      if (e.isBoss) {
+        ctx.fillStyle = '#ffd060';
+        ctx.fillRect(x - r + 3, y - r - 6, (r - 3) * 2, 3);
+        // crown highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillRect(x - r + 3, y - r - 6, (r - 3) * 2, 1);
+      }
     }
   }
 }
