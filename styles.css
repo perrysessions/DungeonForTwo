@@ -308,10 +308,7 @@ html, body {
     border: 1px solid var(--panel-border);
   }
 
-  /* Show rotate message in portrait */
-  @media (orientation: portrait) {
-    #rotate-msg { display: flex; }
-  }
+  /* rotate-msg shown/hidden via JS in mobile.js */
 
   /* Panel floats as overlay when BAG is open */
   #mobile-backdrop {

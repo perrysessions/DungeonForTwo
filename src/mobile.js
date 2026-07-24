@@ -3,7 +3,7 @@
 import { touch } from './input.js';
 import { mobilePickClass, mobileConfirmClass, mobileBackFromClass, mobileToggleClassDetail, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache, titleToggleHowTo } from './ui.js';
 import { isMobile } from './detect.js';
-import { setViewW, setViewH } from './state.js';
+import { setViewW, setViewH, game } from './state.js';
 export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
@@ -43,8 +43,22 @@ export function initMobileControls() {
     setViewW(mobileW);
     setViewH(TARGET_H);
   }
-  requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
-  window.addEventListener('resize', applyMobileW, { passive: true });
+  const rotateMsg = document.getElementById('rotate-msg');
+
+  function checkOrientation() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    if (isPortrait) {
+      game.paused = true;
+      if (rotateMsg) rotateMsg.style.display = 'flex';
+    } else {
+      game.paused = false;
+      if (rotateMsg) rotateMsg.style.display = 'none';
+      applyMobileW();
+    }
+  }
+
+  requestAnimationFrame(() => requestAnimationFrame(checkOrientation));
+  window.addEventListener('resize', checkOrientation, { passive: true });
 
   // Try to lock orientation to landscape on first touch (requires user gesture).
   // Works on Android Chrome; iOS Safari silently rejects — rotate-msg CSS handles that fallback.
