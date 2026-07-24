@@ -69,6 +69,8 @@ function generateFloor() {
 function descend() {
   closeShop();
   ui.closeInventories();
+  // Switch phase immediately so the overlay stops trying to render shop HTML
+  game.phase = Phase.PLAYING;
   const FADE = 0.45; // seconds per half
   game.floorTransition = {
     alpha: 0,
@@ -77,7 +79,6 @@ function descend() {
       game.floor++;
       if (game.floor > MAX_FLOORS) { game.phase = Phase.WIN; game.floorTransition = null; return; }
       generateFloor();
-      game.phase = Phase.PLAYING;
     },
     speed: 1 / FADE,
     midFired: false,

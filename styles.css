@@ -287,11 +287,12 @@ html, body {
     width: 100vw; height: 100dvh;
     display: block; /* override grid/place-items:center so canvas isn't centered with gaps */
   }
-  /* Fill screen edge to edge — canvas.width is set wider by mobile.js */
+  /* Fill screen edge to edge — canvas.width/height set by mobile.js */
   #canvas {
-    display: block;
-    width: 100vw;
-    height: 100dvh;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
     max-width: none;
     max-height: none;
     aspect-ratio: unset;
