@@ -203,7 +203,7 @@ function checkFloorProgress() {
   if (game.enemies.length === 0 && !game.awaitingBoss && !game.stairsActive) {
     game.stairsActive = true;
     playSfx('floor_clear');
-    setMessage('Floor cleared! Reach the stairs ▼ together', 3.5);
+    setMessage(game.numPlayers > 1 ? 'Floor cleared! Reach the stairs ▼ together' : 'Floor cleared! Reach the stairs ▼', 3.5);
   }
   if (game.stairsActive) {
     const s = game.map.stairs;
