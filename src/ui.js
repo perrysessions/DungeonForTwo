@@ -639,22 +639,63 @@ function classSpriteSVG(a) {
   const skin = '#e8c9a0';
   let headgear = '';
   if (a.head === 'helm') {
-    headgear = `<rect x="7" y="6" width="12" height="5" fill="${a.accent}"/>
-                <rect x="7" y="11" width="2" height="4" fill="${a.accent}"/>`;
+    headgear = `
+      <rect x="7" y="6" width="12" height="5" fill="${a.accent}"/>
+      <rect x="7" y="11" width="2" height="4" fill="${a.accent}"/>
+      <rect x="7" y="6" width="12" height="1" fill="rgba(255,255,255,0.32)"/>
+      <rect x="7" y="6" width="1" height="5" fill="rgba(255,255,255,0.25)"/>
+      <rect x="17" y="6" width="2" height="5" fill="rgba(0,0,0,0.35)"/>`;
   } else if (a.head === 'hat') {
-    headgear = `<rect x="6" y="9" width="14" height="3" fill="${a.body}"/>
-                <rect x="10" y="2" width="6" height="8" fill="${a.body}"/>`;
+    headgear = `
+      <rect x="6" y="9" width="14" height="3" fill="${a.body}"/>
+      <rect x="10" y="2" width="6" height="8" fill="${a.body}"/>
+      <rect x="6" y="9" width="14" height="1" fill="rgba(255,255,255,0.24)"/>
+      <rect x="10" y="2" width="1" height="8" fill="rgba(255,255,255,0.22)"/>
+      <rect x="10" y="2" width="6" height="1" fill="rgba(255,255,255,0.22)"/>
+      <rect x="14" y="2" width="2" height="8" fill="rgba(0,0,0,0.32)"/>
+      <rect x="10" y="9" width="6" height="1" fill="rgba(0,0,0,0.28)"/>`;
   } else if (a.head === 'hood') {
-    headgear = `<rect x="7" y="5" width="12" height="6" fill="${a.body}"/>`;
+    headgear = `
+      <rect x="7" y="5" width="12" height="6" fill="${a.body}"/>
+      <rect x="7" y="5" width="12" height="1" fill="rgba(255,255,255,0.22)"/>
+      <rect x="7" y="5" width="1" height="6" fill="rgba(255,255,255,0.2)"/>
+      <rect x="17" y="5" width="2" height="6" fill="rgba(0,0,0,0.3)"/>`;
   }
   return `<svg viewBox="0 0 26 36" width="36" height="46" style="display:block;margin:0 auto 4px;image-rendering:pixelated">
+    <!-- drop shadow -->
+    <ellipse cx="13" cy="35" rx="8" ry="2" fill="rgba(0,0,0,0.3)"/>
+    <!-- legs -->
     <rect x="7" y="27" width="4" height="7" fill="#2a2a30"/>
     <rect x="15" y="27" width="4" height="7" fill="#2a2a30"/>
+    <rect x="7" y="27" width="1" height="7" fill="rgba(255,255,255,0.18)"/>
+    <rect x="15" y="27" width="1" height="7" fill="rgba(255,255,255,0.18)"/>
+    <rect x="10" y="27" width="1" height="7" fill="rgba(0,0,0,0.4)"/>
+    <rect x="18" y="27" width="1" height="7" fill="rgba(0,0,0,0.4)"/>
+    <!-- body -->
     <rect x="6" y="15" width="14" height="12" fill="${a.body}"/>
+    <rect x="6" y="15" width="2" height="12" fill="rgba(255,255,255,0.22)"/>
+    <rect x="6" y="15" width="14" height="1" fill="rgba(255,255,255,0.18)"/>
+    <rect x="18" y="15" width="2" height="12" fill="rgba(0,0,0,0.35)"/>
+    <rect x="6" y="25" width="14" height="2" fill="rgba(0,0,0,0.28)"/>
+    <!-- trim -->
     <rect x="6" y="15" width="14" height="3" fill="${a.trim}"/>
+    <rect x="6" y="15" width="14" height="1" fill="rgba(255,255,255,0.25)"/>
+    <!-- head -->
     <rect x="8" y="7" width="10" height="9" fill="${skin}"/>
+    <rect x="8" y="7" width="2" height="9" fill="rgba(255,255,255,0.26)"/>
+    <rect x="8" y="7" width="10" height="1" fill="rgba(255,255,255,0.3)"/>
+    <rect x="16" y="7" width="2" height="9" fill="rgba(120,80,40,0.38)"/>
+    <rect x="8" y="15" width="10" height="1" fill="rgba(0,0,0,0.2)"/>
+    <!-- eyes -->
+    <rect x="10" y="11" width="2" height="2" fill="#3a2010"/>
+    <rect x="14" y="11" width="2" height="2" fill="#3a2010"/>
+    <rect x="10" y="11" width="1" height="1" fill="rgba(255,255,255,0.5)"/>
+    <rect x="14" y="11" width="1" height="1" fill="rgba(255,255,255,0.5)"/>
+    <!-- headgear -->
     ${headgear}
-    <rect x="18" y="15" width="5" height="5" fill="${a.accent}"/>
+    <!-- weapon dot -->
+    <rect x="18" y="18" width="5" height="5" fill="${a.accent}"/>
+    <rect x="18" y="18" width="2" height="2" fill="rgba(255,255,255,0.38)"/>
   </svg>`;
 }
 
