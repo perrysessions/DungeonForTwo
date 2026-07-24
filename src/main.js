@@ -13,7 +13,7 @@ import {
 import { render, updateCamera, clampToView } from './render.js';
 import { openShop, closeShop } from './shop.js';
 import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx, fadeOutThenIn } from './audio.js';
-import { initMobileControls, updateMobileControls, isMobile } from './mobile.js';
+import { initMobileControls, updateMobileControls, toggleMobilePanel, isMobile } from './mobile.js';
 
 let ctx;
 
@@ -82,6 +82,10 @@ function restart() {
   ui.closeInventories();
   ui.resetClassSelect();
   document.getElementById('panel-right').classList.remove('hidden-panel');
+  // Close mobile bag panel if open — overlay visibility gets restored
+  if (isMobile && document.getElementById('panel-left')?.classList.contains('mobile-panel-open')) {
+    toggleMobilePanel();
+  }
   game.phase = Phase.TITLE;
   stopMusic();
 }
