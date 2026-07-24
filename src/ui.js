@@ -560,6 +560,8 @@ function howToPlayHTML() {
       `<p style="font-size:12px;color:#ccc;margin:0">Descend all <b style="color:#ffd060">${MAX_FLOORS} floors</b> of the dungeon. Every few floors you face a boss — defeat it to continue. Both players must survive to win.</p>`
     )}
 
+    ${sec('Controls', '#80c8ff', `<div>${controls}</div>`)}
+
     ${sec('Classes', '#7bff9b',
       `<p style="font-size:12px;color:#ccc;margin:0 0 4px">Choose from <b>8 unique classes</b>. Each has a special <b style="color:#a0e0ff">ability</b> that costs mana, a <b style="color:#ffb060">passive</b> skill you can upgrade, and a full <b style="color:#c080ff">skill tree</b> to unlock.</p>
        <p style="font-size:12px;color:#ccc;margin:0">Use your ability until you run out of mana — auto-attacks refill it slowly.</p>`
@@ -576,8 +578,6 @@ function howToPlayHTML() {
     ${sec('Reviving', '#ff6090',
       `<p style="font-size:12px;color:#ccc;margin:0">If your ally falls, <b>walk over them</b> and hold to revive. If both players are down at the same time, it's game over.</p>`
     )}
-
-    ${sec('Controls', '#80c8ff', `<div>${controls}</div>`)}
 
     <button data-htp-back style="margin-top:14px;background:#1c1730;border:2px solid #c080ff;color:#c080ff;font-family:monospace;font-size:13px;padding:8px 24px;border-radius:6px;cursor:pointer">← Back to Title</button>
   </div>`;
