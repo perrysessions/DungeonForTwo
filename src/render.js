@@ -245,6 +245,59 @@ function drawTiles(ctx, th) {
           ctx.fillStyle = th.wallHi;
           ctx.fillRect(px, py + TILE - 9, TILE, 2);
         }
+
+        // Crumble: paint void chunks on exposed wall edges using hashes
+        // Each edge gets 1-2 notches if that side is open (adjacent to floor or map boundary)
+        const voidColor = '#000000';
+        const h4 = tileHash(tx + 41, ty + 5);
+        const h5 = tileHash(tx + 17, ty + 83);
+        const h6 = tileHash(tx * 7, ty + 29);
+        const h7 = tileHash(tx + 3, ty * 11);
+
+        // Bottom edge (visible facing edge — most important for depth)
+        if (map.tileAt(tx, ty + 1) === 1) {
+          ctx.fillStyle = voidColor;
+          // notch 1
+          const nw1 = 2 + Math.floor(h4 * 4);
+          const nx1 = px + 2 + Math.floor(h5 * (TILE - nw1 - 4));
+          ctx.fillRect(nx1, py + TILE - 3, nw1, 3);
+          // notch 2 (~60% chance)
+          if (h6 > 0.4) {
+            const nw2 = 2 + Math.floor(h6 * 3);
+            const nx2 = px + 2 + Math.floor(h7 * (TILE - nw2 - 4));
+            ctx.fillRect(nx2, py + TILE - 2, nw2, 2);
+          }
+          // occasional corner chip
+          if (h > 0.7) ctx.fillRect(px, py + TILE - 4, 2, 4);
+          if (h2 > 0.7) ctx.fillRect(px + TILE - 2, py + TILE - 4, 2, 4);
+        }
+
+        // Top edge exposed to floor
+        if (map.tileAt(tx, ty - 1) === 1) {
+          ctx.fillStyle = voidColor;
+          const nw = 2 + Math.floor(h4 * 4);
+          const nx = px + 3 + Math.floor(h5 * (TILE - nw - 6));
+          ctx.fillRect(nx, py, nw, 2);
+          if (h3 > 0.5) ctx.fillRect(px + TILE - 2, py, 2, 3);
+        }
+
+        // Left edge exposed to floor
+        if (map.tileAt(tx - 1, ty) === 1) {
+          ctx.fillStyle = voidColor;
+          const nh = 2 + Math.floor(h6 * 4);
+          const ny = py + 3 + Math.floor(h7 * (TILE - nh - 6));
+          ctx.fillRect(px, ny, 2, nh);
+          if (h4 > 0.6) ctx.fillRect(px, py, 2, 2);
+        }
+
+        // Right edge exposed to floor
+        if (map.tileAt(tx + 1, ty) === 1) {
+          ctx.fillStyle = voidColor;
+          const nh = 2 + Math.floor(h5 * 4);
+          const ny = py + 3 + Math.floor(h4 * (TILE - nh - 6));
+          ctx.fillRect(px + TILE - 2, ny, 2, nh);
+          if (h7 > 0.6) ctx.fillRect(px + TILE - 2, py + TILE - 2, 2, 2);
+        }
       }
     }
   }
