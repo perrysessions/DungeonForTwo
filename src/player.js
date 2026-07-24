@@ -7,7 +7,9 @@ const INV_CAP = 16;
 
 // Steeper than before (~2.5x) so leveling takes meaningfully longer.
 export function xpToNext(level) {
-  return Math.round(45 * Math.pow(level, 1.6));
+  const base = 45 * Math.pow(level, 1.6);
+  const compound = level > 3 ? Math.pow(1.12, level - 3) : 1;
+  return Math.round(base * compound);
 }
 
 export class Player {
