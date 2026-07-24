@@ -45,15 +45,20 @@ export function initMobileControls() {
   }
   const rotateMsg = document.getElementById('rotate-msg');
 
+  let orientationTimer = null;
   function checkOrientation() {
     const isPortrait = window.innerHeight > window.innerWidth;
     if (isPortrait) {
       game.paused = true;
       if (rotateMsg) rotateMsg.style.display = 'flex';
     } else {
-      game.paused = false;
-      if (rotateMsg) rotateMsg.style.display = 'none';
-      applyMobileW();
+      // Debounce: wait for browser to finish settling after rotation
+      clearTimeout(orientationTimer);
+      orientationTimer = setTimeout(() => {
+        game.paused = false;
+        if (rotateMsg) rotateMsg.style.display = 'none';
+        applyMobileW();
+      }, 120);
     }
   }
 
