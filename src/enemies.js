@@ -55,8 +55,8 @@ export class Enemy {
     this.hitFlash = 0;
     this.wobble = rand() * Math.PI * 2;
     this.dead = false;
-    // Bosses and phasing enemies are always alert; others must gain LOS first.
-    this.alert = isBoss || def.behavior === 'phasing' || def.behavior === 'boss_phasing';
+    // Bosses always alert; phasing enemies must get within range first (see update).
+    this.alert = isBoss;
     this.alertTimer = 0; // keeps alert briefly after losing LOS
     // Boss-only fields
     this.phase2 = false;
@@ -119,8 +119,12 @@ export class Enemy {
     const nx = dx / dist, ny = dy / dist;
     const phasing = this.behavior === 'phasing' || this.behavior === 'boss_phasing';
 
-    // Phasing enemies always hunt the nearest player — no LOS needed.
-    if (!phasing) {
+    // Phasing enemies hunt once the player gets within range; then stay on them.
+    if (phasing && !this.isBoss) {
+      const SENSE_RANGE = 240;
+      if (!this.alert && dist <= SENSE_RANGE) this.alert = true;
+      if (!this.alert) return;
+    } else if (!phasing) {
       // LOS aggro: become alert when a player is visible; stay alert briefly after losing sight.
       if (!this.alert) {
         const LOS_RANGE = 320;
