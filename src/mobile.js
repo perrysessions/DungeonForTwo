@@ -3,7 +3,7 @@
 import { touch } from './input.js';
 import { mobilePickClass, mobileConfirmClass, mobileBackFromClass, mobileToggleClassDetail, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache, titleToggleHowTo } from './ui.js';
 import { isMobile } from './detect.js';
-import { setViewW, setViewH, game } from './state.js';
+import { setViewW, setViewH } from './state.js';
 export { isMobile } from './detect.js';
 
 // ---- Build the overlay DOM ----
@@ -34,43 +34,17 @@ export function initMobileControls() {
   // Defer so the browser has finished laying out the viewport (avoids stretch on cold load).
   const canvas = document.getElementById('canvas');
   function applyMobileW() {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
+    // Render at 360px tall to keep the player zoomed in.
+    // Width fills the full screen (shows more map horizontally).
     const TARGET_H = 360;
-    const mobileW = Math.round(W * TARGET_H / H);
+    const mobileW = Math.round(window.innerWidth * TARGET_H / window.innerHeight);
     canvas.width = mobileW;
     canvas.height = TARGET_H;
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
     setViewW(mobileW);
     setViewH(TARGET_H);
   }
-  const rotateMsg = document.getElementById('rotate-msg');
-
-  let orientationTimer = null;
-  function checkOrientation(immediate = false) {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    if (isPortrait) {
-      game.paused = true;
-      if (rotateMsg) rotateMsg.style.display = 'flex';
-    } else {
-      const apply = () => {
-        game.paused = false;
-        if (rotateMsg) rotateMsg.style.display = 'none';
-        applyMobileW();
-      };
-      if (immediate) {
-        apply();
-      } else {
-        // Debounce on rotation so browser finishes settling before we read dimensions
-        clearTimeout(orientationTimer);
-        orientationTimer = setTimeout(apply, 150);
-      }
-    }
-  }
-
-  requestAnimationFrame(() => requestAnimationFrame(() => checkOrientation(true)));
-  window.addEventListener('resize', () => checkOrientation(false), { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
+  window.addEventListener('resize', applyMobileW, { passive: true });
 
   // Try to lock orientation to landscape on first touch (requires user gesture).
   // Works on Android Chrome; iOS Safari silently rejects — rotate-msg CSS handles that fallback.
