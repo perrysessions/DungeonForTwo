@@ -521,13 +521,8 @@ function drawPlayers(ctx) {
 
       // headgear
       drawHead(ctx, x, y, a);
-      // facing weapon indicator
-      const f = p.facing;
-      ctx.fillStyle = a.accent;
-      ctx.fillRect(Math.round(x + f.x * 12 - 2), Math.round(y + f.y * 12 - 2), 5, 5);
-      // weapon highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillRect(Math.round(x + f.x * 12 - 2), Math.round(y + f.y * 12 - 2), 2, 2);
+      // facing weapon
+      drawWeapon(ctx, p.cls.key, x, y, p.facing, a);
       flash(ctx, x - 7, y - 14, 14, 20, p.hitFlash);
     }
     // swing arc
@@ -580,6 +575,126 @@ function drawHead(ctx, x, y, a) {
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.fillRect(x + 4, y - 16, 2, 6);
   }
+}
+
+function drawWeapon(ctx, clsKey, x, y, facing, a) {
+  // Translate to the weapon anchor point, rotate to face direction
+  const ang = Math.atan2(facing.y, facing.x);
+  const wx = Math.round(x + facing.x * 11);
+  const wy = Math.round(y + facing.y * 11);
+  ctx.save();
+  ctx.translate(wx, wy);
+  ctx.rotate(ang);
+
+  switch (clsKey) {
+    case 'warrior': {
+      // Axe: handle + curved blade
+      ctx.fillStyle = '#7a5530'; // handle
+      ctx.fillRect(0, -1, 10, 2);
+      ctx.fillStyle = a.accent;  // blade
+      ctx.fillRect(7, -5, 5, 9);
+      ctx.fillRect(9, -7, 3, 3);
+      ctx.fillRect(9, 5, 3, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillRect(7, -5, 1, 5);
+      break;
+    }
+    case 'ranger': {
+      // Bow: vertical arc + string + arrow nock
+      ctx.fillStyle = a.accent;
+      ctx.fillRect(3, -7, 2, 14);   // bow limb
+      ctx.fillRect(2, -7, 1, 3);    // top curve
+      ctx.fillRect(2, 4, 1, 3);     // bottom curve
+      ctx.strokeStyle = '#c8c8b0';  // string
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(3, -7); ctx.lineTo(1, 0); ctx.lineTo(3, 7); ctx.stroke();
+      ctx.fillStyle = '#c8a060';    // arrow shaft
+      ctx.fillRect(-4, -1, 8, 1);
+      ctx.fillStyle = '#aaaaaa';    // arrowhead
+      ctx.fillRect(3, -1, 3, 1);
+      break;
+    }
+    case 'firemage': {
+      // Staff: brown handle, orange-red glowing orb tip
+      ctx.fillStyle = '#7a5022';
+      ctx.fillRect(0, -1, 11, 2);
+      ctx.fillStyle = '#ff6010';    // orb outer
+      ctx.beginPath(); ctx.arc(12, 0, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffdd40';    // orb inner shine
+      ctx.beginPath(); ctx.arc(11, -1, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,80,0,0.3)';
+      ctx.beginPath(); ctx.arc(12, 0, 6, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
+    case 'necromancer': {
+      // Bone staff: dark handle, purple glowing skull-orb
+      ctx.fillStyle = '#2a1a3a';
+      ctx.fillRect(0, -1, 11, 2);
+      ctx.fillStyle = '#c080ff';    // orb
+      ctx.beginPath(); ctx.arc(12, 0, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e0c0ff';    // shine
+      ctx.beginPath(); ctx.arc(11, -1, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(140,60,255,0.25)';
+      ctx.beginPath(); ctx.arc(12, 0, 7, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
+    case 'cleric': {
+      // Mace: handle + cross head
+      ctx.fillStyle = '#9a8050';
+      ctx.fillRect(0, -1, 9, 2);
+      ctx.fillStyle = a.accent;
+      ctx.fillRect(9, -4, 4, 8);   // vertical bar
+      ctx.fillRect(7, -2, 8, 4);   // horizontal bar
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillRect(9, -4, 1, 4);
+      ctx.fillRect(7, -2, 4, 1);
+      break;
+    }
+    case 'rogue': {
+      // Dagger: short slim blade + dark handle
+      ctx.fillStyle = '#3a3040';
+      ctx.fillRect(0, -1, 5, 2);   // handle
+      ctx.fillStyle = '#d0d4e0';   // blade
+      ctx.fillRect(5, -1, 8, 2);
+      ctx.fillRect(11, 0, 3, 1);   // tip taper
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillRect(5, -1, 6, 1);   // edge shine
+      break;
+    }
+    case 'paladin': {
+      // Sword: longer blade with gold crossguard
+      ctx.fillStyle = '#7a5022';
+      ctx.fillRect(0, -1, 5, 2);   // grip
+      ctx.fillStyle = a.accent;    // crossguard
+      ctx.fillRect(4, -4, 3, 8);
+      ctx.fillStyle = '#d8dce8';   // blade
+      ctx.fillRect(7, -1, 10, 2);
+      ctx.fillRect(15, -1, 3, 1);  // taper
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillRect(7, -1, 8, 1);   // blade shine
+      break;
+    }
+    case 'frostmage': {
+      // Ice staff: pale handle, blue crystal tip
+      ctx.fillStyle = '#3060a0';
+      ctx.fillRect(0, -1, 10, 2);
+      ctx.fillStyle = '#80d0ff';   // crystal
+      ctx.fillRect(10, -4, 4, 8);
+      ctx.fillRect(12, -6, 2, 3);
+      ctx.fillRect(12, 3, 2, 3);
+      ctx.fillStyle = 'rgba(200,240,255,0.5)';
+      ctx.fillRect(10, -4, 1, 4);
+      ctx.fillStyle = 'rgba(100,180,255,0.2)';
+      ctx.beginPath(); ctx.arc(12, 0, 7, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
+    default: {
+      // Fallback: simple sword
+      ctx.fillStyle = '#888';
+      ctx.fillRect(0, -1, 12, 2);
+    }
+  }
+  ctx.restore();
 }
 
 function drawSwing(ctx, p) {

@@ -635,7 +635,63 @@ function modeSelectHTML() {
   </div>`;
 }
 
-function classSpriteSVG(a) {
+function weaponSVG(key, a) {
+  // Drawn pointing right (facing x=1) from anchor 0,0; caller positions via translate
+  switch (key) {
+    case 'warrior':
+      return `<rect x="0" y="-1" width="10" height="2" fill="#7a5530"/>
+              <rect x="7" y="-5" width="5" height="9" fill="${a.accent}"/>
+              <rect x="9" y="-7" width="3" height="3" fill="${a.accent}"/>
+              <rect x="9" y="5" width="3" height="3" fill="${a.accent}"/>
+              <rect x="7" y="-5" width="1" height="5" fill="rgba(255,255,255,0.4)"/>`;
+    case 'ranger':
+      return `<rect x="3" y="-7" width="2" height="14" fill="${a.accent}"/>
+              <rect x="2" y="-7" width="1" height="3" fill="${a.accent}"/>
+              <rect x="2" y="4" width="1" height="3" fill="${a.accent}"/>
+              <line x1="3" y1="-7" x2="1" y2="0" stroke="#c8c8b0" stroke-width="1"/>
+              <line x1="1" y1="0" x2="3" y2="7" stroke="#c8c8b0" stroke-width="1"/>
+              <rect x="-4" y="-1" width="8" height="1" fill="#c8a060"/>
+              <rect x="3" y="-1" width="3" height="1" fill="#aaaaaa"/>`;
+    case 'firemage':
+      return `<rect x="0" y="-1" width="11" height="2" fill="#7a5022"/>
+              <circle cx="12" cy="0" r="4" fill="#ff6010"/>
+              <circle cx="11" cy="-1" r="2" fill="#ffdd40"/>
+              <circle cx="12" cy="0" r="6" fill="rgba(255,80,0,0.25)"/>`;
+    case 'necromancer':
+      return `<rect x="0" y="-1" width="11" height="2" fill="#2a1a3a"/>
+              <circle cx="12" cy="0" r="4" fill="#c080ff"/>
+              <circle cx="11" cy="-1" r="2" fill="#e0c0ff"/>
+              <circle cx="12" cy="0" r="7" fill="rgba(140,60,255,0.2)"/>`;
+    case 'cleric':
+      return `<rect x="0" y="-1" width="9" height="2" fill="#9a8050"/>
+              <rect x="9" y="-4" width="4" height="8" fill="${a.accent}"/>
+              <rect x="7" y="-2" width="8" height="4" fill="${a.accent}"/>
+              <rect x="9" y="-4" width="1" height="4" fill="rgba(255,255,255,0.45)"/>
+              <rect x="7" y="-2" width="4" height="1" fill="rgba(255,255,255,0.45)"/>`;
+    case 'rogue':
+      return `<rect x="0" y="-1" width="5" height="2" fill="#3a3040"/>
+              <rect x="5" y="-1" width="8" height="2" fill="#d0d4e0"/>
+              <rect x="11" y="0" width="3" height="1" fill="#d0d4e0"/>
+              <rect x="5" y="-1" width="6" height="1" fill="rgba(255,255,255,0.5)"/>`;
+    case 'paladin':
+      return `<rect x="0" y="-1" width="5" height="2" fill="#7a5022"/>
+              <rect x="4" y="-4" width="3" height="8" fill="${a.accent}"/>
+              <rect x="7" y="-1" width="10" height="2" fill="#d8dce8"/>
+              <rect x="15" y="-1" width="3" height="1" fill="#d8dce8"/>
+              <rect x="7" y="-1" width="8" height="1" fill="rgba(255,255,255,0.5)"/>`;
+    case 'frostmage':
+      return `<rect x="0" y="-1" width="10" height="2" fill="#3060a0"/>
+              <rect x="10" y="-4" width="4" height="8" fill="#80d0ff"/>
+              <rect x="12" y="-6" width="2" height="3" fill="#80d0ff"/>
+              <rect x="12" y="3" width="2" height="3" fill="#80d0ff"/>
+              <rect x="10" y="-4" width="1" height="4" fill="rgba(200,240,255,0.5)"/>
+              <circle cx="12" cy="0" r="7" fill="rgba(100,180,255,0.15)"/>`;
+    default:
+      return `<rect x="0" y="-1" width="12" height="2" fill="#888"/>`;
+  }
+}
+
+function classSpriteSVG(a, key) {
   const skin = '#e8c9a0';
   let headgear = '';
   if (a.head === 'helm') {
@@ -693,9 +749,8 @@ function classSpriteSVG(a) {
     <rect x="14" y="11" width="1" height="1" fill="rgba(255,255,255,0.5)"/>
     <!-- headgear -->
     ${headgear}
-    <!-- weapon dot -->
-    <rect x="18" y="18" width="5" height="5" fill="${a.accent}"/>
-    <rect x="18" y="18" width="2" height="2" fill="rgba(255,255,255,0.38)"/>
+    <!-- weapon (pointing right, anchored at body side) -->
+    <g transform="translate(20,21)">${weaponSVG(key, a)}</g>
   </svg>`;
 }
 
@@ -715,7 +770,7 @@ function classSelectHTML() {
          </div>`
       : '';
     return `<div class="clscard${isSel ? ' sel' : ''}" data-cls-idx="${i}">
-      ${classSpriteSVG(c.art)}
+      ${classSpriteSVG(c.art, c.key)}
       <div class="cname">${c.name}</div>
       <div class="cability">${c.abilityName}</div>
       <div class="cblurb">${c.blurb}</div>
@@ -746,7 +801,7 @@ function classSelectHTML() {
         <button data-confirm-class style="flex:1;padding:7px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;font-size:13px;cursor:pointer">✔ PLAY ${dc.name}</button>
       </div>
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
-        ${classSpriteSVG(dc.art)}
+        ${classSpriteSVG(dc.art, dc.key)}
         <div>
           <div style="font-size:18px;font-weight:bold;color:#e8d87a">${dc.name}</div>
           <div style="color:#aaaaff;font-size:12px">${dc.abilityName} · ${dc.blurb}</div>
