@@ -230,13 +230,13 @@ function setupMenuTap() {
     if (shopRow) { mobileBuyShopItem(parseInt(shopRow.dataset.shopIdx, 10)); return; }
 
     // Shop: ready button
-    if (e.target.id === 'mobile-ready-btn') { mobileShopReady(); return; }
+    if (e.target.closest('#mobile-ready-btn')) { mobileShopReady(); return; }
 
     // Shop: bag button
-    if (e.target.id === 'mobile-bag-btn') { toggleMobilePanel(); return; }
+    if (e.target.closest('#mobile-bag-btn')) { toggleMobilePanel(); return; }
 
     // Shop: settings button
-    if (e.target.id === 'mobile-settings-btn') { document.getElementById('settings-btn').click(); return; }
+    if (e.target.closest('#mobile-settings-btn')) { document.getElementById('settings-btn').click(); return; }
 
     // Inventory sell button
     const sellBtn = e.target.closest('[data-sell-idx]');
