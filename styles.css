@@ -287,14 +287,14 @@ html, body {
     width: 100vw; height: 100dvh;
     display: block; /* override grid/place-items:center so canvas isn't centered with gaps */
   }
-  /* Pin canvas to viewport corners — bypasses all parent flex/grid sizing */
+  /* Pin canvas to all 4 viewport edges — inset:0 alone sets the size */
   #canvas {
     position: fixed;
-    inset: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: auto;
+    height: auto;
     max-width: none;
     max-height: none;
-    width: 100% !important;
-    height: 100% !important;
     aspect-ratio: unset;
     border: none;
     border-radius: 0;
