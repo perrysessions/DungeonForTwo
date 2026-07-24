@@ -396,7 +396,11 @@ function drawMinions(ctx) {
 function drawEnemies(ctx) {
   for (const e of game.enemies) {
     if (e.dead) continue;
-    const x = Math.round(e.x), y = Math.round(e.y), r = e.radius;
+    // Subtle idle fidget: slow figure-8 using two offset sine waves
+    const ft = game.time * 1.4 + e.wobble;
+    const fx = Math.round(Math.sin(ft) * 1.2);
+    const fy = Math.round(Math.sin(ft * 1.7 + 1.2) * 1.2);
+    const x = Math.round(e.x) + fx, y = Math.round(e.y) + fy, r = e.radius;
     drawCreature(ctx, e, x, y, r);
     flash(ctx, x - r, y - r, r * 2, r * 2, e.hitFlash);
     if (e.slow) { ctx.fillStyle = 'rgba(120,200,255,0.35)'; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
