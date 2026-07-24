@@ -46,24 +46,29 @@ export function initMobileControls() {
   const rotateMsg = document.getElementById('rotate-msg');
 
   let orientationTimer = null;
-  function checkOrientation() {
+  function checkOrientation(immediate = false) {
     const isPortrait = window.innerHeight > window.innerWidth;
     if (isPortrait) {
       game.paused = true;
       if (rotateMsg) rotateMsg.style.display = 'flex';
     } else {
-      // Debounce: wait for browser to finish settling after rotation
-      clearTimeout(orientationTimer);
-      orientationTimer = setTimeout(() => {
+      const apply = () => {
         game.paused = false;
         if (rotateMsg) rotateMsg.style.display = 'none';
         applyMobileW();
-      }, 120);
+      };
+      if (immediate) {
+        apply();
+      } else {
+        // Debounce on rotation so browser finishes settling before we read dimensions
+        clearTimeout(orientationTimer);
+        orientationTimer = setTimeout(apply, 150);
+      }
     }
   }
 
-  requestAnimationFrame(() => requestAnimationFrame(checkOrientation));
-  window.addEventListener('resize', checkOrientation, { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(() => checkOrientation(true)));
+  window.addEventListener('resize', () => checkOrientation(false), { passive: true });
 
   // Try to lock orientation to landscape on first touch (requires user gesture).
   // Works on Android Chrome; iOS Safari silently rejects — rotate-msg CSS handles that fallback.
