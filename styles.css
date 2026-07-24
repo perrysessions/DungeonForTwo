@@ -264,14 +264,6 @@ html, body {
 #settings-close { margin-top: 16px; width: 100%; }
 
 /* ---------- mobile ---------- */
-#rotate-msg {
-  display: none;
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--bg);
-  flex-direction: column; align-items: center; justify-content: center;
-  font-size: 20px; color: var(--ink); text-align: center; gap: 16px;
-}
-#rotate-msg span { font-size: 52px; }
 
 @media (pointer: coarse) {
   /* Hide side panels entirely on touch devices */
@@ -296,9 +288,18 @@ html, body {
     border: 1px solid var(--panel-border);
   }
 
-  /* Show rotate message in portrait */
+  /* Rotate entire page to landscape when in portrait */
   @media (orientation: portrait) {
-    #rotate-msg { display: flex; }
+    #game-root {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh;
+      height: 100vw;
+      position: fixed;
+      top: 0;
+      left: 100vw;
+      overflow: hidden;
+    }
   }
 
   /* Panel floats as overlay when BAG is open */

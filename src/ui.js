@@ -554,7 +554,7 @@ function howToPlayHTML() {
        <div style="height:6px"></div>
        ${row('P2 Move', 'Arrow Keys')}${row('P2 Attack', '/')}${row('P2 Ability', "'")}${row('P2 Revive / Interact', ';')}${row('P2 Inventory', 'P')}`;
 
-  return `<div class="card" style="text-align:center;padding:22px 20px;max-width:520px;max-height:80vh;overflow-y:scroll;-webkit-overflow-scrolling:touch;touch-action:pan-y">
+  return `<div class="card" style="text-align:center;padding:22px 20px;max-width:520px">
     <button data-htp-back style="float:left;background:none;border:1px solid #5a4a7a;color:#c080ff;font-family:monospace;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer">← Back</button>
     <h2 style="color:#c080ff;letter-spacing:2px;margin:0 0 16px">HOW TO PLAY</h2>
 
