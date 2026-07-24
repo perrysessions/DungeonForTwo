@@ -34,12 +34,14 @@ export function initMobileControls() {
   // Defer so the browser has finished laying out the viewport (avoids stretch on cold load).
   const canvas = document.getElementById('canvas');
   function applyMobileW() {
-    // Render at 360px tall to keep the player zoomed in.
-    // Width fills the full screen (shows more map horizontally).
+    const W = window.innerWidth;
+    const H = window.innerHeight;
     const TARGET_H = 360;
-    const mobileW = Math.round(window.innerWidth * TARGET_H / window.innerHeight);
+    const mobileW = Math.round(W * TARGET_H / H);
     canvas.width = mobileW;
     canvas.height = TARGET_H;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
     setViewW(mobileW);
     setViewH(TARGET_H);
   }
