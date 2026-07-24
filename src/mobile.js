@@ -40,7 +40,15 @@ export function initMobileControls() {
   }
   requestAnimationFrame(() => requestAnimationFrame(applyMobileW));
   window.addEventListener('resize', applyMobileW, { passive: true });
-  window.addEventListener('orientationchange', () => setTimeout(applyMobileW, 100), { passive: true });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(applyMobileW, 100);
+    // Reset joystick so stale move vector doesn't drift the player after rotation
+    joyActive = false;
+    joyId = null;
+    touch.move = { x: 0, y: 0 };
+    touch.attack = false;
+    touch.ability = false;
+  }, { passive: true });
 
   setupJoystick();
   setupButtons();
