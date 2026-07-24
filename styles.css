@@ -283,14 +283,20 @@ html, body {
   #panel-left, #panel-right { display: none !important; }
   #game-root { padding: 0; gap: 0; }
   /* dvh = dynamic viewport height (excludes iOS browser chrome) */
-  #stage { width: 100vw; height: 100dvh; }
+  #stage {
+    width: 100vw; height: 100dvh;
+    display: block; /* override grid/place-items:center so canvas isn't centered with gaps */
+  }
   /* Fill screen edge to edge — canvas.width is set wider by mobile.js */
   #canvas {
+    display: block;
     width: 100vw;
     height: 100dvh;
     max-width: none;
     max-height: none;
     aspect-ratio: unset;
+    border: none;
+    border-radius: 0;
     image-rendering: pixelated;
   }
   #settings-btn {
