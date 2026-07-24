@@ -54,9 +54,50 @@ export function render(ctx) {
   ctx.restore();
   drawMobileStats(ctx);
   drawHUD(ctx);
+  drawBossBar(ctx);
   drawBanner(ctx);
   drawComboText(ctx);
   drawFloorTransition(ctx);
+}
+
+function drawBossBar(ctx) {
+  const boss = game.enemies.find(e => e.isBoss && !e.dead);
+  if (!boss) return;
+
+  const barW = Math.round(VIEW_W * 0.55);
+  const barH = 14;
+  const x = Math.round((VIEW_W - barW) / 2);
+  const y = VIEW_H - 28;
+  const pct = Math.max(0, boss.hp / boss.maxHp);
+  const isPhase2 = boss.phase2;
+
+  // Background
+  ctx.fillStyle = '#000';
+  ctx.fillRect(x - 2, y - 2, barW + 4, barH + 4);
+
+  // Empty bar
+  ctx.fillStyle = '#2a1a1a';
+  ctx.fillRect(x, y, barW, barH);
+
+  // Fill — red, pulses orange in phase 2
+  const pulse = isPhase2 ? 0.15 * Math.sin(game.time * 8) : 0;
+  const r = Math.round(220 + pulse * 35);
+  ctx.fillStyle = `rgb(${r},${Math.round(40 + pulse * 20)},${Math.round(40 + pulse * 20)})`;
+  ctx.fillRect(x, y, Math.round(barW * pct), barH);
+
+  // Phase 2 marker at 50%
+  ctx.fillStyle = '#ffffff44';
+  ctx.fillRect(x + Math.round(barW * 0.5) - 1, y, 2, barH);
+
+  // Boss name above bar
+  ctx.save();
+  ctx.font = 'bold 11px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#000';
+  ctx.fillText((isPhase2 ? '⚡ ' : '') + boss.name + (isPhase2 ? ' ⚡' : ''), VIEW_W / 2 + 1, y - 5);
+  ctx.fillStyle = isPhase2 ? '#ffaa30' : '#ffd060';
+  ctx.fillText((isPhase2 ? '⚡ ' : '') + boss.name + (isPhase2 ? ' ⚡' : ''), VIEW_W / 2, y - 6);
+  ctx.restore();
 }
 
 function drawFloorTransition(ctx) {
