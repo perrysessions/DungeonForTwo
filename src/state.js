@@ -43,6 +43,7 @@ export const game = {
   comboCount: 0,     // kills in current combo streak
   comboBonusTotal: 0,// accumulated combo bonus for the run
   comboText: null,   // { label, alpha } for canvas combo display
+  floorTransition: null, // { alpha, dir, onMid } — fade-to-black between floors
 };
 
 export function setMessage(text, seconds = 2.5) {

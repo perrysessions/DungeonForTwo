@@ -68,11 +68,20 @@ function generateFloor() {
 
 function descend() {
   closeShop();
-  game.floor++;
-  if (game.floor > MAX_FLOORS) { game.phase = Phase.WIN; return; }
   ui.closeInventories();
-  generateFloor();
-  game.phase = Phase.PLAYING;
+  const FADE = 0.45; // seconds per half
+  game.floorTransition = {
+    alpha: 0,
+    dir: 1,
+    onMid: () => {
+      game.floor++;
+      if (game.floor > MAX_FLOORS) { game.phase = Phase.WIN; game.floorTransition = null; return; }
+      generateFloor();
+      game.phase = Phase.PLAYING;
+    },
+    speed: 1 / FADE,
+    midFired: false,
+  };
 }
 
 function restart() {
@@ -237,6 +246,19 @@ function simulate(dt) {
 }
 
 
+function updateFloorTransition(dt) {
+  const ft = game.floorTransition;
+  if (!ft) return;
+  ft.alpha += ft.dir * ft.speed * dt;
+  if (ft.dir === 1 && ft.alpha >= 1) {
+    ft.alpha = 1;
+    if (!ft.midFired) { ft.midFired = true; ft.onMid(); }
+    ft.dir = -1;
+  } else if (ft.dir === -1 && ft.alpha <= 0) {
+    game.floorTransition = null;
+  }
+}
+
 // ---- main loop (variable dt, clamped) ----
 let last = performance.now();
 function frame(now) {
@@ -247,6 +269,7 @@ function frame(now) {
   input.beginFrame();
   ui.update(dt);
   updateMobileControls(game.phase);
+  updateFloorTransition(dt);
   if (game.phase === Phase.PLAYING && !game.paused) simulate(dt);
 
   if (game.map) render(ctx);

@@ -56,6 +56,17 @@ export function render(ctx) {
   drawHUD(ctx);
   drawBanner(ctx);
   drawComboText(ctx);
+  drawFloorTransition(ctx);
+}
+
+function drawFloorTransition(ctx) {
+  const ft = game.floorTransition;
+  if (!ft || ft.alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = ft.alpha;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+  ctx.restore();
 }
 
 function drawTiles(ctx, th) {
