@@ -1,7 +1,7 @@
 // Mobile touch controls: virtual joystick (left) + action buttons (right).
 // Writes into input.touch; no game logic lives here.
 import { touch } from './input.js';
-import { mobilePickClass, mobileConfirmClass, mobileToggleClassDetail, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache } from './ui.js';
+import { mobilePickClass, mobileConfirmClass, mobileToggleClassDetail, setMobileInvTab, mobileTapInvRow, mobileBuyShopItem, mobileConfirmBuyShopItem, mobileShopReady, invalidatePanelCache, titleToggleHowTo } from './ui.js';
 import { isMobile } from './detect.js';
 import { setViewW } from './state.js';
 export { isMobile } from './detect.js';
@@ -202,6 +202,10 @@ function setupMenuTap() {
     // Let settings button and modal handle their own events
     if (e.target.closest('#settings-btn') || e.target.closest('#settings-modal')) return;
 
+    // How to play open / back
+    if (e.target.closest('[data-htp-open]')) { titleToggleHowTo(); return; }
+    if (e.target.closest('[data-htp-back]')) { titleToggleHowTo(); return; }
+
     // Class select: confirm / detail buttons
     if (e.target.closest('[data-confirm-class]')) { mobileConfirmClass(); return; }
     if (e.target.closest('[data-detail-class]')) { mobileToggleClassDetail(); return; }
@@ -230,8 +234,8 @@ function setupMenuTap() {
     const sellBtn = e.target.closest('[data-sell-idx]');
     if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
 
-    // Generic confirm: title, game over, win — not during class/mode select
-    if (document.getElementById('overlay')?.querySelector('.clsgrid, [data-confirm-class]')) return;
+    // Generic confirm: title, game over, win — not during class/mode select or how-to screen
+    if (document.getElementById('overlay')?.querySelector('.clsgrid, [data-confirm-class], [data-htp-back]')) return;
     touch.attack = true;
     setTimeout(() => { touch.attack = false; }, 80);
   }, { passive: true });

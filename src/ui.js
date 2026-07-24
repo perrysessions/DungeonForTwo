@@ -51,6 +51,12 @@ export function initUI(controller) {
   els.overlay = document.getElementById('overlay');
   els.panels = [els.left, els.right];
   initSettings();
+  // Desktop click handler for how-to-play buttons (mobile uses setupMenuTap)
+  els.overlay.addEventListener('click', e => {
+    if (e.target.closest('[data-htp-open]') || e.target.closest('[data-htp-back]')) {
+      titleToggleHowTo();
+    }
+  });
 }
 
 function initSettings() {
@@ -112,7 +118,7 @@ function initSettings() {
 
 }
 
-export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false], _detail: false }; _scoreSaved = false; }
+export function resetClassSelect() { cs = { cursor: [0, 0], confirmed: [false, false], _detail: false }; _scoreSaved = false; _showHowTo = false; }
 
 // Mobile: tap a class card to instantly pick and confirm it for P1.
 export function setMobileInvTab(tab) { inv[0].tab = tab; }
@@ -526,7 +532,60 @@ function scrollShop() {
   shop._scroll = null;
 }
 
+let _showHowTo = false;
+export function titleToggleHowTo() { _showHowTo = !_showHowTo; lastOverlayPhase = null; }
+
+function howToPlayHTML() {
+  const sec = (title, color, body) =>
+    `<div style="margin-bottom:14px;text-align:left">
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${color};margin-bottom:5px">${title}</div>
+      ${body}
+    </div>`;
+  const row = (label, val) =>
+    `<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <span style="color:#aaa">${label}</span><span style="color:#e0d8f0">${val}</span>
+    </div>`;
+
+  const controls = isMobile
+    ? `${row('Move', 'Left joystick')}${row('Attack', 'ATK button')}${row('Ability', 'SKL button')}${row('Revive ally', 'Walk over them')}${row('Inventory / Shop', 'BAG button')}`
+    : `${row('P1 Move', 'W A S D')}${row('P1 Attack', 'Space')}${row('P1 Ability', 'E')}${row('P1 Revive / Interact', 'Q')}${row('P1 Inventory', 'R')}
+       <div style="height:6px"></div>
+       ${row('P2 Move', 'Arrow Keys')}${row('P2 Attack', '/')}${row('P2 Ability', "'")}${row('P2 Revive / Interact', ';')}${row('P2 Inventory', 'P')}`;
+
+  return `<div class="card" style="text-align:center;padding:22px 20px;max-width:520px;max-height:80vh;overflow-y:auto">
+    <button data-htp-back style="float:left;background:none;border:1px solid #5a4a7a;color:#c080ff;font-family:monospace;font-size:12px;padding:4px 10px;border-radius:4px;cursor:pointer">← Back</button>
+    <h2 style="color:#c080ff;letter-spacing:2px;margin:0 0 16px">HOW TO PLAY</h2>
+
+    ${sec('The Goal', '#ffd060',
+      `<p style="font-size:12px;color:#ccc;margin:0">Descend all <b style="color:#ffd060">${MAX_FLOORS} floors</b> of the dungeon. Every few floors you face a boss — defeat it to continue. Both players must survive to win.</p>`
+    )}
+
+    ${sec('Classes', '#7bff9b',
+      `<p style="font-size:12px;color:#ccc;margin:0 0 4px">Choose from <b>8 unique classes</b>. Each has a special <b style="color:#a0e0ff">ability</b> that costs mana, a <b style="color:#ffb060">passive</b> skill you can upgrade, and a full <b style="color:#c080ff">skill tree</b> to unlock.</p>
+       <p style="font-size:12px;color:#ccc;margin:0">Use your ability until you run out of mana — auto-attacks refill it slowly.</p>`
+    )}
+
+    ${sec('Leveling Up', '#c080ff',
+      `<p style="font-size:12px;color:#ccc;margin:0">Kill enemies to gain XP. Each level earns <b>1 Skill Point</b>. Spend points in your inventory to unlock class skills and stat upgrades.</p>`
+    )}
+
+    ${sec('The Shop', '#ff9060',
+      `<p style="font-size:12px;color:#ccc;margin:0">Between floors a shop appears. Find <b>weapons, armor, and trinkets</b> — from Common all the way to <b style="color:#ff4040">Mythical</b>. Buy gear with gold or sell items you don't need. When both players are ready, descend.</p>`
+    )}
+
+    ${sec('Reviving', '#ff6090',
+      `<p style="font-size:12px;color:#ccc;margin:0">If your ally falls, <b>walk over them</b> and hold to revive. If both players are down at the same time, it's game over.</p>`
+    )}
+
+    ${sec('Controls', '#80c8ff', `<div>${controls}</div>`)}
+
+    <button data-htp-back style="margin-top:14px;background:#1c1730;border:2px solid #c080ff;color:#c080ff;font-family:monospace;font-size:13px;padding:8px 24px;border-radius:6px;cursor:pointer">← Back to Title</button>
+  </div>`;
+}
+
 function titleHTML() {
+  if (_showHowTo) return howToPlayHTML();
+
   const controls = isMobile
     ? `<p style="font-size:13px;margin:4px 0;color:#b0a0cc">Unlock unique class skills. Find epic, legendary and mythical items.</p>`
     : `<div class="controls two">
@@ -546,8 +605,11 @@ function titleHTML() {
     <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">${subtitle}</p>
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
     ${controls}
-    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:12px 0 10px"></div>
-    <p class="blink big" style="font-size:18px;margin:8px 0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0 8px"></div>
+    <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap">
+      <p class="blink big" style="font-size:18px;margin:0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
+      <button data-htp-open style="background:none;border:1px solid #5a4a7a;color:#9070c0;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">How to Play</button>
+    </div>
     <p class="credit" style="margin-top:14px">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a></p>
   </div>`;
 }
