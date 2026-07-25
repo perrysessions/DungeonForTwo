@@ -1168,19 +1168,24 @@ function shopHTML() {
       <div class="sc-marks">${marks.join('')}</div>
       <button class="sc-buy" data-buy-shop-idx="${i}"${!canAfford ? ' disabled' : ''}>${buyLabel}</button>
     </div>`;
+  }).join('');
+
   // Descend button as a navigable shop card
   const descendIdx = shop.stock.length;
   const descendSelMarks = [];
   for (let pi = 0; pi < active; pi++) {
-    if (shop.cursor[pi] === descendIdx) descendSelMarks.push(`<span class="pmark" style="background:${P_COLOR[pi]}">P${pi + 1}</span>`);
+    if (shop.cursor[pi] === descendIdx) descendSelMarks.push('<span class="pmark" style="background:' + P_COLOR[pi] + '">P' + (pi + 1) + '</span>');
   }
   const descendSel = descendSelMarks.length > 0;
   const allReadyNow = shop.ready.slice(0, active).every(Boolean);
-  const descendCard = !isMobile ? `<div class="shopcard descend-card${descendSel ? ' sel' : ''}" style="border-color:${descendSel ? '#3baa60' : '#2a4030'};${descendSel ? 'box-shadow:0 0 12px #3baa6088;' : ''}grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 20px;min-height:unset;gap:6px">
-    <div style="font-size:22px">⬇</div>
-    <div style="color:#7bff9b;font-weight:bold;font-size:14px">DESCEND TO FLOOR ${game.floor + 1}</div>
-    <div style="font-size:11px;color:#8b84a0">${descendSelMarks.join(' ')}${allReadyNow ? ' All ready!' : (active > 1 ? ' Both players select to descend' : ' Select &amp; attack to descend')}</div>
-  </div>` : '';
+  const descendHint = allReadyNow ? 'All ready!' : (active > 1 ? 'Both players select to descend' : 'Select + attack to descend');
+  const descendBorder = descendSel ? 'border-color:#3baa60;box-shadow:0 0 12px #3baa6060' : 'border-color:#2a4030';
+  const descendCard = isMobile ? '' :
+    '<div class="shopcard descend-card' + (descendSel ? ' sel' : '') + '" style="' + descendBorder + ';grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 20px;min-height:unset;gap:6px">' +
+    '<div style="font-size:22px">⬇</div>' +
+    '<div style="color:#7bff9b;font-weight:bold;font-size:14px">DESCEND TO FLOOR ' + (game.floor + 1) + '</div>' +
+    '<div style="font-size:11px;color:#8b84a0">' + descendSelMarks.join(' ') + ' ' + descendHint + '</div>' +
+    '</div>';
 
   cards += descendCard;
 
