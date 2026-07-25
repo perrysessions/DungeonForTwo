@@ -293,36 +293,18 @@ function init() {
   // the unlock listener below resumes it so music begins immediately on touch.
   const loadScreen = document.getElementById('loading-screen');
   const loadBar = document.getElementById('loading-bar');
-  const loadText = document.getElementById('loading-text');
 
-  // Animate load bar while audio buffers load
-  let fakeProgress = 0;
-  const fakeInterval = setInterval(() => {
-    fakeProgress = Math.min(fakeProgress + Math.random() * 8, 85);
-    loadBar.style.width = fakeProgress + '%';
-  }, 120);
-
-  const dismissLoader = () => {
-    clearInterval(fakeInterval);
-    loadBar.style.width = '100%';
-    loadText.textContent = 'Ready!';
-    setTimeout(() => {
-      loadScreen.classList.add('fade-out');
-      setTimeout(() => { if (loadScreen.parentNode) loadScreen.remove(); }, 450);
-    }, 300);
-  };
+  // Animate bar to 100% over 1 second then dismiss — audio loads in background
+  loadBar.style.transition = 'width 0.9s ease';
+  loadBar.style.width = '100%';
+  setTimeout(() => {
+    loadScreen.classList.add('fade-out');
+    setTimeout(() => { if (loadScreen.parentNode) loadScreen.remove(); }, 450);
+  }, 1000);
 
   preloadAudio().then(() => {
-    dismissLoader();
     playMusic('dungeon', { fadeIn: 2.5 });
-  }).catch(() => {
-    dismissLoader();
-  });
-
-  // Safety fallback — dismiss after 5s no matter what
-  setTimeout(() => {
-    if (loadScreen.parentNode) dismissLoader();
-  }, 5000);
+  }).catch(() => {});
 
   const unlockAudio = () => { resumeAudio(); };
   document.addEventListener('click', unlockAudio, { once: true });
