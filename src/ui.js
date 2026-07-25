@@ -848,6 +848,63 @@ function classSelectHTML() {
   </div>`;
 }
 
+function shopCornerSVG(pos) {
+  const transforms = { tl:'', tr:'scale(-1,1)', bl:'scale(1,-1)', br:'scale(-1,-1)' };
+  const origins   = { tl:'top left', tr:'top right', bl:'bottom left', br:'bottom right' };
+  const posStyle  = { tl:'top:-2px;left:-2px', tr:'top:-2px;right:-2px', bl:'bottom:-2px;left:-2px', br:'bottom:-2px;right:-2px' };
+  return `<div style="position:absolute;${posStyle[pos]};z-index:4;line-height:0;transform:${transforms[pos]};transform-origin:${origins[pos]}">
+    <svg viewBox="0 0 32 32" width="32" height="32" style="image-rendering:pixelated;display:block">
+      <!-- outer fill -->
+      <rect x="0" y="0" width="32" height="32" fill="#0c0a18"/>
+      <!-- vertical pillar -->
+      <rect x="0" y="0" width="12" height="32" fill="#28203c"/>
+      <rect x="0" y="0" width="2" height="32" fill="#3c3058"/>
+      <rect x="10" y="0" width="2" height="32" fill="#14102a"/>
+      <!-- horizontal pillar -->
+      <rect x="0" y="0" width="32" height="12" fill="#28203c"/>
+      <rect x="0" y="0" width="32" height="2" fill="#3c3058"/>
+      <rect x="0" y="10" width="32" height="2" fill="#14102a"/>
+      <!-- corner cap -->
+      <rect x="0" y="0" width="12" height="12" fill="#342850"/>
+      <rect x="0" y="0" width="12" height="2" fill="#4e3c6e"/>
+      <rect x="0" y="0" width="2" height="12" fill="#4e3c6e"/>
+      <rect x="10" y="10" width="2" height="2" fill="#0c0a18"/>
+      <!-- rune glyph on vertical pillar -->
+      <rect x="4" y="17" width="4" height="1" fill="#7060a8"/>
+      <rect x="5" y="15" width="2" height="5" fill="#7060a8"/>
+      <rect x="4" y="19" width="2" height="1" fill="#7060a8"/>
+      <!-- rune glyph on horizontal pillar -->
+      <rect x="17" y="4" width="1" height="4" fill="#7060a8"/>
+      <rect x="15" y="5" width="5" height="2" fill="#7060a8"/>
+      <rect x="19" y="4" width="1" height="2" fill="#7060a8"/>
+    </svg>
+  </div>`;
+}
+
+function chestSVG() {
+  return `<svg viewBox="0 0 28 22" width="28" height="22" style="image-rendering:pixelated;display:block;flex-shrink:0">
+    <!-- body -->
+    <rect x="1" y="10" width="26" height="11" fill="#7a4e18"/>
+    <rect x="1" y="10" width="2" height="11" fill="#9a6428"/>
+    <rect x="25" y="10" width="2" height="11" fill="#4a2e0a"/>
+    <rect x="1" y="19" width="26" height="2" fill="#4a2e0a"/>
+    <!-- lid -->
+    <rect x="1" y="2" width="26" height="9" fill="#9a6420"/>
+    <rect x="1" y="2" width="26" height="2" fill="#c48030"/>
+    <rect x="1" y="2" width="2" height="9" fill="#b07428"/>
+    <rect x="25" y="2" width="2" height="9" fill="#5a3810"/>
+    <!-- band -->
+    <rect x="0" y="9" width="28" height="3" fill="#c89030"/>
+    <rect x="0" y="9" width="28" height="1" fill="#f0c040"/>
+    <!-- lock -->
+    <rect x="11" y="8" width="6" height="5" fill="#d4a030"/>
+    <rect x="12" y="9" width="4" height="2" fill="#f0c040"/>
+    <rect x="13" y="10" width="2" height="4" fill="#7a4e18"/>
+    <!-- lid shine -->
+    <rect x="3" y="3" width="12" height="1" fill="rgba(255,255,255,0.15)"/>
+  </svg>`;
+}
+
 function satchelSVG() {
   return `<svg viewBox="0 0 24 24" width="26" height="26" style="display:block;image-rendering:pixelated">
     <!-- strap loop -->
@@ -923,12 +980,13 @@ function shopHTML() {
       </div>`
     : `<p class="hint" style="margin:0">${active === 1 ? 'Interact to ready up' : 'Both players Interact to ready up'} · descend to floor ${game.floor + 1}</p>`;
 
-  return `<div class="card wide shop-wrap">
+  return `<div class="shop-frame">
+    ${shopCornerSVG('tl')}${shopCornerSVG('tr')}${shopCornerSVG('bl')}${shopCornerSVG('br')}
     <div class="shop-header">
-      <div class="shop-title">⚔ Floor ${game.floor} — Shop</div>
-      <div class="shop-gold">🪙 ${totalGold}</div>
+      <div class="shop-title">Floor ${game.floor} — Shop</div>
+      <div class="shop-gold">${chestSVG()}<span>${totalGold}</span></div>
     </div>
-    <div class="shop-hint">${isMobile ? 'Tap a card · BUY to purchase · 📦 for inventory' : '↕ browse · Attack to buy · Interact to ready up · R: inventory'}</div>
+    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · Attack to buy · Interact to ready · R: inventory'}</div>
     <div class="shopgrid">${cards}</div>
     <div class="shop-footer">
       <div class="shop-status">${status.join(' &nbsp;·&nbsp; ')}</div>
