@@ -199,7 +199,8 @@ html, body {
   padding: 6px 10px; overflow-y: auto; max-height: 50vh; }
 .shopcard { display: flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 6px 4px 6px; border: 2px solid #3a3555; border-radius: 6px;
-  background: #14121e; cursor: pointer; transition: background 0.1s; min-width: 0; }
+  background: #14121e; cursor: pointer; transition: background 0.1s; min-width: 0;
+  position: relative; }
 .shopcard:hover, .shopcard.sel { background: #1e1a30; }
 .shopcard .sc-icon { font-size: 20px; line-height: 1; margin: 1px 0; }
 .shopcard .sc-name { font-size: 10px; font-weight: bold; text-align: center;
@@ -211,7 +212,7 @@ html, body {
   border-radius: 4px; border: 2px solid #3baa60; background: #1c2a1c;
   color: #7bff9b; cursor: pointer; width: 100%; }
 .shopcard .sc-buy:disabled { border-color: #444; color: #666; background: #111; cursor: default; }
-.shopcard .sc-marks { display: flex; gap: 3px; justify-content: center; }
+.shopcard .sc-marks { position: absolute; top: 3px; right: 3px; display: flex; gap: 2px; }
 .shop-footer { display: flex; align-items: center; justify-content: space-between;
   padding: 8px 12px 10px; border-top: 2px solid var(--panel-border); gap: 8px; flex-wrap: wrap; }
 .shop-status { font-size: 12px; color: var(--ink-dim); font-family: monospace; }
