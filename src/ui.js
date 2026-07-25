@@ -415,8 +415,17 @@ function rarityTag(it) {
 
 function invSection(pi) {
   const st = inv[pi], p = game.players[pi];
-  if (!st.open) return `<div class="hint">[${keyName(pi, 'inventory')}] Inventory / Skills` +
-    (p.skillPoints > 0 ? ` — <b class="blink">${p.skillPoints} SP!</b>` : '') + `</div>`;
+  const moveKeys = pi === 0 ? 'WASD' : '↑↓←→';
+  const atkKey = keyName(pi, 'attack');
+  const ablKey = keyName(pi, 'ability');
+  const invKey = keyName(pi, 'inventory');
+  const intKey = keyName(pi, 'interact');
+  if (!st.open) return `<div class="hint" style="line-height:1.7">
+    <b style="color:#c090ff">P${pi+1} Controls</b><br>
+    ${moveKeys} move &nbsp;·&nbsp; [${atkKey}] attack<br>
+    [${ablKey}] ability &nbsp;·&nbsp; [${intKey}] use/sell<br>
+    [${invKey}] inventory/skills${p.skillPoints > 0 ? ` &nbsp;<b class="blink">${p.skillPoints} SP!</b>` : ''}
+  </div>`;
   const tabs = `<div class="tabs"><span class="${st.tab === 'items' ? 'on' : ''}">Items</span>` +
     `<span class="${st.tab === 'skills' ? 'on' : ''}">Skills</span></div>`;
   let body = '';
@@ -455,7 +464,7 @@ function invSection(pi) {
     ? `<button data-panel-close style="width:100%;margin-bottom:8px;padding:6px;background:#1a0d0d;border:2px solid #c03030;color:#ff8080;border-radius:4px;font-family:monospace;font-size:12px;cursor:pointer">✕ CLOSE BAG</button>`
     : '';
   return `<div class="inv-open">${closeBtn}${tabs}<div class="rows">${body}</div>` +
-    `<div class="hint">↕ move · ↔ tab · [${keyName(pi, 'attack')}] use/buy · [${keyName(pi, 'interact')}] sell · [${keyName(pi, 'inventory')}] close</div></div>`;
+    `<div class="hint">${pi === 0 ? 'WASD' : '↑↓←→'} browse · [${keyName(pi, 'attack')}] use/buy · [${keyName(pi, 'interact')}] sell · [${keyName(pi, 'inventory')}] close</div></div>`;
 }
 
 function keyName(pi, action) {
