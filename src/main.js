@@ -302,16 +302,27 @@ function init() {
     loadBar.style.width = fakeProgress + '%';
   }, 120);
 
-  preloadAudio().then(() => {
+  const dismissLoader = () => {
     clearInterval(fakeInterval);
     loadBar.style.width = '100%';
     loadText.textContent = 'Ready!';
     setTimeout(() => {
       loadScreen.classList.add('fade-out');
-      setTimeout(() => loadScreen.remove(), 450);
+      setTimeout(() => { if (loadScreen.parentNode) loadScreen.remove(); }, 450);
     }, 300);
+  };
+
+  preloadAudio().then(() => {
+    dismissLoader();
     playMusic('dungeon', { fadeIn: 2.5 });
+  }).catch(() => {
+    dismissLoader();
   });
+
+  // Safety fallback — dismiss after 5s no matter what
+  setTimeout(() => {
+    if (loadScreen.parentNode) dismissLoader();
+  }, 5000);
 
   const unlockAudio = () => { resumeAudio(); };
   document.addEventListener('click', unlockAudio, { once: true });
