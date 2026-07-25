@@ -33,6 +33,7 @@ const P_COLOR = ['#5aa9ff', '#ff8a4a'];
 let els = {};
 let ctrl = {};
 let lastOverlayPhase = null;
+let lastShopKey = null;
 
 // per-player inventory overlay state
 const inv = [
@@ -506,6 +507,7 @@ function renderOverlay() {
   if (game.phase === Phase.PLAYING) {
     o.classList.add('hidden'); o.innerHTML = '';
     lastOverlayPhase = null;
+    lastShopKey = null;
     return;
   }
   o.classList.remove('hidden');
@@ -520,6 +522,13 @@ function renderOverlay() {
   else if (game.phase === Phase.SHOP) {
     // Don't stomp the overlay while settings modal is open
     if (!document.getElementById('settings-modal').classList.contains('hidden')) return;
+    // Only re-render when shop state actually changes (prevents settings-btn flash)
+    const shop = game.shop;
+    const shopKey = shop
+      ? `${shop.stock.length}|${shop.cursor.join()}|${shop.ready.join()}|${game.players.map(p=>p.gold).join()}`
+      : '';
+    if (shopKey === lastShopKey) return;
+    lastShopKey = shopKey;
     o.innerHTML = shopHTML(); scrollShop();
   }
   else if (game.phase === Phase.GAME_OVER) { o.innerHTML = endHTML(false); bindEndScreenButtons(); }
@@ -836,6 +845,40 @@ function classSelectHTML() {
   </div>`;
 }
 
+function satchelSVG() {
+  return `<svg viewBox="0 0 24 24" width="26" height="26" style="display:block;image-rendering:pixelated">
+    <!-- strap loop -->
+    <rect x="8" y="2" width="8" height="3" fill="#7a5a2a"/>
+    <rect x="8" y="2" width="8" height="1" fill="#9a7a3a"/>
+    <rect x="8" y="4" width="2" height="2" fill="#7a5a2a"/>
+    <rect x="14" y="4" width="2" height="2" fill="#7a5a2a"/>
+    <!-- bag body -->
+    <rect x="3" y="6" width="18" height="14" fill="#9a6a30" rx="1"/>
+    <!-- body highlight top -->
+    <rect x="3" y="6" width="18" height="2" fill="#b88040"/>
+    <!-- body left highlight -->
+    <rect x="3" y="6" width="2" height="14" fill="#aa7438"/>
+    <!-- body shadow right -->
+    <rect x="19" y="6" width="2" height="14" fill="#6a4818"/>
+    <!-- body shadow bottom -->
+    <rect x="3" y="18" width="18" height="2" fill="#6a4818"/>
+    <!-- flap -->
+    <rect x="3" y="6" width="18" height="7" fill="#b87830"/>
+    <rect x="3" y="6" width="18" height="1" fill="#d09840"/>
+    <rect x="3" y="6" width="1" height="7" fill="#c88838"/>
+    <rect x="20" y="6" width="1" height="7" fill="#7a5020"/>
+    <rect x="3" y="12" width="18" height="1" fill="#7a5020"/>
+    <!-- clasp -->
+    <rect x="10" y="11" width="4" height="3" fill="#d4a030"/>
+    <rect x="11" y="12" width="2" height="1" fill="#fff8c0"/>
+    <!-- gold coins peek -->
+    <rect x="6" y="15" width="4" height="3" fill="#d4a030"/>
+    <rect x="6" y="15" width="4" height="1" fill="#f0c040"/>
+    <rect x="14" y="15" width="4" height="3" fill="#d4a030"/>
+    <rect x="14" y="15" width="4" height="1" fill="#f0c040"/>
+  </svg>`;
+}
+
 function shopHTML() {
   const shop = game.shop;
   const active = game.numPlayers;
@@ -871,7 +914,7 @@ function shopHTML() {
 
   const readyBtn = isMobile
     ? `<div class="shop-ready-row">
-        <button id="mobile-bag-btn" style="padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦</button>
+        <button id="mobile-bag-btn" style="padding:7px 10px;background:#1c1c30;border:2px solid #5580cc;border-radius:6px;cursor:pointer;line-height:0">${satchelSVG()}</button>
         <button id="mobile-ready-btn" style="flex:1;padding:10px 18px;font-size:14px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${shop.ready[0] ? '✓ READY' : '⬇ DESCEND'}</button>
         <button id="mobile-settings-btn" style="padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c1c;border:2px solid #4a4060;color:#aaa;border-radius:6px;cursor:pointer">⚙</button>
       </div>`
