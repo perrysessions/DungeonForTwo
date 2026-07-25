@@ -187,18 +187,36 @@ html, body {
 .statusline { margin-top: 10px; font-size: 14px; }
 
 /* shop */
-.shoplist { max-height: 46vh; overflow-y: auto; margin: 10px 0; }
-.shoprow {
-  display: grid; grid-template-columns: 24px 1.4fr 2.1fr 0.7fr 0.6fr; gap: 8px;
-  align-items: center; padding: 6px 8px; border: 2px solid transparent;
-  border-radius: 4px; font-size: 12px; text-align: left;
-}
-.shoprow .ico { width: 20px; font-size: 15px; }
-.shoprow.sel { background: #2a2242; border-color: #6a5aa0; }
-.shoprow .iname { font-weight: bold; }
-.shoprow .idesc { color: var(--ink-dim); font-size: 11px; }
-.shoprow .iprice { color: var(--gold); text-align: right; }
-.shoprow .imk { display: flex; gap: 3px; justify-content: flex-end; }
+.shop-wrap { display: flex; flex-direction: column; gap: 0; }
+.shop-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px 8px; border-bottom: 2px solid var(--panel-border); gap: 10px; }
+.shop-title { font-size: 17px; font-weight: bold; color: var(--gold); font-family: monospace; }
+.shop-gold { display: flex; align-items: center; gap: 6px; font-size: 15px;
+  color: var(--gold); font-family: monospace; font-weight: bold;
+  background: #1c1a10; border: 2px solid #6a5a20; border-radius: 6px; padding: 4px 10px; }
+.shop-hint { font-size: 11px; color: var(--ink-dim); padding: 4px 14px 6px; }
+.shopgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  padding: 8px 12px; overflow-y: auto; max-height: 52vh; }
+.shopcard { display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 6px 8px; border: 2px solid #3a3555; border-radius: 8px;
+  background: #14121e; cursor: pointer; transition: background 0.1s; min-width: 0; }
+.shopcard:hover, .shopcard.sel { background: #1e1a30; }
+.shopcard .sc-icon { font-size: 28px; line-height: 1; margin: 2px 0 2px; }
+.shopcard .sc-name { font-size: 11px; font-weight: bold; text-align: center;
+  color: #e0dce8; font-family: monospace; line-height: 1.2; }
+.shopcard .sc-rar  { font-size: 10px; font-family: monospace; text-align: center; }
+.shopcard .sc-desc { font-size: 10px; color: var(--ink-dim); text-align: center;
+  line-height: 1.3; min-height: 26px; }
+.shopcard .sc-price { font-size: 11px; color: var(--gold); font-family: monospace; font-weight: bold; }
+.shopcard .sc-buy { margin-top: 2px; padding: 4px 10px; font-size: 11px; font-family: monospace;
+  border-radius: 4px; border: 2px solid #3baa60; background: #1c2a1c;
+  color: #7bff9b; cursor: pointer; width: 100%; }
+.shopcard .sc-buy:disabled { border-color: #444; color: #666; background: #111; cursor: default; }
+.shopcard .sc-marks { display: flex; gap: 3px; justify-content: center; }
+.shop-footer { display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px 10px; border-top: 2px solid var(--panel-border); gap: 8px; flex-wrap: wrap; }
+.shop-status { font-size: 12px; color: var(--ink-dim); font-family: monospace; }
+.shop-ready-row { display: flex; gap: 8px; align-items: center; }
 
 /* mode select */
 .modegrid { display: flex; gap: 20px; justify-content: center; margin: 16px 0; }
@@ -340,10 +358,13 @@ html, body {
   #panel-left .tabs span {
     cursor: pointer;
   }
-  /* Shop list: let the overlay scroll instead of a nested scroll container */
-  .shoplist { max-height: none; overflow: visible; }
-  /* Shop rows need cursor:pointer for iOS click-in-scroll-container fix */
-  .shoprow { cursor: pointer; }
+  /* Shop grid: 2 columns on mobile, let overlay scroll */
+  .shopgrid { grid-template-columns: repeat(2, 1fr); max-height: none; overflow: visible; }
+  .shopcard { cursor: pointer; }
+  .shopcard .sc-icon { font-size: 22px; }
+  .shop-header { padding: 8px 10px 6px; }
+  .shop-title { font-size: 14px; }
+  .shop-footer { padding: 6px 10px 8px; }
 
   /* Shop / menu overlays: start at top, scroll freely, full pointer-events */
   #overlay {

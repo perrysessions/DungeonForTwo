@@ -529,7 +529,7 @@ function renderOverlay() {
 function scrollShop() {
   const shop = game.shop;
   if (!shop || shop._scroll == null) return;
-  const row = els.overlay.querySelector(`.shoprow[data-i="${shop._scroll}"]`);
+  const row = els.overlay.querySelector(`.shopcard[data-shop-idx="${shop._scroll}"]`);
   if (row) row.scrollIntoView({ block: 'nearest' });
   shop._scroll = null;
 }
@@ -839,43 +839,55 @@ function classSelectHTML() {
 function shopHTML() {
   const shop = game.shop;
   const active = game.numPlayers;
-  const rows = shop.stock.map((it, i) => {
+
+  const cards = shop.stock.map((it, i) => {
     const marks = [];
     for (let pi = 0; pi < active; pi++) if (!inv[pi].open && shop.cursor[pi] === i)
       marks.push(`<span class="pmark" style="background:${P_COLOR[pi]}">P${pi + 1}</span>`);
     const sel = marks.length > 0;
+    const rarColor = it.color || '#aaaaaa';
     const canAfford = (game.players[0]?.gold ?? 0) >= it.price;
-    const buyBtn = sel && isMobile
-      ? canAfford
-        ? `<button data-buy-shop-idx="${i}" style="grid-column:1/-1;font-size:12px;padding:5px 16px;margin-top:2px;background:#1c2a1c;border:2px solid #3baa60;color:#7bff9b;border-radius:4px;font-family:monospace;cursor:pointer;width:fit-content">BUY ${it.price}g</button>`
-        : `<small style="grid-column:1/-1;color:#ff6060;margin-top:2px">Need ${it.price - game.players[0].gold}g more</small>`
-      : '';
-    return `<div class="shoprow ${sel ? 'sel' : ''}" data-shop-idx="${i}">
-      <span class="ico">${it.icon || '❔'}</span>
-      <span class="iname" style="color:${it.color || '#fff'}">${it.name}</span>
-      <span class="idesc">${rarityTag(it)}${it.desc || ''}</span>
-      <span class="iprice">💰${it.price}</span>
-      <span class="imk">${marks.join('')}</span>${buyBtn}</div>`;
+    const buyLabel = isMobile
+      ? (canAfford ? `BUY 💰${it.price}` : `💰${it.price}`)
+      : `BUY 💰${it.price}`;
+    return `<div class="shopcard${sel ? ' sel' : ''}" data-shop-idx="${i}"
+        style="border-color:${rarColor}40;${sel ? `border-color:${rarColor};box-shadow:0 0 8px ${rarColor}55;` : ''}">
+      <div class="sc-icon">${it.icon || '❔'}</div>
+      <div class="sc-name" style="color:${rarColor}">${it.name}</div>
+      <div class="sc-rar" style="color:${rarColor}">${it.rarityName || ''}</div>
+      <div class="sc-desc">${it.desc || ''}</div>
+      <div class="sc-marks">${marks.join('')}</div>
+      <button class="sc-buy" data-buy-shop-idx="${i}"${!canAfford ? ' disabled' : ''}>${buyLabel}</button>
+    </div>`;
   }).join('');
+
   const status = [];
   for (let pi = 0; pi < active; pi++) {
     const p = game.players[pi];
-    status.push(`<span style="color:${P_COLOR[pi]}">P${pi + 1} 💰${p.gold} · ${shop.ready[pi] ? 'READY ✓' : 'shopping'}</span>`);
+    status.push(`<span style="color:${P_COLOR[pi]}">P${pi + 1} 💰${p.gold}${shop.ready[pi] ? ' ✓' : ''}</span>`);
   }
-  const mobileReadyBtn = isMobile
-    ? `<div style="display:flex;gap:8px;margin-top:10px">` +
-      `<button id="mobile-bag-btn" style="flex:0 0 auto;padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦</button>` +
-      `<button id="mobile-ready-btn" style="flex:1;padding:10px;font-size:15px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${game.shop?.ready[0] ? '✓ READY — tap to unready' : 'READY TO DESCEND'}</button>` +
-      `<button id="mobile-settings-btn" style="flex:0 0 auto;padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c1c;border:2px solid #4a4060;color:#aaa;border-radius:6px;cursor:pointer">⚙</button>` +
-      `</div>`
-    : '';
-  return `<div class="card wide shop">
-    <h2>Shop — Floor ${game.floor} cleared!</h2>
-    <p class="sub">${isMobile ? 'Tap to select · tap BUY to purchase · ' : '↕ browse · Attack to buy · Interact to ready up · '}open Inventory to equip/sell</p>
-    <div class="shoplist">${rows}</div>
-    <p class="statusline">${status.join(' &nbsp;|&nbsp; ')}</p>
-    ${mobileReadyBtn}
-    <p class="hint">${active === 1 ? 'Ready up' : 'Both players Ready'} to descend to floor ${game.floor + 1}.</p>
+
+  const totalGold = game.players[0]?.gold ?? 0;
+
+  const readyBtn = isMobile
+    ? `<div class="shop-ready-row">
+        <button id="mobile-bag-btn" style="padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c30;border:2px solid #5580cc;color:#aac4ff;border-radius:6px;cursor:pointer">📦</button>
+        <button id="mobile-ready-btn" style="flex:1;padding:10px 18px;font-size:14px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${shop.ready[0] ? '✓ READY' : '⬇ DESCEND'}</button>
+        <button id="mobile-settings-btn" style="padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c1c;border:2px solid #4a4060;color:#aaa;border-radius:6px;cursor:pointer">⚙</button>
+      </div>`
+    : `<p class="hint" style="margin:0">${active === 1 ? 'Interact to ready up' : 'Both players Interact to ready up'} · descend to floor ${game.floor + 1}</p>`;
+
+  return `<div class="card wide shop-wrap">
+    <div class="shop-header">
+      <div class="shop-title">⚔ Floor ${game.floor} — Shop</div>
+      <div class="shop-gold">🪙 ${totalGold}</div>
+    </div>
+    <div class="shop-hint">${isMobile ? 'Tap a card · BUY to purchase · 📦 for inventory' : '↕ browse · Attack to buy · Interact to ready up · R: inventory'}</div>
+    <div class="shopgrid">${cards}</div>
+    <div class="shop-footer">
+      <div class="shop-status">${status.join(' &nbsp;·&nbsp; ')}</div>
+      ${readyBtn}
+    </div>
   </div>`;
 }
 
