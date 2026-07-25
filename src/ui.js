@@ -981,7 +981,6 @@ function shopHTML() {
     : `<p class="hint" style="margin:0">${active === 1 ? 'Interact to ready up' : 'Both players Interact to ready up'} · descend to floor ${game.floor + 1}</p>`;
 
   return `<div class="shop-frame">
-    ${shopCornerSVG('tl')}${shopCornerSVG('tr')}${shopCornerSVG('bl')}${shopCornerSVG('br')}
     <div class="shop-header">
       <div class="shop-title">Floor ${game.floor} — Shop</div>
       <div class="shop-gold">${chestSVG()}<span>${totalGold}</span></div>

@@ -366,8 +366,8 @@ html, body {
   #panel-left .tabs span {
     cursor: pointer;
   }
-  /* Shop grid: 2 columns on mobile, let overlay scroll */
-  .shopgrid { grid-template-columns: repeat(2, 1fr); max-height: none; overflow: visible; gap: 5px; padding: 5px 8px; }
+  /* Shop grid: 4 columns on mobile too, let overlay scroll */
+  .shopgrid { grid-template-columns: repeat(4, 1fr); max-height: none; overflow: visible; gap: 4px; padding: 4px 6px; }
   .shopcard { cursor: pointer; padding: 5px 4px; }
   .shopcard .sc-icon { font-size: 18px; }
   .shopcard .sc-name { font-size: 9px; }
