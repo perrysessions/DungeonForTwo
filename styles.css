@@ -289,6 +289,42 @@ html, body {
 #restart-yes:hover { background: #3a1010 !important; }
 #settings-close { margin-top: 16px; width: 100%; }
 
+#loading-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #0c0a12;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.4s ease;
+}
+#loading-screen.fade-out { opacity: 0; pointer-events: none; }
+#loading-content { text-align: center; }
+#loading-title {
+  font-family: "Courier New", monospace;
+  font-size: 28px;
+  color: #c090ff;
+  margin-bottom: 32px;
+  text-shadow: 0 0 20px #9060cc;
+  letter-spacing: 2px;
+}
+#loading-bar-wrap {
+  width: 260px; height: 10px;
+  background: #2a2040;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 0 auto 14px;
+}
+#loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8040cc, #c080ff);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.2s ease;
+}
+#loading-text {
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #8b84a0;
+}
+
 #rotate-msg {
   display: none;
   position: fixed; inset: 0; z-index: 9999;

@@ -271,7 +271,7 @@ function frame(now) {
   ui.update(dt);
   updateMobileControls(game.phase);
   updateFloorTransition(dt);
-  if (game.phase === Phase.PLAYING && !game.paused && !game.floorTransition) simulate(dt);
+  if (game.phase === Phase.PLAYING && !game.paused && !game.floorTransition && !game.tabHidden) simulate(dt);
 
   if (game.map) render(ctx);
   game.time += dt;
@@ -291,12 +291,41 @@ function init() {
   // Start music as soon as audio buffers are loaded. Browsers that enforce
   // autoplay policy will suspend the AudioContext until the first user gesture;
   // the unlock listener below resumes it so music begins immediately on touch.
+  const loadScreen = document.getElementById('loading-screen');
+  const loadBar = document.getElementById('loading-bar');
+  const loadText = document.getElementById('loading-text');
+
+  // Animate load bar while audio buffers load
+  let fakeProgress = 0;
+  const fakeInterval = setInterval(() => {
+    fakeProgress = Math.min(fakeProgress + Math.random() * 8, 85);
+    loadBar.style.width = fakeProgress + '%';
+  }, 120);
+
   preloadAudio().then(() => {
+    clearInterval(fakeInterval);
+    loadBar.style.width = '100%';
+    loadText.textContent = 'Ready!';
+    setTimeout(() => {
+      loadScreen.classList.add('fade-out');
+      setTimeout(() => loadScreen.remove(), 450);
+    }, 300);
     playMusic('dungeon', { fadeIn: 2.5 });
   });
+
   const unlockAudio = () => { resumeAudio(); };
   document.addEventListener('click', unlockAudio, { once: true });
   document.addEventListener('keydown', unlockAudio, { once: true });
+
+  // Pause when tab/iframe loses focus; resume on return
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      game.tabHidden = true;
+    } else {
+      game.tabHidden = false;
+    }
+  });
+
   requestAnimationFrame(frame);
 }
 

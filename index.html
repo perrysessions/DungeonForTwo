@@ -4,9 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Dungeon For Two</title>
+  <meta name="description" content="A local 2-player browser roguelike. Fight through 20 dungeon floors, level up your class, and take on epic bosses. Free to play!" />
+  <meta property="og:title" content="Dungeon For Two" />
+  <meta property="og:description" content="A local 2-player browser roguelike. Fight through 20 dungeon floors, level up your class, and take on epic bosses." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/preview.png" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="loading-screen">
+    <div id="loading-content">
+      <div id="loading-title">⚔ Dungeon For Two ⚔</div>
+      <div id="loading-bar-wrap"><div id="loading-bar"></div></div>
+      <div id="loading-text">Loading…</div>
+    </div>
+  </div>
   <div id="rotate-msg">⟳ Rotate your device to play</div>
   <div id="game-root">
     <aside id="panel-left" class="panel"></aside>
