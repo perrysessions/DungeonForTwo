@@ -335,26 +335,32 @@ function handleShop() {
   const shop = game.shop;
   if (!shop) return;
   const active = game.numPlayers;
+  const DESCEND_IDX = shop.stock.length; // virtual slot after all items
   for (let pi = 0; pi < active; pi++) {
     if (inv[pi].open) continue;
     const p = game.players[pi];
     const n = shop.stock.length;
+    const total = n + 1; // items + descend button
     const COLS = 4;
-    if (n > 0 && input.actionPressed(pi, 'up'))    { shop.cursor[pi] = (shop.cursor[pi] - COLS + n) % n; shop._scroll = shop.cursor[pi]; }
-    if (n > 0 && input.actionPressed(pi, 'down'))  { shop.cursor[pi] = (shop.cursor[pi] + COLS) % n;     shop._scroll = shop.cursor[pi]; }
-    if (n > 0 && input.actionPressed(pi, 'left'))  { shop.cursor[pi] = (shop.cursor[pi] - 1 + n) % n;   shop._scroll = shop.cursor[pi]; }
-    if (n > 0 && input.actionPressed(pi, 'right')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % n;       shop._scroll = shop.cursor[pi]; }
-    if (n > 0 && input.actionPressed(pi, 'attack')) {
+    if (input.actionPressed(pi, 'up'))    { shop.cursor[pi] = (shop.cursor[pi] - COLS + total) % total; shop._scroll = shop.cursor[pi]; }
+    if (input.actionPressed(pi, 'down'))  { shop.cursor[pi] = (shop.cursor[pi] + COLS) % total;         shop._scroll = shop.cursor[pi]; }
+    if (input.actionPressed(pi, 'left'))  { shop.cursor[pi] = (shop.cursor[pi] - 1 + total) % total;   shop._scroll = shop.cursor[pi]; }
+    if (input.actionPressed(pi, 'right')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % total;           shop._scroll = shop.cursor[pi]; }
+    if (input.actionPressed(pi, 'attack')) {
       const idx = shop.cursor[pi];
-      const res = buy(p, shop.stock[idx]);
-      if (res.ok) {
-        // Purchased item is gone for both players.
-        shop.stock.splice(idx, 1);
-        for (let k = 0; k < 2; k++) {
-          if (shop.cursor[k] > idx) shop.cursor[k]--;
-          shop.cursor[k] = Math.max(0, Math.min(shop.cursor[k], shop.stock.length - 1));
-        }
-      } else flashPanel(pi, res.reason);
+      if (idx === DESCEND_IDX) {
+        // Descend button — mark this player ready
+        shop.ready[pi] = true;
+      } else if (n > 0) {
+        const res = buy(p, shop.stock[idx]);
+        if (res.ok) {
+          shop.stock.splice(idx, 1);
+          for (let k = 0; k < 2; k++) {
+            if (shop.cursor[k] > idx) shop.cursor[k]--;
+            shop.cursor[k] = Math.max(0, Math.min(shop.cursor[k], shop.stock.length));
+          }
+        } else flashPanel(pi, res.reason);
+      }
     }
     if (input.actionPressed(pi, 'interact')) shop.ready[pi] = !shop.ready[pi];
   }
@@ -1162,7 +1168,21 @@ function shopHTML() {
       <div class="sc-marks">${marks.join('')}</div>
       <button class="sc-buy" data-buy-shop-idx="${i}"${!canAfford ? ' disabled' : ''}>${buyLabel}</button>
     </div>`;
-  }).join('');
+  // Descend button as a navigable shop card
+  const descendIdx = shop.stock.length;
+  const descendSelMarks = [];
+  for (let pi = 0; pi < active; pi++) {
+    if (shop.cursor[pi] === descendIdx) descendSelMarks.push(`<span class="pmark" style="background:${P_COLOR[pi]}">P${pi + 1}</span>`);
+  }
+  const descendSel = descendSelMarks.length > 0;
+  const allReadyNow = shop.ready.slice(0, active).every(Boolean);
+  const descendCard = !isMobile ? `<div class="shopcard descend-card${descendSel ? ' sel' : ''}" style="border-color:${descendSel ? '#3baa60' : '#2a4030'};${descendSel ? 'box-shadow:0 0 12px #3baa6088;' : ''}grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 20px;min-height:unset;gap:6px">
+    <div style="font-size:22px">⬇</div>
+    <div style="color:#7bff9b;font-weight:bold;font-size:14px">DESCEND TO FLOOR ${game.floor + 1}</div>
+    <div style="font-size:11px;color:#8b84a0">${descendSelMarks.join(' ')}${allReadyNow ? ' All ready!' : (active > 1 ? ' Both players select to descend' : ' Select &amp; attack to descend')}</div>
+  </div>` : '';
+
+  cards += descendCard;
 
   const status = [];
   for (let pi = 0; pi < active; pi++) {
@@ -1178,14 +1198,14 @@ function shopHTML() {
         <button id="mobile-ready-btn" style="flex:1;padding:10px 18px;font-size:14px;font-family:monospace;background:#1c3020;border:2px solid #3baa60;color:#7bff9b;border-radius:6px;cursor:pointer">${shop.ready[0] ? '✓ READY' : '⬇ DESCEND'}</button>
         <button id="mobile-settings-btn" style="padding:10px 14px;font-size:15px;font-family:monospace;background:#1c1c1c;border:2px solid #4a4060;color:#aaa;border-radius:6px;cursor:pointer">⚙</button>
       </div>`
-    : `<p class="hint" style="margin:0">${active === 1 ? 'Interact to ready up' : 'Both players Interact to ready up'} · descend to floor ${game.floor + 1}</p>`;
+    : '';
 
   return `<div class="shop-frame">
     <div class="shop-header">
       <div class="shop-title">Floor ${game.floor} — Shop</div>
       <div class="shop-gold">${chestSVG()}<span>${totalGold}</span></div>
     </div>
-    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · Attack to buy · Interact to ready · R: inventory'}</div>
+    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · Attack to buy/descend · R: inventory'}</div>
     <div class="shopgrid">${cards}</div>
     <div class="shop-footer">
       <div class="shop-status">${status.join(' &nbsp;·&nbsp; ')}</div>
