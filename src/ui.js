@@ -339,8 +339,11 @@ function handleShop() {
     if (inv[pi].open) continue;
     const p = game.players[pi];
     const n = shop.stock.length;
-    if (n > 0 && input.actionPressed(pi, 'up')) { shop.cursor[pi] = (shop.cursor[pi] - 1 + n) % n; shop._scroll = shop.cursor[pi]; }
-    if (n > 0 && input.actionPressed(pi, 'down')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % n; shop._scroll = shop.cursor[pi]; }
+    const COLS = 4;
+    if (n > 0 && input.actionPressed(pi, 'up'))    { shop.cursor[pi] = (shop.cursor[pi] - COLS + n) % n; shop._scroll = shop.cursor[pi]; }
+    if (n > 0 && input.actionPressed(pi, 'down'))  { shop.cursor[pi] = (shop.cursor[pi] + COLS) % n;     shop._scroll = shop.cursor[pi]; }
+    if (n > 0 && input.actionPressed(pi, 'left'))  { shop.cursor[pi] = (shop.cursor[pi] - 1 + n) % n;   shop._scroll = shop.cursor[pi]; }
+    if (n > 0 && input.actionPressed(pi, 'right')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % n;       shop._scroll = shop.cursor[pi]; }
     if (n > 0 && input.actionPressed(pi, 'attack')) {
       const idx = shop.cursor[pi];
       const res = buy(p, shop.stock[idx]);

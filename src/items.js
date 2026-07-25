@@ -167,7 +167,7 @@ export function rollLoot(floor, enemyTier) {
 export function generateShopStock(floor) {
   const t = tierForFloor(floor + 1); // stock hints at what's ahead
   const stock = [];
-  for (let i = 0; i < 5; i++) stock.push(generateEquipment(t, floor));
+  for (let i = 0; i < 4; i++) stock.push(generateEquipment(t, floor));
   stock.push(generateEquipment(t, floor + 1, chance(0.4) ? 'legendary' : 'rare'));
   stock.push(makePotion('health'));
   stock.push(makePotion('greaterHealth'));
