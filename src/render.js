@@ -133,170 +133,171 @@ function drawTiles(ctx, th) {
 
       if (map.tileAt(tx, ty) === 1) {
         // --- FLOOR ---
-        // Two-tone checkerboard base
-        ctx.fillStyle = (tx + ty) % 2 === 0 ? th.floor : th.floor2;
+        const base = (tx + ty) % 2 === 0 ? th.floor : th.floor2;
+        ctx.fillStyle = base;
         ctx.fillRect(px, py, TILE, TILE);
 
-        // Tile border grout lines
+        // Inner corner shadows — darkens each tile's edges for sunken-tile depth
+        ctx.fillStyle = 'rgba(0,0,0,0.32)';
+        ctx.fillRect(px, py, TILE, 2);          // top edge
+        ctx.fillRect(px, py, 2, TILE);          // left edge
         ctx.fillStyle = 'rgba(0,0,0,0.18)';
-        ctx.fillRect(px, py, TILE, 1);
-        ctx.fillRect(px, py, 1, TILE);
+        ctx.fillRect(px, py + TILE - 2, TILE, 2); // bottom edge
+        ctx.fillRect(px + TILE - 2, py, 2, TILE); // right edge
 
-        // Random crack on ~20% of tiles
-        if (h < 0.2) {
-          ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+        // Corner vignette (darker squares in corners)
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.fillRect(px, py, 4, 4);
+        ctx.fillRect(px + TILE - 4, py, 4, 4);
+        ctx.fillRect(px, py + TILE - 4, 4, 4);
+        ctx.fillRect(px + TILE - 4, py + TILE - 4, 4, 4);
+
+        // Crack on ~22% of tiles
+        if (h < 0.22) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.38)';
           ctx.lineWidth = 1;
           ctx.beginPath();
-          const cx = px + 6 + Math.floor(h2 * 20);
-          const cy = py + 6 + Math.floor(h3 * 20);
+          const cx = px + 6 + Math.floor(h2 * 18);
+          const cy = py + 6 + Math.floor(h3 * 18);
           ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + (h2 > 0.5 ? 7 : -5), cy + (h3 > 0.5 ? 6 : -4));
+          ctx.lineTo(cx + (h2 > 0.5 ? 8 : -6), cy + (h3 > 0.5 ? 7 : -5));
+          ctx.lineTo(cx + (h2 > 0.5 ? 11 : -9), cy + (h3 > 0.5 ? 10 : -8));
           ctx.stroke();
         }
 
-        // Small pebble on ~12% of tiles
-        if (h > 0.85) {
-          ctx.fillStyle = 'rgba(0,0,0,0.22)';
-          const px2 = px + 4 + Math.floor(h2 * 24);
-          const py2 = py + 4 + Math.floor(h3 * 24);
+        // Small pebble on ~10% of tiles
+        if (h > 0.88) {
+          ctx.fillStyle = 'rgba(0,0,0,0.28)';
+          const px2 = px + 5 + Math.floor(h2 * 20);
+          const py2 = py + 5 + Math.floor(h3 * 20);
           ctx.beginPath(); ctx.ellipse(px2, py2, 3, 2, h * 3, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fillStyle = 'rgba(255,255,255,0.09)';
           ctx.beginPath(); ctx.ellipse(px2 - 1, py2 - 1, 1.5, 1, h * 3, 0, Math.PI * 2); ctx.fill();
         }
 
-        // Shadow cast from wall above
+        // Deep shadow from wall above
         if (map.tileAt(tx, ty - 1) !== 1) {
-          ctx.fillStyle = 'rgba(0,0,0,0.35)';
-          ctx.fillRect(px, py, TILE, 7);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)';
+          ctx.fillRect(px, py, TILE, 8);
+          ctx.fillStyle = 'rgba(0,0,0,0.25)';
+          ctx.fillRect(px, py + 8, TILE, 5);
         }
-        // Shadow from wall on left
         if (map.tileAt(tx - 1, ty) !== 1) {
-          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.fillStyle = 'rgba(0,0,0,0.22)';
           ctx.fillRect(px, py, 5, TILE);
         }
-        // Shadow from wall on right
         if (map.tileAt(tx + 1, ty) !== 1) {
-          ctx.fillStyle = 'rgba(0,0,0,0.12)';
+          ctx.fillStyle = 'rgba(0,0,0,0.14)';
           ctx.fillRect(px + TILE - 4, py, 4, TILE);
         }
 
       } else {
         // --- WALL ---
+        // Staggered masonry: 2 rows of bricks per tile, offset every other row
         ctx.fillStyle = th.wall;
         ctx.fillRect(px, py, TILE, TILE);
 
-        // Stone block grid — divide each tile into 2×1 brick pattern
-        const brickRow = ty % 2;
-        const brickX = brickRow === 0 ? 0 : TILE / 2;
-        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-        ctx.lineWidth = 1;
-        // Horizontal mortar
-        ctx.beginPath();
-        ctx.moveTo(px, py + TILE / 2); ctx.lineTo(px + TILE, py + TILE / 2);
-        ctx.stroke();
-        // Vertical mortar (offset per row)
-        ctx.beginPath();
-        ctx.moveTo(px + brickX, py); ctx.lineTo(px + brickX, py + TILE / 2);
-        ctx.stroke();
-        const brickX2 = brickRow === 0 ? TILE / 2 : 0;
-        ctx.beginPath();
-        ctx.moveTo(px + brickX2, py + TILE / 2); ctx.lineTo(px + brickX2, py + TILE);
-        ctx.stroke();
-
-        // Highlight top edge of each stone
-        ctx.fillStyle = th.wallHi;
-        ctx.fillRect(px + 1, py + 1, TILE - 2, 2);
-        ctx.fillRect(px + 1, py + TILE / 2 + 1, TILE - 2, 2);
-
-        // Shadow bottom edge
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.fillRect(px, py + TILE / 2 - 2, TILE, 2);
-        ctx.fillRect(px, py + TILE - 2, TILE, 2);
-
-        // Random crack on ~18% of wall tiles
-        if (h < 0.18) {
-          ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          const cx = px + 4 + Math.floor(h2 * 24);
-          const cy = py + 4 + Math.floor(h3 * 24);
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + (h2 > 0.5 ? 8 : -6), cy + 5);
-          ctx.lineTo(cx + (h2 > 0.5 ? 11 : -9), cy + 10);
-          ctx.stroke();
-        }
-
-        // Moss on walls that are above a floor tile (~30% of eligible)
-        if (map.tileAt(tx, ty + 1) === 1 && h > 0.65) {
-          ctx.fillStyle = th.wallMoss;
-          const mw = 4 + Math.floor(h2 * 8);
-          const mx = px + 2 + Math.floor(h3 * (TILE - mw - 4));
-          ctx.fillRect(mx, py + TILE - 6, mw, 4);
-          // Moss highlight
-          ctx.fillStyle = 'rgba(100,180,80,0.15)';
-          ctx.fillRect(mx, py + TILE - 6, mw, 2);
-        }
-
-        // Facing-wall highlight strip (the "wall top" — bottom edge of wall facing player)
-        if (map.tileAt(tx, ty + 1) === 1) {
-          ctx.fillStyle = th.wallTop;
-          ctx.fillRect(px, py + TILE - 9, TILE, 9);
-          // Highlight rim
-          ctx.fillStyle = th.wallHi;
-          ctx.fillRect(px, py + TILE - 9, TILE, 2);
-        }
-
-        // Crumble: paint void chunks on exposed wall edges using hashes
-        // Each edge gets 1-2 notches if that side is open (adjacent to floor or map boundary)
-        const voidColor = '#000000';
         const h4 = tileHash(tx + 41, ty + 5);
         const h5 = tileHash(tx + 17, ty + 83);
         const h6 = tileHash(tx * 7, ty + 29);
         const h7 = tileHash(tx + 3, ty * 11);
 
-        // Bottom edge (visible facing edge — most important for depth)
+        // Two brick rows, each 14px tall with 2px mortar gap between and on edges
+        // Stagger: even rows align to tile left, odd rows offset by TILE/2
+        const mortar = 2;
+        const rowH = (TILE - mortar * 3) / 2; // ~13px each
+        const rowOffset = (ty % 2 === 0) ? 0 : TILE / 2;
+
+        for (let row = 0; row < 2; row++) {
+          const by = py + mortar + row * (rowH + mortar);
+          // Each row has 1 or 2 brick columns depending on the stagger offset
+          // Draw bricks spanning the full tile width starting from the row offset
+          // (a brick may be cut at tile edge — that's fine, masonry wraps)
+          const brickW = TILE; // one wide brick per row per tile, stagger gives the offset look
+          const startX = px - rowOffset + (tx % 2 === 0 ? 0 : TILE / 2);
+
+          // We draw up to 2 potential brick segments clipped to this tile
+          const offsets = [-rowOffset, TILE - rowOffset];
+          for (const ox of offsets) {
+            const bx = px + ox;
+            const bw = TILE / 2 - mortar; // half-width brick minus mortar
+            // Clamp to tile
+            const clipL = Math.max(bx + mortar, px + mortar);
+            const clipR = Math.min(bx + TILE / 2 - mortar, px + TILE - mortar);
+            if (clipR <= clipL) continue;
+            const cw = clipR - clipL;
+
+            // Brick color: slight per-brick variation via hash
+            const bHash = tileHash(Math.round((bx - px) * 10 + tx), ty * 2 + row);
+            ctx.fillStyle = bHash < 0.35 ? th.wallHi : th.wall;
+            ctx.fillRect(clipL, by, cw, rowH);
+
+            // Top-left highlight
+            ctx.fillStyle = 'rgba(255,255,255,0.13)';
+            ctx.fillRect(clipL, by, cw, 2);
+            if (clipL === px + mortar || clipL === bx + mortar) {
+              ctx.fillRect(clipL, by, 2, rowH);
+            }
+
+            // Bottom-right shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.38)';
+            ctx.fillRect(clipL, by + rowH - 2, cw, 2);
+            ctx.fillRect(clipR - 2, by, 2, rowH);
+          }
+        }
+
+        // Dark mortar lines (horizontal)
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(px, py, TILE, mortar);
+        ctx.fillRect(px, py + mortar + rowH, TILE, mortar);
+        ctx.fillRect(px, py + TILE - mortar, TILE, mortar);
+
+        // Vertical mortar (staggered per row)
+        ctx.fillRect(px + rowOffset, py + mortar, mortar, rowH);
+        const col2X = rowOffset + TILE / 2;
+        if (col2X < TILE) ctx.fillRect(px + col2X, py + mortar, mortar, rowH);
+        const row2Off = (TILE / 2 - rowOffset + TILE) % TILE;
+        ctx.fillRect(px + row2Off, py + mortar + rowH + mortar, mortar, rowH);
+        const col2R2 = row2Off + TILE / 2;
+        if (col2R2 < TILE) ctx.fillRect(px + col2R2, py + mortar + rowH + mortar, mortar, rowH);
+
+        // Random crack on ~18% of wall tiles
+        if (h < 0.18) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          const cx = px + 5 + Math.floor(h2 * 22);
+          const cy = py + 5 + Math.floor(h3 * 20);
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + (h2 > 0.5 ? 8 : -6), cy + 6);
+          ctx.lineTo(cx + (h2 > 0.5 ? 11 : -9), cy + 11);
+          ctx.stroke();
+        }
+
+        // Moss near bottom on tiles above floor
+        if (map.tileAt(tx, ty + 1) === 1 && h > 0.65) {
+          ctx.fillStyle = th.wallMoss;
+          const mw = 4 + Math.floor(h2 * 9);
+          const mx = px + 3 + Math.floor(h3 * (TILE - mw - 6));
+          ctx.fillRect(mx, py + TILE - 7, mw, 5);
+          ctx.fillStyle = 'rgba(100,180,80,0.15)';
+          ctx.fillRect(mx, py + TILE - 7, mw, 2);
+        }
+
+        // Facing-wall top strip
         if (map.tileAt(tx, ty + 1) === 1) {
-          ctx.fillStyle = voidColor;
-          // notch 1
-          const nw1 = 2 + Math.floor(h4 * 4);
-          const nx1 = px + 2 + Math.floor(h5 * (TILE - nw1 - 4));
+          ctx.fillStyle = th.wallTop;
+          ctx.fillRect(px, py + TILE - 9, TILE, 9);
+          ctx.fillStyle = th.wallHi;
+          ctx.fillRect(px, py + TILE - 9, TILE, 2);
+          // Crumble notches
+          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          const nw1 = 2 + Math.floor(h4 * 4); const nx1 = px + 2 + Math.floor(h5 * (TILE - nw1 - 4));
           ctx.fillRect(nx1, py + TILE - 3, nw1, 3);
-          // notch 2 (~60% chance)
           if (h6 > 0.4) {
-            const nw2 = 2 + Math.floor(h6 * 3);
-            const nx2 = px + 2 + Math.floor(h7 * (TILE - nw2 - 4));
+            const nw2 = 2 + Math.floor(h6 * 3); const nx2 = px + 2 + Math.floor(h7 * (TILE - nw2 - 4));
             ctx.fillRect(nx2, py + TILE - 2, nw2, 2);
           }
-          // occasional corner chip
-          if (h > 0.7) ctx.fillRect(px, py + TILE - 4, 2, 4);
-          if (h2 > 0.7) ctx.fillRect(px + TILE - 2, py + TILE - 4, 2, 4);
-        }
-
-        // Top edge exposed to floor
-        if (map.tileAt(tx, ty - 1) === 1) {
-          ctx.fillStyle = voidColor;
-          const nw = 2 + Math.floor(h4 * 4);
-          const nx = px + 3 + Math.floor(h5 * (TILE - nw - 6));
-          ctx.fillRect(nx, py, nw, 2);
-          if (h3 > 0.5) ctx.fillRect(px + TILE - 2, py, 2, 3);
-        }
-
-        // Left edge exposed to floor
-        if (map.tileAt(tx - 1, ty) === 1) {
-          ctx.fillStyle = voidColor;
-          const nh = 2 + Math.floor(h6 * 4);
-          const ny = py + 3 + Math.floor(h7 * (TILE - nh - 6));
-          ctx.fillRect(px, ny, 2, nh);
-          if (h4 > 0.6) ctx.fillRect(px, py, 2, 2);
-        }
-
-        // Right edge exposed to floor
-        if (map.tileAt(tx + 1, ty) === 1) {
-          ctx.fillStyle = voidColor;
-          const nh = 2 + Math.floor(h5 * 4);
-          const ny = py + 3 + Math.floor(h4 * (TILE - nh - 6));
-          ctx.fillRect(px + TILE - 2, ny, 2, nh);
-          if (h7 > 0.6) ctx.fillRect(px + TILE - 2, py + TILE - 2, 2, 2);
         }
       }
     }

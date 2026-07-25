@@ -31,6 +31,7 @@ const SFX_FILES = {
   ability:       'assets/sounds/mage_ability.ogg',
   sword_ability: 'assets/sounds/sword_ability.ogg',
   floor_clear:   'assets/sounds/finished_level.ogg',
+  boss_sting:    'assets/sounds/boss_music.ogg',
 };
 
 const MUSIC_FILES = {

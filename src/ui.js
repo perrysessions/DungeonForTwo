@@ -848,6 +848,197 @@ function classSelectHTML() {
   </div>`;
 }
 
+function itemIconSVG(it) {
+  const c = it.color || '#b8b8c4';
+  const dim = 'width="28" height="28"';
+  const wrap = (vb, content) =>
+    `<svg viewBox="${vb}" ${dim} style="display:block;image-rendering:pixelated">${content}</svg>`;
+
+  if (it.slot === 'consumable') {
+    const liq = it.id.startsWith('mana') ? '#3050ee' : '#bb1828';
+    const glassStroke = it.id.startsWith('mana') ? 'rgba(140,180,255,0.8)' : 'rgba(255,180,180,0.7)';
+    return wrap('0 0 20 28',
+      `<!-- bottle body - wide rounded flask -->
+       <ellipse cx="10" cy="19" rx="8" ry="7" fill="${liq}"/>
+       <ellipse cx="10" cy="19" rx="8" ry="7" fill="rgba(255,255,255,0.08)"/>
+       <ellipse cx="10" cy="19" rx="8" ry="7" fill="none" stroke="${glassStroke}" stroke-width="1.2"/>
+       <!-- liquid fill line -->
+       <ellipse cx="10" cy="16" rx="7" ry="1.5" fill="rgba(255,255,255,0.15)"/>
+       <!-- glass highlight -->
+       <ellipse cx="6" cy="15" rx="2" ry="3.5" fill="rgba(255,255,255,0.3)"/>
+       <!-- neck -->
+       <rect x="7" y="8" width="6" height="8" fill="${liq}"/>
+       <rect x="7" y="8" width="6" height="8" fill="none" stroke="${glassStroke}" stroke-width="1"/>
+       <rect x="8" y="9" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>
+       <!-- cork -->
+       <rect x="6" y="3" width="8" height="6" rx="2" fill="#c08030"/>
+       <rect x="6" y="3" width="3" height="6" fill="rgba(255,255,255,0.18)" rx="1"/>
+       <rect x="6" y="3" width="8" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>`
+    );
+  }
+
+  const n = it.name || '';
+  if (it.slot === 'weapon') {
+    if (n.includes('Sword')) return wrap('0 0 10 32',
+      `<!-- long blade -->
+       <polygon points="5,0 7,22 3,22" fill="#c8d8e8"/>
+       <polygon points="5,0 5.6,11 5,11" fill="rgba(255,255,255,0.75)"/>
+       <!-- crossguard -->
+       <rect x="0" y="22" width="10" height="3" rx="1" fill="${c}"/>
+       <rect x="0" y="22" width="10" height="1" fill="rgba(255,255,255,0.3)"/>
+       <!-- grip -->
+       <rect x="3.5" y="25" width="3" height="5" rx="0.5" fill="#7a4820"/>
+       <rect x="3.5" y="25" width="1" height="5" fill="rgba(255,255,255,0.22)"/>
+       <!-- pommel -->
+       <ellipse cx="5" cy="31" rx="3" ry="2" fill="${c}"/>
+       <ellipse cx="4" cy="30.5" rx="1.2" ry="0.8" fill="rgba(255,255,255,0.4)"/>`);
+    if (n.includes('Axe')) return wrap('-10 -10 20 20',
+      `<g transform="rotate(35)">
+        <rect x="-1.5" y="-6" width="3" height="14" fill="#7a5030"/>
+        <polygon points="2,-6 9,-4 9,4 2,4" fill="${c}"/>
+        <polygon points="2,-6 9,-4 9,-1" fill="rgba(255,255,255,0.35)"/>
+        <polygon points="9,-4 9,4 7,-1" fill="rgba(0,0,0,0.4)"/>
+      </g>`);
+    if (n.includes('Mace')) return wrap('-10 -10 20 20',
+      `<g transform="rotate(40)">
+        <rect x="-1.5" y="-4" width="3" height="12" fill="#7a5030"/>
+        <rect x="-4" y="-8" width="8" height="6" rx="1" fill="${c}"/>
+        <rect x="-4" y="-8" width="2" height="6" fill="rgba(255,255,255,0.25)" rx="0.5"/>
+        <rect x="2" y="-8" width="2" height="6" fill="rgba(0,0,0,0.35)" rx="0.5"/>
+        <rect x="-5" y="-5" width="2" height="3" fill="${c}"/>
+        <rect x="3" y="-5" width="2" height="3" fill="${c}"/>
+      </g>`);
+    if (n.includes('Bow')) return wrap('0 0 20 28',
+      `<!-- bow limb - D-curve shape -->
+       <path d="M 14,2 Q 2,14 14,26" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
+       <!-- highlight on limb -->
+       <path d="M 14,2 Q 4,14 14,26" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+       <!-- string -->
+       <line x1="14" y1="2" x2="14" y2="26" stroke="#d0d0a0" stroke-width="1"/>
+       <!-- grip wrap -->
+       <rect x="10" y="11" width="4" height="6" rx="1" fill="#8b5820"/>
+       <rect x="10" y="11" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>`);
+    if (n.includes('Dagger')) return wrap('-10 -10 20 20',
+      `<g transform="rotate(40)">
+        <polygon points="0,-9 1.5,-1 -1.5,-1" fill="#dde8f0"/>
+        <polygon points="0,-9 0.5,-3 0,-3" fill="#fff" opacity="0.7"/>
+        <rect x="-3" y="-1" width="6" height="1.5" fill="${c}" rx="0.3"/>
+        <rect x="-1" y="0.5" width="2" height="4" fill="#4a3858"/>
+      </g>`);
+    if (n.includes('Staff')) return wrap('-10 -14 20 28',
+      `<rect x="-1.5" y="-7" width="3" height="19" rx="1" fill="#7a5022"/>
+       <rect x="-1.5" y="-7" width="1" height="19" fill="rgba(255,255,255,0.2)" rx="1"/>
+       <circle cx="0" cy="-10" r="5" fill="${c}" opacity="0.9"/>
+       <circle cx="-1.5" cy="-12" r="2" fill="rgba(255,255,255,0.45)"/>
+       <circle cx="0" cy="-10" r="7" fill="${c}" opacity="0.18"/>`);
+  }
+
+  if (it.slot === 'armor') {
+    if (n.includes('Robe')) return wrap('0 0 24 30',
+      `<!-- hood/shoulders -->
+       <ellipse cx="12" cy="5" rx="8" ry="5" fill="${c}"/>
+       <!-- hood center peak -->
+       <polygon points="12,0 8,4 16,4" fill="rgba(255,255,255,0.15)"/>
+       <!-- robe body — wide and flowing -->
+       <polygon points="4,8 20,8 22,28 2,28" fill="${c}"/>
+       <!-- front opening / dark seam -->
+       <polygon points="12,8 10,28 14,28" fill="rgba(0,0,0,0.35)"/>
+       <!-- left highlight -->
+       <polygon points="4,8 8,8 7,28 2,28" fill="rgba(255,255,255,0.12)"/>
+       <!-- right shadow -->
+       <polygon points="20,8 16,8 17,28 22,28" fill="rgba(0,0,0,0.2)"/>
+       <!-- collar/neck area -->
+       <ellipse cx="12" cy="8" rx="4" ry="2" fill="rgba(0,0,0,0.3)"/>
+       <!-- hem detail -->
+       <rect x="2" y="26" width="20" height="2" fill="rgba(255,255,255,0.12)"/>`);
+    if (n.includes('Plate')) return wrap('-10 -10 20 20',
+      `<polygon points="0,-9 7,-4 8,5 0,9 -8,5 -7,-4" fill="${c}"/>
+       <polygon points="0,-9 7,-4 8,5 0,9 -8,5 -7,-4" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+       <polygon points="-7,-4 0,-9 7,-4 5,-3 0,-7 -5,-3" fill="rgba(255,255,255,0.3)"/>
+       <rect x="-2" y="-3" width="4" height="10" fill="rgba(0,0,0,0.2)"/>`);
+    if (n.includes('Mail')) return wrap('-10 -10 20 20',
+      `<polygon points="0,-9 7,-3 7,6 0,9 -7,6 -7,-3" fill="${c}"/>
+       <rect x="-7" y="-1" width="14" height="1" fill="rgba(255,255,255,0.2)"/>
+       <rect x="-7" y="2" width="14" height="1" fill="rgba(255,255,255,0.2)"/>
+       <rect x="-7" y="5" width="14" height="1" fill="rgba(255,255,255,0.2)"/>
+       <polygon points="0,-9 7,-3 5,-3 0,-7 -5,-3 -7,-3" fill="rgba(255,255,255,0.28)"/>`);
+    // Tunic — leather vest, front-facing
+    return wrap('0 0 24 28',
+      `<!-- body -->
+       <polygon points="3,8 21,8 20,26 4,26" fill="${c}"/>
+       <!-- left lapel/front panel -->
+       <polygon points="12,8 3,8 3,4 8,2 12,8" fill="${c}"/>
+       <!-- right lapel/front panel -->
+       <polygon points="12,8 21,8 21,4 16,2 12,8" fill="${c}"/>
+       <!-- front seam line -->
+       <line x1="12" y1="8" x2="12" y2="26" stroke="rgba(0,0,0,0.35)" stroke-width="1"/>
+       <!-- collar -->
+       <polygon points="8,2 16,2 14,0 10,0" fill="rgba(0,0,0,0.3)"/>
+       <!-- left shoulder highlight -->
+       <polygon points="3,4 8,2 8,4 3,6" fill="rgba(255,255,255,0.22)"/>
+       <!-- right shadow -->
+       <polygon points="21,4 16,2 16,4 21,6" fill="rgba(0,0,0,0.25)"/>
+       <!-- bottom shadow -->
+       <rect x="4" y="24" width="16" height="2" fill="rgba(0,0,0,0.25)"/>
+       <!-- button/clasp row -->
+       <circle cx="12" cy="12" r="1" fill="rgba(0,0,0,0.4)"/>
+       <circle cx="12" cy="17" r="1" fill="rgba(0,0,0,0.4)"/>
+       <circle cx="12" cy="22" r="1" fill="rgba(0,0,0,0.4)"/>`);
+  }
+
+  if (it.slot === 'trinket') {
+    if (n.includes('Boot')) return wrap('0 0 26 28',
+      `<!-- shaft (leg part, centered) -->
+       <rect x="7" y="1" width="9" height="15" rx="2" fill="${c}"/>
+       <!-- cuff rim at top -->
+       <rect x="6" y="1" width="11" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
+       <!-- heel — square block behind foot -->
+       <rect x="4" y="14" width="7" height="8" rx="1" fill="${c}"/>
+       <!-- foot/sole extending right -->
+       <rect x="4" y="19" width="18" height="6" rx="3" fill="${c}"/>
+       <!-- toe bump -->
+       <ellipse cx="20" cy="22" rx="3" ry="4" fill="${c}"/>
+       <!-- sole underline -->
+       <rect x="4" y="24" width="20" height="2" rx="1" fill="rgba(0,0,0,0.55)"/>
+       <!-- shaft highlight left -->
+       <rect x="8" y="2" width="2" height="13" fill="rgba(255,255,255,0.25)" rx="1"/>
+       <!-- shaft shadow right -->
+       <rect x="13" y="2" width="2" height="13" fill="rgba(0,0,0,0.22)" rx="1"/>
+       <!-- ankle crease -->
+       <line x1="7" y1="18" x2="16" y2="18" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>`);
+    if (n.includes('Ring') || n.includes('Band')) return wrap('0 0 24 24',
+      `<!-- ring band - clean circle -->
+       <circle cx="12" cy="14" r="8" fill="none" stroke="${c}" stroke-width="4"/>
+       <!-- inner shadow on band -->
+       <circle cx="12" cy="14" r="8" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="1.5" stroke-dasharray="0" transform="translate(1,1)"/>
+       <!-- band highlight -->
+       <path d="M 6,9 A 8,8 0 0,1 18,9" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none"/>
+       <!-- gem on top -->
+       <polygon points="12,1 16,5 12,7 8,5" fill="${c}"/>
+       <polygon points="12,1 16,5 12,5" fill="rgba(255,255,255,0.5)"/>
+       <polygon points="12,1 8,5 12,5" fill="rgba(255,255,255,0.25)"/>
+       <!-- gem shine -->
+       <polygon points="11,2 13,2 12,4" fill="rgba(255,255,255,0.8)"/>
+       <!-- gem base connects to band -->
+       <rect x="9" y="6" width="6" height="3" fill="${c}"/>`);
+    if (n.includes('Amulet') || n.includes('Charm') || n.includes('Sigil')) return wrap('-10 -12 20 22',
+      `<line x1="-5" y1="-10" x2="0" y2="-6" stroke="#c8a860" stroke-width="1"/>
+       <line x1="5" y1="-10" x2="0" y2="-6" stroke="#c8a860" stroke-width="1"/>
+       <polygon points="0,-6 7,2 0,8 -7,2" fill="${c}"/>
+       <polygon points="0,-6 -7,2 -4,2 0,-3" fill="rgba(255,255,255,0.35)"/>
+       <polygon points="7,2 0,8 -7,2 -4,2 0,5 4,2" fill="rgba(0,0,0,0.3)"/>
+       <circle cx="0" cy="1" r="2" fill="rgba(255,255,255,0.6)"/>`);
+    // Fallback trinket — gem on chain
+    return wrap('-10 -12 20 22',
+      `<path d="M-5,-10 Q0,-8 5,-10" stroke="#c8a860" stroke-width="1" fill="none"/>
+       <polygon points="0,8 -5,1 -3,-3 3,-3 5,1" fill="${c}"/>
+       <polygon points="0,6 -3,1 -1,-1 1,-1" fill="rgba(255,255,255,0.5)"/>`);
+  }
+
+  // fallback
+  return `<span style="font-size:18px">${it.icon || '❔'}</span>`;
+}
+
 function shopCornerSVG(pos) {
   const transforms = { tl:'', tr:'scale(-1,1)', bl:'scale(1,-1)', br:'scale(-1,-1)' };
   const origins   = { tl:'top left', tr:'top right', bl:'bottom left', br:'bottom right' };
