@@ -335,12 +335,11 @@ function handleShop() {
   const shop = game.shop;
   if (!shop) return;
   const active = game.numPlayers;
-  const DESCEND_IDX = shop.stock.length; // virtual slot after all items
   for (let pi = 0; pi < active; pi++) {
     if (inv[pi].open) continue;
     const p = game.players[pi];
     const n = shop.stock.length;
-    const total = n + 1; // items + descend button
+    const total = n + 1; // n items + descend button
     const COLS = 4;
     if (input.actionPressed(pi, 'up'))    { shop.cursor[pi] = (shop.cursor[pi] - COLS + total) % total; shop._scroll = shop.cursor[pi]; }
     if (input.actionPressed(pi, 'down'))  { shop.cursor[pi] = (shop.cursor[pi] + COLS) % total;         shop._scroll = shop.cursor[pi]; }
@@ -348,10 +347,9 @@ function handleShop() {
     if (input.actionPressed(pi, 'right')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % total;           shop._scroll = shop.cursor[pi]; }
     if (input.actionPressed(pi, 'attack')) {
       const idx = shop.cursor[pi];
-      if (idx === DESCEND_IDX) {
-        // Descend button — mark this player ready
-        shop.ready[pi] = true;
-      } else if (n > 0) {
+      if (idx >= n) {
+        shop.ready[pi] = true; // descend button
+      } else {
         const res = buy(p, shop.stock[idx]);
         if (res.ok) {
           shop.stock.splice(idx, 1);
@@ -1170,24 +1168,23 @@ function shopHTML() {
     </div>`;
   }).join('');
 
-  // Descend button as a navigable shop card
-  const descendIdx = shop.stock.length;
-  const descendSelMarks = [];
-  for (let pi = 0; pi < active; pi++) {
-    if (shop.cursor[pi] === descendIdx) descendSelMarks.push('<span class="pmark" style="background:' + P_COLOR[pi] + '">P' + (pi + 1) + '</span>');
+  // Descend button card (desktop only — mobile has its own button)
+  if (!isMobile) {
+    const n = shop.stock.length;
+    const descendSel = shop.cursor.slice(0, active).some(c => c >= n);
+    const selMarks = [];
+    for (let pi = 0; pi < active; pi++) {
+      if (shop.cursor[pi] >= n) selMarks.push('<span class="pmark" style="background:' + P_COLOR[pi] + '">P' + (pi + 1) + '</span>');
+    }
+    const allReady = shop.ready.slice(0, active).every(Boolean);
+    const hint = allReady ? 'All ready!' : (active > 1 ? 'Both players must select' : '[Space] to confirm');
+    const borderStyle = descendSel ? 'border-color:#3baa60;box-shadow:0 0 10px #3baa6055' : 'border-color:#2a4030';
+    cards += '<div class="shopcard' + (descendSel ? ' sel' : '') + '" style="' + borderStyle + ';grid-column:1/-1;flex-direction:row;justify-content:center;align-items:center;gap:16px;padding:12px 20px;min-height:unset">'
+      + '<span style="font-size:20px">⬇</span>'
+      + '<div><div style="color:#7bff9b;font-weight:bold;font-size:14px">DESCEND TO FLOOR ' + (game.floor + 1) + '</div>'
+      + '<div style="font-size:11px;color:#8b84a0">' + selMarks.join(' ') + ' ' + hint + '</div></div>'
+      + '</div>';
   }
-  const descendSel = descendSelMarks.length > 0;
-  const allReadyNow = shop.ready.slice(0, active).every(Boolean);
-  const descendHint = allReadyNow ? 'All ready!' : (active > 1 ? 'Both players select to descend' : 'Select + attack to descend');
-  const descendBorder = descendSel ? 'border-color:#3baa60;box-shadow:0 0 12px #3baa6060' : 'border-color:#2a4030';
-  const descendCard = isMobile ? '' :
-    '<div class="shopcard descend-card' + (descendSel ? ' sel' : '') + '" style="' + descendBorder + ';grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 20px;min-height:unset;gap:6px">' +
-    '<div style="font-size:22px">⬇</div>' +
-    '<div style="color:#7bff9b;font-weight:bold;font-size:14px">DESCEND TO FLOOR ' + (game.floor + 1) + '</div>' +
-    '<div style="font-size:11px;color:#8b84a0">' + descendSelMarks.join(' ') + ' ' + descendHint + '</div>' +
-    '</div>';
-
-  cards += descendCard;
 
   const status = [];
   for (let pi = 0; pi < active; pi++) {
@@ -1210,7 +1207,7 @@ function shopHTML() {
       <div class="shop-title">Floor ${game.floor} — Shop</div>
       <div class="shop-gold">${chestSVG()}<span>${totalGold}</span></div>
     </div>
-    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · Attack to buy/descend · R: inventory'}</div>
+    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · [Space] buy or descend · [R] inventory'}</div>
     <div class="shopgrid">${cards}</div>
     <div class="shop-footer">
       <div class="shop-status">${status.join(' &nbsp;·&nbsp; ')}</div>
