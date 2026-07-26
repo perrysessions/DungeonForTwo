@@ -466,17 +466,22 @@ html, body {
 /* Portrait: controls sit below the canvas */
 @media (pointer: coarse) and (orientation: portrait) {
   #mobile-controls {
-    top: var(--canvas-h, 58dvh);
+    top: var(--canvas-h, 65dvh);
     bottom: 0;
     background: rgba(6,4,14,0.97);
     border-top: 2px solid #2a2040;
-    align-items: center;
+    align-items: stretch;
   }
-  #joy-zone { flex: 0 0 50%; display: flex; align-items: center; justify-content: center; }
+  #joy-zone {
+    flex: 0 0 50%;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
   #joy-base { left: 50%; top: 50%; opacity: 0.4; }
   #btn-zone {
     flex: 0 0 50%;
     justify-content: center;
+    align-items: center;
     padding: 10px 14px 10px 0;
   }
   .mbtn { width: 72px; height: 72px; font-size: 12px; }

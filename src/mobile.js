@@ -41,7 +41,7 @@ export function initMobileControls() {
 
     if (isPortrait) {
       // Canvas fills top 58% of screen; controls live below it
-      const canvasH = Math.round(H * 0.58);
+      const canvasH = Math.round(H * 0.65);
       const TARGET_H = 300;
       const mobileW = Math.round(W * TARGET_H / canvasH);
       canvas.width = mobileW;
