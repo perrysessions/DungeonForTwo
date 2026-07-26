@@ -40,16 +40,14 @@ export function initMobileControls() {
     const isPortrait = H > W;
 
     if (isPortrait) {
-      // Canvas fills top 58% of screen; controls live below it
-      const canvasH = Math.round(H * 0.65);
-      const TARGET_H = 300;
-      const mobileW = Math.round(W * TARGET_H / canvasH);
-      canvas.width = mobileW;
+      // Canvas fills full screen; controls overlay the bottom as transparent HUD
+      const TARGET_H = Math.round(H * 400 / W);
+      canvas.width = 400;
       canvas.height = TARGET_H;
-      canvas.style.cssText = 'position:fixed;top:0;left:0;width:' + W + 'px;height:' + canvasH + 'px;bottom:auto;right:auto';
-      setViewW(mobileW);
+      canvas.style.cssText = 'position:fixed;top:0;left:0;width:' + W + 'px;height:' + H + 'px';
+      setViewW(400);
       setViewH(TARGET_H);
-      document.documentElement.style.setProperty('--canvas-h', canvasH + 'px');
+      document.documentElement.style.setProperty('--canvas-h', '100dvh');
     } else {
       // Landscape: canvas fills full screen
       const TARGET_H = 360;
