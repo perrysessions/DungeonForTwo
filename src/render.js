@@ -991,12 +991,19 @@ function drawBanner(ctx) {
   if (game.messageTimer <= 0 || !game.message) return;
   ctx.save();
   ctx.globalAlpha = Math.min(1, game.messageTimer);
-  ctx.font = 'bold 22px monospace';
   ctx.textAlign = 'center';
+  // Scale font down on narrow canvases so text doesn't overflow
+  let fontSize = 22;
+  ctx.font = `bold ${fontSize}px monospace`;
+  while (ctx.measureText(game.message).width > VIEW_W - 16 && fontSize > 11) {
+    fontSize -= 1;
+    ctx.font = `bold ${fontSize}px monospace`;
+  }
+  const y = Math.round(fontSize * 2.8);
   ctx.fillStyle = '#000';
-  ctx.fillText(game.message, VIEW_W / 2 + 2, 62);
+  ctx.fillText(game.message, VIEW_W / 2 + 2, y + 2);
   ctx.fillStyle = '#ffd060';
-  ctx.fillText(game.message, VIEW_W / 2, 60);
+  ctx.fillText(game.message, VIEW_W / 2, y);
   ctx.restore();
 }
 
