@@ -1147,7 +1147,7 @@ function shopHTML() {
   const shop = game.shop;
   const active = game.numPlayers;
 
-  const cards = shop.stock.map((it, i) => {
+  let cards = shop.stock.map((it, i) => {
     const marks = [];
     for (let pi = 0; pi < active; pi++) if (!inv[pi].open && shop.cursor[pi] === i)
       marks.push(`<span class="pmark" style="background:${P_COLOR[pi]}">P${pi + 1}</span>`);
