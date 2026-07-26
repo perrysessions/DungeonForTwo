@@ -349,12 +349,10 @@ html, body {
     width: 100vw; height: 100dvh;
     display: block; /* override grid/place-items:center so canvas isn't centered with gaps */
   }
-  /* Pin canvas to all 4 viewport edges — inset:0 alone sets the size */
+  /* JS sets canvas dimensions and position via style.cssText in applyMobileW */
   #canvas {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: auto;
-    height: auto;
+    top: 0; left: 0;
     max-width: none;
     max-height: none;
     aspect-ratio: unset;
@@ -368,11 +366,6 @@ html, body {
     width: 36px; height: 36px; padding: 0;
     background: rgba(16,12,26,0.75);
     border: 1px solid var(--panel-border);
-  }
-
-  /* Show rotate message in portrait */
-  @media (orientation: portrait) {
-    #rotate-msg { display: flex; }
   }
 
   /* Panel floats as overlay when BAG is open */
@@ -446,10 +439,31 @@ html, body {
 
 /* ---------- mobile control overlay ---------- */
 #mobile-controls {
-  position: absolute; inset: 0;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex; align-items: stretch;
   pointer-events: none;
   z-index: 20;
+}
+
+/* Portrait: controls sit below the canvas */
+@media (pointer: coarse) and (orientation: portrait) {
+  #mobile-controls {
+    top: var(--canvas-h, 58dvh);
+    bottom: 0;
+    background: rgba(6,4,14,0.97);
+    border-top: 2px solid #2a2040;
+    align-items: center;
+  }
+  #joy-zone { flex: 0 0 50%; }
+  #btn-zone {
+    flex: 0 0 50%;
+    justify-content: center;
+    padding: 10px 14px 10px 0;
+  }
+  .mbtn { width: 72px; height: 72px; font-size: 12px; }
+  .mbtn.attack { width: 88px; height: 88px; font-size: 14px; }
+  #mb-inventory { width: 52px; height: 52px; }
 }
 
 #joy-zone {

@@ -37,48 +37,46 @@ export function initMobileControls() {
     const vv = window.visualViewport;
     const W = vv ? Math.round(vv.width) : window.innerWidth;
     const H = vv ? Math.round(vv.height) : window.innerHeight;
-    const TARGET_H = 360;
-    const mobileW = Math.round(W * TARGET_H / H);
-    canvas.width = mobileW;
-    canvas.height = TARGET_H;
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
-    setViewW(mobileW);
-    setViewH(TARGET_H);
-  }
-  const rotateMsg = document.getElementById('rotate-msg');
-  let resumeTimer = null;
+    const isPortrait = H > W;
 
-  function onResize() {
-    const isPortrait = window.innerHeight > window.innerWidth;
     if (isPortrait) {
-      game.paused = true;
-      if (rotateMsg) rotateMsg.style.display = 'flex';
-      clearTimeout(resumeTimer);
+      // Canvas fills top 58% of screen; controls live below it
+      const canvasH = Math.round(H * 0.58);
+      const TARGET_H = 300;
+      const mobileW = Math.round(W * TARGET_H / canvasH);
+      canvas.width = mobileW;
+      canvas.height = TARGET_H;
+      canvas.style.cssText = 'position:fixed;top:0;left:0;width:' + W + 'px;height:' + canvasH + 'px;bottom:auto;right:auto';
+      setViewW(mobileW);
+      setViewH(TARGET_H);
+      document.documentElement.style.setProperty('--canvas-h', canvasH + 'px');
     } else {
-      if (rotateMsg) rotateMsg.style.display = 'none';
-      // Small delay so browser finishes settling dimensions after rotation
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => {
-        applyMobileW();
-        game.paused = false;
-      }, 150);
+      // Landscape: canvas fills full screen
+      const TARGET_H = 360;
+      const mobileW = Math.round(W * TARGET_H / H);
+      canvas.width = mobileW;
+      canvas.height = TARGET_H;
+      canvas.style.cssText = 'position:fixed;top:0;left:0;width:' + W + 'px;height:' + H + 'px';
+      setViewW(mobileW);
+      setViewH(TARGET_H);
+      document.documentElement.style.setProperty('--canvas-h', '100dvh');
     }
+  }
+
+  let resumeTimer = null;
+  function onResize() {
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      applyMobileW();
+      game.paused = false;
+    }, 150);
   }
 
   requestAnimationFrame(() => requestAnimationFrame(() => {
     applyMobileW();
-    onResize(); // set initial portrait/landscape state
+    game.paused = false;
   }));
   window.addEventListener('resize', onResize, { passive: true });
-
-  // Try to lock orientation to landscape on first touch (requires user gesture).
-  // Works on Android Chrome; iOS Safari silently rejects — rotate-msg CSS handles that fallback.
-  document.addEventListener('touchstart', () => {
-    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-      screen.orientation.lock('landscape').catch(() => {});
-    }
-  }, { once: true, passive: true });
 
   setupJoystick();
   setupButtons();
