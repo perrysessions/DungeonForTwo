@@ -339,12 +339,23 @@ function handleShop() {
     if (inv[pi].open) continue;
     const p = game.players[pi];
     const n = shop.stock.length;
-    const total = n + 1; // n items + descend button
     const COLS = 4;
-    if (input.actionPressed(pi, 'up'))    { shop.cursor[pi] = (shop.cursor[pi] - COLS + total) % total; shop._scroll = shop.cursor[pi]; }
-    if (input.actionPressed(pi, 'down'))  { shop.cursor[pi] = (shop.cursor[pi] + COLS) % total;         shop._scroll = shop.cursor[pi]; }
-    if (input.actionPressed(pi, 'left'))  { shop.cursor[pi] = (shop.cursor[pi] - 1 + total) % total;   shop._scroll = shop.cursor[pi]; }
-    if (input.actionPressed(pi, 'right')) { shop.cursor[pi] = (shop.cursor[pi] + 1) % total;           shop._scroll = shop.cursor[pi]; }
+    const lastRow = Math.floor((n - 1) / COLS) * COLS; // index of first item in last row
+    const cur = shop.cursor[pi];
+    const onDescend = cur >= n;
+    if (input.actionPressed(pi, 'up')) {
+      if (onDescend) shop.cursor[pi] = lastRow + Math.min(cur - n, n - lastRow - 1);
+      else shop.cursor[pi] = cur - COLS >= 0 ? cur - COLS : n; // up from row 0 goes to descend
+      shop._scroll = shop.cursor[pi];
+    }
+    if (input.actionPressed(pi, 'down')) {
+      if (onDescend) shop.cursor[pi] = cur - n; // col position back to top
+      else if (cur + COLS >= n) shop.cursor[pi] = n; // any bottom-row item → descend
+      else shop.cursor[pi] = cur + COLS;
+      shop._scroll = shop.cursor[pi];
+    }
+    if (input.actionPressed(pi, 'left'))  { if (!onDescend) { shop.cursor[pi] = cur - 1 >= 0 ? cur - 1 : n - 1; shop._scroll = shop.cursor[pi]; } }
+    if (input.actionPressed(pi, 'right')) { if (!onDescend) { shop.cursor[pi] = cur + 1 < n ? cur + 1 : 0;       shop._scroll = shop.cursor[pi]; } }
     if (input.actionPressed(pi, 'attack')) {
       const idx = shop.cursor[pi];
       if (idx >= n) {
@@ -1207,7 +1218,7 @@ function shopHTML() {
       <div class="shop-title">Floor ${game.floor} — Shop</div>
       <div class="shop-gold">${chestSVG()}<span>${totalGold}</span></div>
     </div>
-    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : '↑↓←→ browse · [Space] buy or descend · [R] inventory'}</div>
+    <div class="shop-hint">${isMobile ? 'Tap a card · BUY · 📦 bag' : 'P1: WASD browse · P2: arrows browse · [attack] buy/descend · [R] inventory'}</div>
     <div class="shopgrid">${cards}</div>
     <div class="shop-footer">
       <div class="shop-status">${status.join(' &nbsp;·&nbsp; ')}</div>
