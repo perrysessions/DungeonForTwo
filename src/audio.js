@@ -13,6 +13,14 @@ const masterGain = ctx.createGain();
 masterGain.gain.value = 1;
 masterGain.connect(ctx.destination);
 
+let _muted = false;
+export function toggleMute() {
+  _muted = !_muted;
+  masterGain.gain.value = _muted ? 0 : 1;
+  return _muted;
+}
+export function isMuted() { return _muted; }
+
 sfxGain = ctx.createGain();
 sfxGain.gain.value = 0.7;
 sfxGain.connect(masterGain);

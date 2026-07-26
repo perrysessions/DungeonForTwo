@@ -6,7 +6,7 @@ import { isMobile } from './detect.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
-import { setMusicVolume, setSfxVolume } from './audio.js';
+import { setMusicVolume, setSfxVolume, toggleMute, isMuted } from './audio.js';
 
 // ---------- Local High Score Board ----------
 const HS_KEY = 'dungeon2_scores';
@@ -101,6 +101,13 @@ function initSettings() {
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { modal.classList.contains('hidden') ? open() : close(); }
+    if ((e.key === 'm' || e.key === 'M') && modal.classList.contains('hidden')) muteBtn.click();
+  });
+
+  const muteBtn = document.getElementById('mute-btn');
+  muteBtn.addEventListener('click', () => {
+    const muted = toggleMute();
+    muteBtn.textContent = muted ? '🔇' : '🔊';
   });
 
   volMusic.addEventListener('input', () => {
