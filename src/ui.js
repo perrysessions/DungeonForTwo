@@ -983,15 +983,15 @@ function itemIconSVG(it) {
   if (it.slot === 'weapon') {
     if (n.includes('Sword')) return wrap('0 0 28 28',
       `<g transform="rotate(-45,14,14)">
-       <polygon points="14,1 16,13 12,13" fill="#c8d8e8"/>
-       <polygon points="14,1 15,8 14,8" fill="rgba(255,255,255,0.7)"/>
-       <polygon points="16,13 12,13 12.5,14" fill="rgba(0,0,0,0.25)"/>
-       <rect x="8" y="13" width="12" height="2.5" rx="1" fill="${c}"/>
-       <rect x="8" y="13" width="12" height="1" rx="0.5" fill="rgba(255,255,255,0.3)"/>
-       <rect x="12" y="15.5" width="4" height="7" rx="1" fill="#7a4820"/>
-       <rect x="12" y="15.5" width="1.5" height="7" rx="0.5" fill="rgba(255,255,255,0.25)"/>
-       <circle cx="14" cy="24" r="2.5" fill="${c}"/>
-       <circle cx="13.5" cy="23.5" r="1" fill="rgba(255,255,255,0.45)"/>
+       <polygon points="14,0 16,17 12,17" fill="#c8d8e8"/>
+       <polygon points="14,0 15,10 14,10" fill="rgba(255,255,255,0.7)"/>
+       <polygon points="16,17 12,17 12.5,18" fill="rgba(0,0,0,0.25)"/>
+       <rect x="7" y="17" width="14" height="2.5" rx="1" fill="${c}"/>
+       <rect x="7" y="17" width="14" height="1" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+       <rect x="12" y="19.5" width="4" height="4" rx="1" fill="#7a4820"/>
+       <rect x="12" y="19.5" width="1.5" height="4" rx="0.5" fill="rgba(255,255,255,0.25)"/>
+       <circle cx="14" cy="25" r="2" fill="${c}"/>
+       <circle cx="13.5" cy="24.5" r="0.8" fill="rgba(255,255,255,0.45)"/>
        </g>`);
     if (n.includes('Axe')) return wrap('0 0 28 28',
       `<g transform="rotate(-45,14,14)">
