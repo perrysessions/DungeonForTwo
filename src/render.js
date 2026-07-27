@@ -460,7 +460,9 @@ function drawPlayers(ctx) {
     }
     // invuln blink
     if (p.invuln > 0 && Math.floor(game.time * 20) % 2 === 0) { /* skip draw frame */ }
-    else {
+    else if (p.cls.key === 'druid' && p.beastForm > 0) {
+      drawBeastDruid(ctx, p, x, y);
+    } else {
       const r = 11;
       // drop shadow
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -538,6 +540,90 @@ function drawPlayers(ctx) {
     drawTag(ctx, x, y - 26, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
     drawMiniBar(ctx, x, y - 20, p.hp / p.stats.maxHp, '#e04040');
   }
+}
+
+function drawBeastDruid(ctx, p, x, y) {
+  const fur = '#5a3822';
+  const furDark = '#3a2010';
+  const furLight = '#7a5030';
+
+  // drop shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.beginPath(); ctx.ellipse(x, y + 13, 13, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // thick legs
+  ctx.fillStyle = fur;
+  ctx.fillRect(x - 8, y + 6, 6, 8);
+  ctx.fillRect(x + 2, y + 6, 6, 8);
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.fillRect(x - 3, y + 6, 1, 8);
+  ctx.fillRect(x + 6, y + 6, 1, 8);
+
+  // bulky torso
+  ctx.fillStyle = fur;
+  ctx.fillRect(x - 9, y - 6, 18, 13);
+  ctx.fillStyle = 'rgba(255,255,255,0.14)';
+  ctx.fillRect(x - 9, y - 6, 2, 13);
+  ctx.fillRect(x - 9, y - 6, 18, 1);
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(x + 7, y - 6, 2, 13);
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fillRect(x - 9, y + 9, 18, 2);
+
+  // claws (extended in facing direction)
+  const cf = p.facing;
+  const cx = Math.round(x + cf.x * 16), cy = Math.round(y + cf.y * 16);
+  ctx.fillStyle = furLight;
+  ctx.fillRect(cx - 4, cy - 4, 8, 8);
+  ctx.fillStyle = '#e8e4d0';
+  ctx.fillRect(cx + Math.round(cf.x * 3), cy - 4, 2, 2);
+  ctx.fillRect(cx + Math.round(cf.x * 3), cy - 1, 2, 2);
+  ctx.fillRect(cx + Math.round(cf.x * 3), cy + 2, 2, 2);
+
+  // beast head
+  ctx.fillStyle = fur;
+  ctx.fillRect(x - 8, y - 17, 16, 12);
+  // muzzle
+  ctx.fillStyle = furLight;
+  ctx.fillRect(x - 5, y - 11, 10, 5);
+  // head highlight / shadow
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(x - 8, y - 17, 16, 1);
+  ctx.fillRect(x - 8, y - 17, 2, 12);
+  ctx.fillStyle = 'rgba(0,0,0,0.42)';
+  ctx.fillRect(x + 6, y - 17, 2, 12);
+  // ears
+  ctx.fillStyle = furDark;
+  ctx.fillRect(x - 8, y - 20, 4, 4);
+  ctx.fillRect(x + 4, y - 20, 4, 4);
+  ctx.fillStyle = '#c07060';
+  ctx.fillRect(x - 7, y - 19, 2, 2);
+  ctx.fillRect(x + 5, y - 19, 2, 2);
+
+  // glowing green eyes
+  ctx.fillStyle = 'rgba(60,255,80,0.4)';
+  ctx.fillRect(x - 6, y - 15, 5, 5);
+  ctx.fillRect(x + 1, y - 15, 5, 5);
+  ctx.fillStyle = '#30ff60';
+  ctx.fillRect(x - 5, y - 14, 3, 3);
+  ctx.fillRect(x + 2, y - 14, 3, 3);
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.fillRect(x - 5, y - 14, 1, 1);
+  ctx.fillRect(x + 2, y - 14, 1, 1);
+
+  flash(ctx, x - 9, y - 17, 18, 30, p.hitFlash);
+
+  // beast timer bar
+  const pct = Math.max(0, p.beastForm / (p.beastFormMax || 7));
+  const bw = 30;
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.fillRect(x - bw / 2, y - 24, bw, 4);
+  ctx.fillStyle = pct > 0.4 ? '#8bc34a' : '#ff7020';
+  ctx.fillRect(x - bw / 2, y - 24, Math.round(bw * pct), 4);
+
+  // name tag
+  drawTag(ctx, x, y - 28, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
+  drawMiniBar(ctx, x, y - 22, p.hp / p.stats.maxHp, '#e04040');
 }
 
 function drawHead(ctx, x, y, a) {

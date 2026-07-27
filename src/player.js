@@ -193,6 +193,7 @@ export class Player {
     if (this.momentumT > 0) this.momentumT -= dt;
     if (this.swing && this.swing.t > 0) { this.swing.t -= dt; if (this.swing.t <= 0) this.swing = null; }
     if (this.novaFx && this.novaFx.t > 0) { this.novaFx.t -= dt; if (this.novaFx.t <= 0) this.novaFx = null; }
+    if (this.beastForm > 0) { this.beastForm -= dt; if (this.beastForm <= 0) { this.beastForm = 0; this.attackTimer = 0; } }
     if (!this.downed) {
       if (this.stats.hpRegen > 0)
         this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.hpRegen * dt);

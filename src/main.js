@@ -108,8 +108,10 @@ function controlPlayer(p, pi, dt) {
     vx = p.dashDir.x * 520; vy = p.dashDir.y * 520;
   } else {
     const mv = input.moveVector(pi);
+    const inBeast = p.cls.key === 'druid' && p.beastForm > 0;
     // Momentum/Killing-Spree passives grant a brief move-speed burst after a kill.
-    const spd = p.stats.moveSpeed * (p.momentumT > 0 ? 1 + 0.08 * p.passiveRank : 1);
+    const baseSpd = inBeast ? (p.stats.moveSpeed * 1.45 + (p.mods.beastSpd || 0)) : p.stats.moveSpeed;
+    const spd = baseSpd * (p.momentumT > 0 ? 1 + 0.08 * p.passiveRank : 1);
     vx = mv.x * spd; vy = mv.y * spd;
     if (mv.x || mv.y) {
       const m = Math.hypot(mv.x, mv.y) || 1;

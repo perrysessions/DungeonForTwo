@@ -218,13 +218,11 @@ export function passiveOnKill(player, enemy) {
       spawnParticles(enemy.x, enemy.y, '#a0e0ff', 8, 90);
       break;
     }
-    case 'd_pass': { // Regrowth — chance on kill to restore HP to self
-      const chance = [0, 0.25, 0.40, 0.55, 0.70][rank] || 0;
-      if (Math.random() < chance) {
-        const h = Math.round(player.stats.maxHp * 0.08 * rank);
-        player.hp = Math.min(player.stats.maxHp, player.hp + h);
-        spawnFloater(player.x, player.y - 20, `+${h}`, '#8ce050');
-        spawnParticles(player.x, player.y, '#8ce050', 6, 70);
+    case 'd_pass': { // Wildblood — on kill in beast form, restore beast timer
+      if (player.beastForm > 0) {
+        const ext = 1.5 * rank;
+        player.beastForm = Math.min(player.beastFormMax || 10, player.beastForm + ext);
+        spawnFloater(player.x, player.y - 20, `+${ext.toFixed(1)}s`, '#8bc34a');
       }
       break;
     }
@@ -265,9 +263,16 @@ function meleeHit(player, range, mult, { full = false, knockback = 0, source, ai
 
 // ---- basic attack -------------------------------------------------------
 export function basicAttack(player) {
-  player.attackTimer = player.stats.attackCooldown;
+  const inBeast = player.cls.key === 'druid' && player.beastForm > 0;
+  player.attackTimer = inBeast ? 0.26 : player.stats.attackCooldown;
   // Auto-aim at the nearest enemy; fall back to facing when none in sight.
   const f = nearestEnemyDir(player);
+  if (inBeast) {
+    const dmgMult = 1.6 * (1 + (player.mods.beastDmg || 0));
+    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, big: true };
+    meleeHit(player, 65, dmgMult, { full: true, knockback: 2, source: player, aim: f });
+    return;
+  }
   if (player.stats.weaponType === 'melee') {
     player.swing = { t: 0.18, max: 0.18, dir: { ...f } };
     meleeHit(player, player.stats.attackRange, 1, {
@@ -305,7 +310,7 @@ function projColor(player) {
 // The tiny lock just prevents firing 60x/frame while the button is held.
 const ABILITY_CD = {
   cleave: 0.15, multishot: 0.15, fireball: 0.15, raiseMinion: 0.15,
-  thornBurst: 0.15, dash: 0.15, smite: 0.15, frostNova: 0.15,
+  shapeshift: 0.15, dash: 0.15, smite: 0.15, frostNova: 0.15,
 };
 
 export function useAbility(player) {
@@ -367,19 +372,13 @@ const ABILITIES = {
     game.minions.push(makeMinion(player));
     spawnParticles(player.x, player.y, '#8ce0a0', 12, 90);
   },
-  thornBurst(player) {
-    const radius = 140 * (1 + (player.mods.slowPower || 0) * 0.5);
-    const { dmg } = rollDamage(player, 1.2 + (player.mods.holy || 0));
-    for (const e of game.enemies) {
-      if (e.dead) continue;
-      const d = Math.hypot(e.x - player.x, e.y - player.y);
-      if (d <= radius && game.map.lineClear(player.x, player.y, e.x, e.y)) {
-        damageEnemy(e, dmg, { source: player, slow: 0.35 + (player.mods.slowPower || 0) * 0.1, slowTime: 2 + (player.mods.slowPower || 0) });
-      }
-    }
-    spawnParticles(player.x, player.y, '#8ce050', 22, 140);
-    spawnParticles(player.x, player.y, '#c8e67a', 10, 90);
-    player.novaFx = { t: 0.3, max: 0.3, radius };
+  shapeshift(player) {
+    const dur = 7 + (player.mods.beastDur || 0);
+    player.beastForm = dur;
+    player.beastFormMax = dur;
+    player.attackTimer = 0;
+    spawnParticles(player.x, player.y, '#8bc34a', 18, 130);
+    spawnParticles(player.x, player.y, '#5a3a1a', 12, 90);
   },
   dash(player) {
     const f = player.facing;
