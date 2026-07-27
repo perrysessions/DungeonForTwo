@@ -57,6 +57,12 @@ export function initUI(controller) {
     if (e.target.closest('[data-htp-open]') || e.target.closest('[data-htp-back]')) {
       titleToggleHowTo();
     }
+    if (e.target.closest('[data-artpreview-open]')) {
+      _showArtPreview = true; lastOverlayPhase = null;
+    }
+    if (e.target.closest('[data-artpreview-back]')) {
+      _showArtPreview = false; lastOverlayPhase = null;
+    }
     if (e.target.closest('[data-cls-back]')) ctrl.onBackToTitle();
   });
 }
@@ -593,6 +599,46 @@ function scrollShop() {
 let _showHowTo = false;
 export function titleToggleHowTo() { _showHowTo = !_showHowTo; lastOverlayPhase = null; }
 
+let _showArtPreview = false;
+function artPreviewHTML() {
+  const vial = (liq) => `<svg viewBox="0 0 28 28" width="48" height="48" style="image-rendering:pixelated">
+    <rect x="7" y="8" width="14" height="14" rx="2" fill="rgba(200,230,255,0.35)" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
+    <rect x="8.5" y="15" width="11" height="7" rx="1.5" fill="${liq}"/>
+    <rect x="8.5" y="9" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+    <line x1="9" y1="8" x2="7" y2="5" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
+    <line x1="19" y1="8" x2="21" y2="5" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
+    <rect x="9" y="2" width="10" height="4" rx="1.5" fill="#c89050"/>
+  </svg>`;
+  const staff = (orb, wood='#7a5022') => `<svg viewBox="0 0 28 28" width="48" height="48" style="image-rendering:pixelated">
+    <rect x="12" y="6" width="4" height="20" rx="1.5" fill="${wood}"/>
+    <rect x="12" y="6" width="1.5" height="20" fill="rgba(255,255,255,0.2)" rx="1"/>
+    <rect x="11" y="13" width="6" height="4" rx="1" fill="#3a2010"/>
+    <circle cx="14" cy="5" r="7" fill="${orb}" opacity="0.2"/>
+    <circle cx="14" cy="5" r="5" fill="${orb}" opacity="0.95"/>
+    <circle cx="12" cy="3" r="2.5" fill="rgba(255,255,255,0.45)"/>
+  </svg>`;
+  const row = (icon, label) => `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+    ${icon}<span style="font-size:11px;color:#9080b0;text-align:center">${label}</span></div>`;
+  return `<div class="card wide" style="text-align:left">
+    <button data-artpreview-back style="background:none;border:1px solid #5a4a7a;color:#9070c0;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer;margin-bottom:16px">← Back</button>
+    <h2 style="color:#c080ff;margin:0 0 14px">Art Preview</h2>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Potions</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+      ${row(vial('#e03050'), 'Health')}
+      ${row(vial('#5080ff'), 'Mana')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Staves</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${row(staff('#ff6010'), 'Fire')}
+      ${row(staff('#c080ff'), 'Bone')}
+      ${row(staff('#80d0ff'), 'Ice')}
+      ${row(staff('#8bc34a','#5a3a1a'), 'Druid')}
+      ${row(staff('#e8c34a'), 'Rare')}
+      ${row(staff('#a0ffa0'), 'Epic')}
+    </div>
+  </div>`;
+}
+
 function howToPlayHTML() {
   const sec = (title, color, body) =>
     `<div style="margin-bottom:14px;text-align:left">
@@ -643,6 +689,7 @@ function howToPlayHTML() {
 
 function titleHTML() {
   if (_showHowTo) return howToPlayHTML();
+  if (_showArtPreview) return artPreviewHTML();
 
   const controls = isMobile
     ? `<p style="font-size:13px;margin:4px 0;color:#b0a0cc">Unlock unique class skills. Find epic, legendary and mythical items.</p>`
@@ -667,6 +714,7 @@ function titleHTML() {
     <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap">
       <p class="blink big" style="font-size:18px;margin:0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
       <button data-htp-open style="background:none;border:1px solid #5a4a7a;color:#9070c0;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">How to Play</button>
+      <button data-artpreview-open style="background:none;border:1px solid #3a6a3a;color:#70b070;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">🎨 Art</button>
     </div>
     <p class="credit" style="margin-top:14px">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a></p>
   </div>`;
