@@ -240,6 +240,9 @@ function setupMenuTap() {
     if (e.target.closest('[data-htp-open]')) { titleToggleHowTo(); return; }
     if (e.target.closest('[data-htp-back]')) { titleToggleHowTo(); return; }
 
+    // Art preview open / back
+    if (e.target.closest('[data-artpreview-open]') || e.target.closest('[data-artpreview-back]')) return;
+
     // Class select: back / confirm / detail buttons
     if (e.target.closest('[data-cls-back]')) { mobileBackFromClass(); return; }
     if (e.target.closest('[data-confirm-class]')) { mobileConfirmClass(); return; }
