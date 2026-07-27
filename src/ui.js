@@ -677,6 +677,7 @@ function artPreviewHTML() {
     <div style="display:flex;gap:16px;flex-wrap:wrap">
       ${[
         {name:'Mace',slot:'weapon',color:'#909098'},
+        {name:'Boots of Speed',slot:'trinket',color:'#8b5c2a'},
         {name:'Ring of Might',slot:'trinket',color:'#e05050'},
         {name:'Amulet of Focus',slot:'trinket',color:'#a060ff'},
         {name:'Charm of Vigor',slot:'trinket',color:'#40c080'},
@@ -1163,25 +1164,33 @@ function itemIconSVG(it, size = 28) {
   }
 
   if (it.slot === 'trinket') {
-    if (n.includes('Boot')) return wrap('0 0 26 28',
-      `<!-- shaft (leg part, centered) -->
-       <rect x="7" y="1" width="9" height="15" rx="2" fill="${c}"/>
-       <!-- cuff rim at top -->
-       <rect x="6" y="1" width="11" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
-       <!-- heel — square block behind foot -->
-       <rect x="4" y="14" width="7" height="8" rx="1" fill="${c}"/>
-       <!-- foot/sole extending right -->
-       <rect x="4" y="19" width="18" height="6" rx="3" fill="${c}"/>
-       <!-- toe bump -->
-       <ellipse cx="20" cy="22" rx="3" ry="4" fill="${c}"/>
-       <!-- sole underline -->
-       <rect x="4" y="24" width="20" height="2" rx="1" fill="rgba(0,0,0,0.55)"/>
-       <!-- shaft highlight left -->
-       <rect x="8" y="2" width="2" height="13" fill="rgba(255,255,255,0.25)" rx="1"/>
-       <!-- shaft shadow right -->
-       <rect x="13" y="2" width="2" height="13" fill="rgba(0,0,0,0.22)" rx="1"/>
-       <!-- ankle crease -->
-       <line x1="7" y1="18" x2="16" y2="18" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>`);
+    if (n.includes('Boot')) return wrap('0 0 28 28',
+      `<!-- left boot (behind, dim) -->
+       <rect x="1" y="10" width="9" height="12" rx="1.5" fill="${c}" opacity="0.5"/>
+       <rect x="0" y="7" width="11" height="4" rx="1.5" fill="${c}" opacity="0.4"/>
+       <rect x="0" y="21" width="12" height="5" rx="1.5" fill="${c}" opacity="0.45"/>
+       <rect x="0" y="25" width="13" height="2" rx="0.5" fill="rgba(0,0,0,0.65)"/>
+       <!-- right boot shaft (narrow) -->
+       <rect x="10" y="6" width="9" height="15" rx="1.5" fill="${c}"/>
+       <rect x="11" y="7" width="2.5" height="13" rx="1" fill="rgba(255,255,255,0.2)"/>
+       <rect x="16" y="6" width="2" height="15" rx="1" fill="rgba(0,0,0,0.18)"/>
+       <!-- right cuff (rolled, wider than shaft) -->
+       <rect x="9" y="3" width="12" height="5" rx="2" fill="${c}"/>
+       <rect x="10" y="6.5" width="10" height="1.5" fill="rgba(0,0,0,0.25)"/>
+       <rect x="10" y="3" width="10" height="2.5" rx="1" fill="rgba(255,255,255,0.13)"/>
+       <!-- buckle strap -->
+       <rect x="9" y="13" width="11" height="2.5" rx="0.5" fill="rgba(0,0,0,0.35)"/>
+       <circle cx="14.5" cy="14.25" r="2" fill="#c8962a"/>
+       <circle cx="14.5" cy="14.25" r="1" fill="rgba(0,0,0,0.5)"/>
+       <!-- right foot (extends wide past shaft) -->
+       <rect x="9" y="20" width="18" height="6" rx="2" fill="${c}"/>
+       <rect x="9" y="20" width="5" height="6" rx="1" fill="rgba(0,0,0,0.15)"/>
+       <!-- sole with tread ridges -->
+       <rect x="9" y="25" width="19" height="2.5" rx="0.8" fill="#1a0e05"/>
+       <rect x="11" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
+       <rect x="15" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
+       <rect x="19" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
+       <rect x="23" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>`);
     if (n.includes('Ring') || n.includes('Band')) return wrap('0 0 28 28',
       `<!-- band outer shadow -->
        <ellipse cx="14" cy="19" rx="9.5" ry="5.5" fill="rgba(0,0,0,0.4)"/>
