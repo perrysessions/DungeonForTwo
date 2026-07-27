@@ -226,7 +226,7 @@ export function passiveOnKill(player, enemy) {
       break;
     }
     case 'n_pass': { // Undying Legion — chance per kill to spawn a free wraith minion
-      const chance = [0, 0.12, 0.22, 0.32, 0.42][rank] || 0;
+      const chance = [0, 0.08, 0.16, 0.24, 0.32][rank] || 0;
       if (Math.random() < chance) spawnFreeMinion(player);
       break;
     }
