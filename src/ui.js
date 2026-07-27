@@ -1288,7 +1288,7 @@ function shopHTML() {
       : `BUY 💰${it.price}`;
     return `<div class="shopcard${sel ? ' sel' : ''}" data-shop-idx="${i}"
         style="border-color:${rarColor}40;${sel ? `border-color:${rarColor};box-shadow:0 0 8px ${rarColor}55;` : ''}">
-      <div class="sc-icon">${it.slot === 'consumable' ? itemIconSVG(it) : (it.icon || '❔')}</div>
+      <div class="sc-icon">${itemIconSVG(it)}</div>
       <div class="sc-name" style="color:${rarColor}">${it.name}</div>
       <div class="sc-rar" style="color:${rarColor}">${it.rarityName || ''}</div>
       <div class="sc-desc">${it.desc || ''}</div>
