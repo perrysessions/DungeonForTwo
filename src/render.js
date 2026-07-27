@@ -980,25 +980,262 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillRect(x + 1, y - 3, 2, 8);
       break;
     }
-    case 'wraith':
-    case 'wraithqueen': {
+    case 'trollwarchief': {
+      const c = e.color;
+      // legs / boots
+      ctx.fillStyle = '#4a3010';
+      ctx.fillRect(x - 10, y + 8, 8, 12); ctx.fillRect(x + 2, y + 8, 8, 12);
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(x - 10, y + 8, 2, 12); ctx.fillRect(x + 2, y + 8, 2, 12);
+      // chainmail torso
+      ctx.fillStyle = '#808090';
+      ctx.fillRect(x - 14, y - 8, 28, 18);
+      ctx.fillStyle = '#5c5c68';
+      for (let row = 0; row < 5; row++) {
+        const off = (row % 2) * 3;
+        for (let col = 0; col < 5; col++) ctx.fillRect(x - 13 + col * 6 + off, y - 7 + row * 4, 5, 3);
+      }
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(x - 14, y - 8, 3, 18);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + 11, y - 8, 3, 18);
+      // shoulder strap & belt
+      ctx.fillStyle = '#7a4818';
+      ctx.fillRect(x - 13, y - 8, 4, 18); // diagonal strap
+      ctx.fillRect(x - 14, y + 2, 28, 4); // belt
+      ctx.fillStyle = '#c8962a'; ctx.fillRect(x - 3, y + 1, 6, 5); // buckle
+      ctx.fillStyle = '#7a4818'; ctx.fillRect(x - 2, y + 2, 4, 3); // buckle hole
+      // green shoulders
+      ctx.fillStyle = c;
+      ctx.fillRect(x - 17, y - 14, 9, 10); ctx.fillRect(x + 8, y - 14, 9, 10);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x - 17, y - 14, 2, 10); ctx.fillRect(x + 8, y - 14, 2, 10);
+      // club (left side)
+      ctx.fillStyle = '#4a2808'; ctx.fillRect(x - 23, y - 2, 4, 14); // handle
+      ctx.fillStyle = '#6a4010'; ctx.fillRect(x - 26, y - 12, 8, 12); // head
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 26, y - 12, 2, 12);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x - 19, y - 12, 2, 12);
+      // head
+      ctx.fillStyle = c; ctx.fillRect(x - 12, y - 24, 24, 16);
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(x - 12, y - 24, 24, 1); ctx.fillRect(x - 12, y - 24, 2, 16);
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x + 10, y - 24, 2, 16);
+      // horns
+      ctx.fillStyle = '#c8b878';
+      ctx.fillRect(x - 12, y - 33, 5, 10); ctx.fillRect(x + 7, y - 33, 5, 10);
+      ctx.fillStyle = '#a89060';
+      ctx.fillRect(x - 11, y - 36, 3, 5); ctx.fillRect(x + 8, y - 36, 3, 5);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(x - 12, y - 33, 1, 10); ctx.fillRect(x + 7, y - 33, 1, 10);
+      // brow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x - 10, y - 20, 20, 3);
+      // eyes
+      ctx.fillStyle = '#0a0606'; ctx.fillRect(x - 8, y - 19, 5, 3); ctx.fillRect(x + 3, y - 19, 5, 3);
+      ctx.fillStyle = 'rgba(255,80,30,0.85)'; ctx.fillRect(x - 8, y - 19, 2, 1); ctx.fillRect(x + 3, y - 19, 2, 1);
+      break;
+    }
+    case 'goblinking': {
+      const gc = '#4a8a28'; // green body
+      // legs + shoes
+      ctx.fillStyle = '#3a2010';
+      ctx.fillRect(x - 11, y + 10, 9, 10); ctx.fillRect(x + 2, y + 10, 9, 10);
+      ctx.fillStyle = '#7a3820'; // reddish boots
+      ctx.fillRect(x - 12, y + 16, 10, 4); ctx.fillRect(x + 2, y + 16, 10, 4);
+      // robe body - tri-color panels
+      ctx.fillStyle = '#2858a0'; ctx.fillRect(x - 14, y - 8, 10, 20); // blue left
+      ctx.fillStyle = '#c02828'; ctx.fillRect(x - 4, y - 8, 8, 20);  // red center
+      ctx.fillStyle = '#d0d0d0'; ctx.fillRect(x + 4, y - 8, 10, 20); // white right
+      // robe shading
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(x - 14, y - 8, 2, 20);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + 12, y - 8, 2, 20);
+      ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(x - 14, y + 16, 28, 2);
+      // wristbands
+      ctx.fillStyle = '#c8962a';
+      ctx.fillRect(x - 16, y + 2, 4, 4); ctx.fillRect(x + 12, y + 2, 4, 4);
+      // green arms
+      ctx.fillStyle = gc;
+      ctx.fillRect(x - 17, y - 8, 5, 12); ctx.fillRect(x + 12, y - 8, 5, 12);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x - 17, y - 8, 1, 12); ctx.fillRect(x + 12, y - 8, 1, 12);
+      // head
+      ctx.fillStyle = gc; ctx.fillRect(x - 13, y - 24, 26, 18);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x - 13, y - 24, 26, 1); ctx.fillRect(x - 13, y - 24, 2, 18);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + 11, y - 24, 2, 18);
+      // crown base
+      ctx.fillStyle = '#ffd060';
+      ctx.fillRect(x - 11, y - 28, 22, 6);
+      // crown points (3 points)
+      ctx.fillRect(x - 11, y - 33, 5, 7); ctx.fillRect(x - 3, y - 32, 6, 6); ctx.fillRect(x + 6, y - 33, 5, 7);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillRect(x - 11, y - 33, 1, 33 - 28 + 6); ctx.fillRect(x - 11, y - 28, 22, 1);
+      // gem in crown
+      ctx.fillStyle = '#e03030'; ctx.fillRect(x - 2, y - 30, 4, 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(x - 2, y - 30, 1, 1);
+      // brow ridge
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 11, y - 18, 22, 2);
+      // eyes
+      ctx.fillStyle = '#0a1808'; ctx.fillRect(x - 8, y - 17, 5, 4); ctx.fillRect(x + 3, y - 17, 5, 4);
+      ctx.fillStyle = 'rgba(255,200,30,0.85)'; ctx.fillRect(x - 8, y - 17, 2, 1); ctx.fillRect(x + 3, y - 17, 2, 1);
+      break;
+    }
+    case 'bonelord': {
+      const robe = '#702090'; const skull = '#d8d8c0';
+      // robe body
+      ctx.fillStyle = robe; ctx.fillRect(x - 14, y - 12, 28, 24);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 14, y - 12, 3, 24);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x + 11, y - 12, 3, 24);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(x - 14, y + 10, 28, 2);
+      // robe bottom scallops
+      ctx.fillStyle = '#4a1060';
+      for (let i = 0; i < 4; i++) ctx.fillRect(x - 14 + i * 7, y + 10, 6, 4);
+      // skull staff (right side)
+      ctx.fillStyle = '#4a3010'; ctx.fillRect(x + 15, y - 20, 4, 32); // staff pole
+      ctx.fillStyle = skull; ctx.fillRect(x + 13, y - 28, 8, 8);      // skull head
+      ctx.fillStyle = '#201818'; ctx.fillRect(x + 14, y - 26, 2, 2); ctx.fillRect(x + 18, y - 26, 2, 2); // eyes
+      ctx.fillStyle = '#201818';
+      for (let i = 0; i < 3; i++) ctx.fillRect(x + 14 + i * 2, y - 22, 1, 2); // teeth
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x + 13, y - 28, 8, 1);
+      // hood
+      ctx.fillStyle = robe; ctx.fillRect(x - 13, y - 28, 26, 18);
+      ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x - 9, y - 26, 18, 14); // hood shadow
+      // skull face
+      ctx.fillStyle = skull; ctx.fillRect(x - 7, y - 25, 14, 12);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x - 7, y - 25, 14, 1);
+      // eye sockets (dark hollow)
+      ctx.fillStyle = '#0c0808'; ctx.fillRect(x - 6, y - 22, 5, 5); ctx.fillRect(x + 1, y - 22, 5, 5);
+      ctx.fillStyle = 'rgba(180,40,255,0.7)'; ctx.fillRect(x - 5, y - 22, 2, 2); ctx.fillRect(x + 2, y - 22, 2, 2); // purple glow in sockets
+      // nose cavity
+      ctx.fillStyle = '#201010'; ctx.fillRect(x - 1, y - 18, 2, 2);
+      // jaw/teeth
+      ctx.fillStyle = skull; ctx.fillRect(x - 5, y - 14, 10, 3);
+      ctx.fillStyle = '#201010';
+      for (let i = 0; i < 4; i++) ctx.fillRect(x - 4 + i * 3, y - 13, 2, 3); // teeth gaps
+      // purple wisps
+      ctx.globalAlpha = 0.55;
+      ctx.fillStyle = '#b040ff';
+      ctx.fillRect(x - 22, y - 22, 4, 8); ctx.fillRect(x - 20, y - 28, 3, 8); // left wisps
+      ctx.fillRect(x + 18, y - 22, 4, 8); ctx.fillRect(x + 17, y - 28, 3, 8); // right wisps
+      ctx.fillRect(x - 22, y - 16, 3, 5); ctx.fillRect(x + 19, y - 16, 3, 5);
+      ctx.globalAlpha = 1;
+      break;
+    }
+    case 'wraith': {
       ctx.globalAlpha = 0.72;
       ctx.fillRect(x - r + 2, y - r, (r - 2) * 2, r);
       ctx.beginPath();
       for (let i = 0; i < 4; i++) ctx.rect(x - r + 2 + i * (r / 2), y, r / 2 - 1, r * 0.7);
       ctx.fill();
-      // highlight left
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.fillRect(x - r + 2, y - r, 2, r);
-      // shadow right
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(x + r - 4, y - r, 2, r);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - r + 2, y - r, 2, r);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + r - 4, y - r, 2, r);
       ctx.globalAlpha = 1;
-      // eyes
       ctx.fillStyle = '#e0fff8'; ctx.fillRect(x - 4, y - r + 4, 3, 3); ctx.fillRect(x + 2, y - r + 4, 3, 3);
-      // eye glow
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillRect(x - 4, y - r + 4, 1, 1); ctx.fillRect(x + 2, y - r + 4, 1, 1);
+      ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fillRect(x - 4, y - r + 4, 1, 1); ctx.fillRect(x + 2, y - r + 4, 1, 1);
+      break;
+    }
+    case 'wraithqueen': {
+      const t = game.time;
+      // outer ethereal glow
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#a8f8f0';
+      ctx.beginPath(); ctx.ellipse(x, y, r + 6, r + 4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      // wispy tendrils at bottom (animated)
+      ctx.globalAlpha = 0.55;
+      ctx.fillStyle = '#c8f8f8';
+      const tendrilOffsets = [-14, -9, -4, 1, 6, 11, 16];
+      for (let i = 0; i < tendrilOffsets.length; i++) {
+        const wave = Math.sin(t * 2.2 + i * 0.9) * 3;
+        const th = 8 + (i % 3) * 5;
+        ctx.fillRect(x + tendrilOffsets[i], y + 14 + wave, 3, th);
+      }
+      // side wispy arms
+      ctx.fillRect(x - 28, y - 10, 4, 16); ctx.fillRect(x - 24, y - 18, 3, 10);
+      ctx.fillRect(x + 24, y - 10, 4, 16); ctx.fillRect(x + 21, y - 18, 3, 10);
+      ctx.globalAlpha = 1;
+      // main body
+      ctx.fillStyle = '#d8f8f8';
+      ctx.fillRect(x - 16, y - 14, 32, 30);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(x - 16, y - 14, 4, 30);
+      ctx.fillStyle = 'rgba(80,180,200,0.3)'; ctx.fillRect(x + 12, y - 14, 4, 30);
+      // crown of spikes
+      ctx.fillStyle = '#b8f0f0';
+      const spikes = [-14, -9, -4, 1, 6, 11];
+      for (let i = 0; i < spikes.length; i++) {
+        const sh = 6 + (i % 2) * 5;
+        ctx.fillRect(x + spikes[i], y - 14 - sh, 3, sh + 2);
+      }
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      for (let i = 0; i < spikes.length; i++) {
+        const sh = 6 + (i % 2) * 5;
+        ctx.fillRect(x + spikes[i], y - 14 - sh, 1, sh);
+      }
+      // face shadow
+      ctx.fillStyle = 'rgba(40,120,140,0.35)'; ctx.fillRect(x - 12, y - 12, 24, 10);
+      // glowing eyes
+      ctx.fillStyle = '#00f8e8'; ctx.fillRect(x - 8, y - 10, 6, 5); ctx.fillRect(x + 2, y - 10, 6, 5);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 7, y - 9, 2, 2); ctx.fillRect(x + 3, y - 9, 2, 2);
+      ctx.fillStyle = 'rgba(0,240,200,0.5)'; // eye glow halo
+      ctx.fillRect(x - 10, y - 12, 10, 9); ctx.fillRect(x, y - 12, 10, 9);
+      // mouth (sorrowful)
+      ctx.fillStyle = 'rgba(40,120,140,0.7)';
+      ctx.fillRect(x - 5, y - 2, 10, 2);
+      ctx.fillRect(x - 6, y - 1, 2, 2); ctx.fillRect(x + 4, y - 1, 2, 2);
+      break;
+    }
+    case 'devourer': {
+      // tentacles (behind body)
+      const tentacleAngles = [0, 0.7, 1.4, 2.1, 2.8, 3.5, 4.2, 4.9];
+      ctx.fillStyle = '#6a2888';
+      for (const ang of tentacleAngles) {
+        const tx2 = Math.cos(ang), ty2 = Math.sin(ang);
+        const len = r + 10 + Math.sin(game.time * 1.8 + ang) * 4;
+        // tentacle as thick tapered rects
+        ctx.fillRect(x + tx2 * (r - 4) - 3, y + ty2 * (r - 4) - 3, 6, 6);
+        ctx.fillRect(x + tx2 * (r + 2) - 2, y + ty2 * (r + 2) - 2, 5, 5);
+        ctx.fillRect(x + tx2 * (r + 7) - 2, y + ty2 * (r + 7) - 2, 4, 4);
+        ctx.fillRect(x + tx2 * len - 1, y + ty2 * len - 1, 3, 3);
+      }
+      // main body
+      ctx.fillStyle = '#2a5a20';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      // body highlight top-left
+      ctx.fillStyle = '#3a7a2c';
+      ctx.beginPath(); ctx.arc(x - r * 0.2, y - r * 0.2, r * 0.75, 0, Math.PI * 2); ctx.fill();
+      // body shadow bottom-right
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath(); ctx.arc(x + r * 0.3, y + r * 0.3, r * 0.6, 0, Math.PI * 2); ctx.fill();
+      // central maw
+      ctx.fillStyle = '#0a0505';
+      ctx.beginPath(); ctx.arc(x, y, r * 0.42, 0, Math.PI * 2); ctx.fill();
+      // teeth ring
+      ctx.fillStyle = '#e8e4d0';
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        const tr = r * 0.42;
+        ctx.fillRect(x + Math.cos(a) * tr - 2, y + Math.sin(a) * tr - 2, 4, 4);
+      }
+      // inner maw darkness
+      ctx.fillStyle = '#050202';
+      ctx.beginPath(); ctx.arc(x, y, r * 0.32, 0, Math.PI * 2); ctx.fill();
+      // tongue
+      ctx.fillStyle = '#c03040';
+      ctx.beginPath(); ctx.ellipse(x, y + 3, r * 0.18, r * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+      // ring of eyes
+      const eyeAngles = [0, 1.05, 2.09, 3.14, 4.19, 5.24];
+      const eyeDist = r * 0.7;
+      for (const ea of eyeAngles) {
+        const ex = x + Math.cos(ea) * eyeDist, ey = y + Math.sin(ea) * eyeDist;
+        ctx.fillStyle = '#e8d040';
+        ctx.beginPath(); ctx.arc(ex, ey, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#100808';
+        ctx.beginPath(); ctx.arc(ex + 0.5, ey + 0.5, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillRect(ex - 3, ey - 3, 1, 1);
+      }
+      // body surface texture
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(x - 4, y - r + 4, 3, 3); ctx.fillRect(x + 6, y - r + 8, 2, 2);
+      ctx.fillRect(x - 12, y - 6, 2, 2); ctx.fillRect(x + 10, y + 8, 2, 2);
       break;
     }
     default: {
@@ -1199,4 +1436,22 @@ function drawComboText(ctx) {
   ctx.fillStyle = '#ff9020';
   ctx.fillText(ct.label, VIEW_W / 2, VIEW_H / 2 - 60);
   ctx.restore();
+}
+
+export function drawBossCanvases() {
+  const defs = [
+    { key: 'trollwarchief', color: '#6aaf3a', r: 28 },
+    { key: 'goblinking',    color: '#c8b020', r: 30 },
+    { key: 'bonelord',      color: '#e8e8d0', r: 32 },
+    { key: 'wraithqueen',   color: '#5fe0d0', r: 32 },
+    { key: 'devourer',      color: '#a02060', r: 36 },
+  ];
+  for (const b of defs) {
+    const cvs = document.getElementById(`bpv-${b.key}`);
+    if (!cvs) continue;
+    const c2 = cvs.getContext('2d');
+    c2.clearRect(0, 0, cvs.width, cvs.height);
+    const cx = cvs.width / 2, cy = Math.round(cvs.height * 0.62);
+    drawCreature(c2, { key: b.key, color: b.color, isBoss: true }, cx, cy, b.r);
+  }
 }

@@ -3,6 +3,7 @@
 import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
 import { isMobile } from './detect.js';
+import { drawBossCanvases } from './render.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
@@ -575,9 +576,11 @@ function renderOverlay() {
   // but 60fps DOM stomping is avoided (which breaks click events on the buttons).
   const titleKey = `title_${_showHowTo}_${_showArtPreview}`;
   if (game.phase === Phase.TITLE) {
-    if (lastOverlayPhase === titleKey) return;
-    lastOverlayPhase = titleKey;
-    o.innerHTML = titleHTML();
+    if (lastOverlayPhase !== titleKey) {
+      lastOverlayPhase = titleKey;
+      o.innerHTML = titleHTML();
+    }
+    if (_showArtPreview) drawBossCanvases();
     return;
   }
   const isEnd = game.phase === Phase.GAME_OVER || game.phase === Phase.WIN;
@@ -674,7 +677,7 @@ function artPreviewHTML() {
       }).join('')}
     </div>
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Trinkets</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
       ${[
         {name:'Mace',slot:'weapon',color:'#909098'},
         {name:'Boots of Speed',slot:'trinket',color:'#8b5c2a'},
@@ -686,6 +689,22 @@ function artPreviewHTML() {
         const svg = itemIconSVG({slot,name,color}).replace('width="28" height="28"','width="64" height="64"');
         return row(svg, name.split(' ')[0]);
       }).join('')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Bosses</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      ${[
+        {key:'trollwarchief', label:'Troll Warchief', floor:3},
+        {key:'goblinking',    label:'Goblin King',    floor:5},
+        {key:'bonelord',      label:'Bone Lord',      floor:10},
+        {key:'wraithqueen',   label:'Wraith Queen',   floor:15},
+        {key:'devourer',      label:'The Devourer',   floor:20},
+      ].map(({key,label,floor}) =>
+        `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <canvas id="bpv-${key}" width="96" height="96" style="image-rendering:pixelated"></canvas>
+          <span style="font-size:11px;color:#ffd060">${label}</span>
+          <span style="font-size:10px;color:#6a5a8a">Floor ${floor}</span>
+        </div>`
+      ).join('')}
     </div>
   </div>`;
 }
