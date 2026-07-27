@@ -428,8 +428,8 @@ function spawnFreeMinion(owner) {
   spawnParticles(owner.x, owner.y, '#c060ff', 12, 100);
 }
 
-const MINION_ORBIT_RADIUS = 48;
-const MINION_DETECT_RANGE = 210;
+const MINION_ORBIT_RADIUS = 36;
+const MINION_DETECT_RANGE = 270;
 
 export function updateMinions(dt) {
   for (const m of game.minions) {

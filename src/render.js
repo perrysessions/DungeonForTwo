@@ -729,18 +729,74 @@ function drawMiniBar(ctx, x, y, frac, color) {
 function drawMinions(ctx) {
   for (const m of game.minions) {
     const x = Math.round(m.x), y = Math.round(m.y);
-    ctx.fillStyle = m.color || '#cfeccb';
-    ctx.fillRect(x - 5, y - 8, 10, 12);
-    if (m.free) { // ghostly free minion: little aura
-      ctx.fillStyle = 'rgba(192,96,255,0.25)';
-      ctx.fillRect(x - 7, y - 10, 14, 16);
+
+    if (m.free) {
+      // Ghostly wraith: ethereal aura + semi-transparent body
+      ctx.fillStyle = 'rgba(192,96,255,0.18)';
+      ctx.beginPath(); ctx.ellipse(x, y, 10, 14, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 0.82;
       ctx.fillStyle = m.color;
       ctx.fillRect(x - 5, y - 8, 10, 12);
+      ctx.fillRect(x - 4, y - 14, 8, 7);
+      ctx.globalAlpha = 1;
+      // glowing purple eye sockets
+      ctx.fillStyle = 'rgba(255,180,255,0.85)';
+      ctx.fillRect(x - 3, y - 12, 2, 2); ctx.fillRect(x + 1, y - 12, 2, 2);
+    } else {
+      // Skeleton minion — bone white with pixel-art shading
+      const c = '#dfe3d0';
+
+      // drop shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.beginPath(); ctx.ellipse(x, y + 9, 7, 3, 0, 0, Math.PI * 2); ctx.fill();
+
+      // stick legs
+      ctx.fillStyle = c;
+      ctx.fillRect(x - 4, y + 3, 2, 7);
+      ctx.fillRect(x + 2, y + 3, 2, 7);
+      ctx.fillStyle = 'rgba(0,0,0,0.38)';
+      ctx.fillRect(x - 3, y + 3, 1, 7);
+      ctx.fillRect(x + 3, y + 3, 1, 7);
+
+      // torso
+      ctx.fillStyle = c;
+      ctx.fillRect(x - 4, y - 5, 8, 9);
+      // ribcage lines
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
+      ctx.fillRect(x - 3, y - 3, 6, 1);
+      ctx.fillRect(x - 3, y,     6, 1);
+      ctx.fillRect(x - 3, y + 3, 6, 1);
+      // torso highlight / shadow
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.fillRect(x - 4, y - 5, 1, 9);
+      ctx.fillStyle = 'rgba(0,0,0,0.38)';
+      ctx.fillRect(x + 3, y - 5, 1, 9);
+
+      // skull
+      ctx.fillStyle = c;
+      ctx.fillRect(x - 4, y - 14, 8, 9);
+      // skull highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(x - 4, y - 14, 8, 1);
+      ctx.fillRect(x - 4, y - 14, 1, 9);
+      // skull shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(x + 3, y - 14, 1, 9);
+      // jaw gap
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.fillRect(x - 3, y - 6, 6, 1);
+
+      // hollow eye sockets
+      ctx.fillStyle = '#120808';
+      ctx.fillRect(x - 3, y - 12, 3, 3);
+      ctx.fillRect(x,     y - 12, 3, 3);
+      // green soul-glow in eyes
+      ctx.fillStyle = 'rgba(60,255,100,0.9)';
+      ctx.fillRect(x - 3, y - 12, 1, 1);
+      ctx.fillRect(x,     y - 12, 1, 1);
     }
-    ctx.fillStyle = '#0a1a0a';
-    ctx.fillRect(x - 3, y - 5, 2, 2);
-    ctx.fillRect(x + 1, y - 5, 2, 2);
-    drawMiniBar(ctx, x, y - 12, m.hp / m.maxHp, m.free ? '#d69cff' : '#7bff9b');
+
+    drawMiniBar(ctx, x, y - 18, m.hp / m.maxHp, m.free ? '#d69cff' : '#7bff9b');
   }
 }
 
