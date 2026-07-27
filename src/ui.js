@@ -57,12 +57,8 @@ export function initUI(controller) {
     if (e.target.closest('[data-htp-open]') || e.target.closest('[data-htp-back]')) {
       titleToggleHowTo();
     }
-    if (e.target.closest('[data-artpreview-open]')) {
-      _showArtPreview = true; els.overlay.innerHTML = titleHTML();
-    }
-    if (e.target.closest('[data-artpreview-back]')) {
-      _showArtPreview = false; els.overlay.innerHTML = titleHTML();
-    }
+    if (e.target.closest('[data-artpreview-open]')) titleToggleArtPreview(true);
+    if (e.target.closest('[data-artpreview-back]')) titleToggleArtPreview(false);
     if (e.target.closest('[data-cls-back]')) ctrl.onBackToTitle();
   });
 }
@@ -600,6 +596,10 @@ let _showHowTo = false;
 export function titleToggleHowTo() { _showHowTo = !_showHowTo; lastOverlayPhase = null; }
 
 let _showArtPreview = false;
+export function titleToggleArtPreview(show) {
+  _showArtPreview = show;
+  document.getElementById('overlay').innerHTML = titleHTML();
+}
 function artPreviewHTML() {
   const vial = (liq) => `<svg viewBox="0 0 28 28" width="48" height="48" style="image-rendering:pixelated">
     <rect x="7" y="8" width="14" height="14" rx="2" fill="rgba(200,230,255,0.35)" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
