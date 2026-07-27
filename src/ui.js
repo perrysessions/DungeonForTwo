@@ -628,13 +628,18 @@ function artPreviewHTML() {
       ${row(vial('#5080ff'), 'Mana')}
     </div>
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Staves</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
       ${row(staff('#ff6010'), 'Fire')}
       ${row(staff('#c080ff'), 'Bone')}
       ${row(staff('#80d0ff'), 'Ice')}
       ${row(staff('#8bc34a','#5a3a1a'), 'Druid')}
       ${row(staff('#e8c34a'), 'Rare')}
-      ${row(staff('#a0ffa0'), 'Epic')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Blades</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${row(itemIconSVG({slot:'weapon',name:'Sword',color:'#b0b8c8'}), 'Sword')}
+      ${row(itemIconSVG({slot:'weapon',name:'Axe',color:'#b0b8c8'}), 'Axe')}
+      ${row(itemIconSVG({slot:'weapon',name:'Dagger',color:'#b0b8c8'}), 'Dagger')}
     </div>
   </div>`;
 }
@@ -968,26 +973,31 @@ function itemIconSVG(it) {
 
   const n = it.name || '';
   if (it.slot === 'weapon') {
-    if (n.includes('Sword')) return wrap('0 0 10 32',
-      `<!-- long blade -->
-       <polygon points="5,0 7,22 3,22" fill="#c8d8e8"/>
-       <polygon points="5,0 5.6,11 5,11" fill="rgba(255,255,255,0.75)"/>
+    if (n.includes('Sword')) return wrap('0 0 28 28',
+      `<!-- blade diagonal top-right to bottom-left -->
+       <polygon points="24,2 26,4 10,22 6,22" fill="#c8d8e8"/>
+       <polygon points="24,2 25,3 10,20 10,22" fill="rgba(255,255,255,0.6)"/>
+       <polygon points="10,22 6,22 7,24" fill="rgba(0,0,0,0.3)"/>
        <!-- crossguard -->
-       <rect x="0" y="22" width="10" height="3" rx="1" fill="${c}"/>
-       <rect x="0" y="22" width="10" height="1" fill="rgba(255,255,255,0.3)"/>
+       <rect x="5" y="20" width="10" height="3" rx="1" transform="rotate(-45,10,21.5)" fill="${c}"/>
        <!-- grip -->
-       <rect x="3.5" y="25" width="3" height="5" rx="0.5" fill="#7a4820"/>
-       <rect x="3.5" y="25" width="1" height="5" fill="rgba(255,255,255,0.22)"/>
+       <rect x="3" y="20" width="3" height="8" rx="1" transform="rotate(-45,4.5,24)" fill="#7a4820"/>
+       <rect x="3" y="20" width="1" height="8" rx="0.5" transform="rotate(-45,3.5,24)" fill="rgba(255,255,255,0.25)"/>
        <!-- pommel -->
-       <ellipse cx="5" cy="31" rx="3" ry="2" fill="${c}"/>
-       <ellipse cx="4" cy="30.5" rx="1.2" ry="0.8" fill="rgba(255,255,255,0.4)"/>`);
-    if (n.includes('Axe')) return wrap('-10 -10 20 20',
-      `<g transform="rotate(35)">
-        <rect x="-1.5" y="-6" width="3" height="14" fill="#7a5030"/>
-        <polygon points="2,-6 9,-4 9,4 2,4" fill="${c}"/>
-        <polygon points="2,-6 9,-4 9,-1" fill="rgba(255,255,255,0.35)"/>
-        <polygon points="9,-4 9,4 7,-1" fill="rgba(0,0,0,0.4)"/>
-      </g>`);
+       <circle cx="5" cy="26" r="2.5" fill="${c}"/>
+       <circle cx="4.5" cy="25.5" r="1" fill="rgba(255,255,255,0.45)"/>`);
+    if (n.includes('Axe')) return wrap('0 0 28 28',
+      `<!-- handle diagonal -->
+       <rect x="12" y="10" width="4" height="16" rx="1.5" transform="rotate(45,14,18)" fill="#7a4820"/>
+       <rect x="12" y="10" width="1.5" height="16" rx="1" transform="rotate(45,12.75,18)" fill="rgba(255,255,255,0.2)"/>
+       <!-- top axe blade -->
+       <path d="M6,4 Q2,8 5,13 L11,9 Z" fill="${c}"/>
+       <path d="M6,4 Q4,7 6,10 L9,8 Z" fill="rgba(255,255,255,0.4)"/>
+       <!-- bottom axe blade -->
+       <path d="M17,15 L22,20 Q24,24 20,25 Q17,22 15,20 Z" fill="${c}"/>
+       <path d="M17,15 L21,20 Q22,22 20,23 L17,19 Z" fill="rgba(255,255,255,0.35)"/>
+       <!-- blade edge shadow -->
+       <path d="M5,13 Q8,16 11,9" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>`);
     if (n.includes('Mace')) return wrap('-10 -10 20 20',
       `<g transform="rotate(40)">
         <rect x="-1.5" y="-4" width="3" height="12" fill="#7a5030"/>
@@ -1007,13 +1017,20 @@ function itemIconSVG(it) {
        <!-- grip wrap -->
        <rect x="10" y="11" width="4" height="6" rx="1" fill="#8b5820"/>
        <rect x="10" y="11" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>`);
-    if (n.includes('Dagger')) return wrap('-10 -10 20 20',
-      `<g transform="rotate(40)">
-        <polygon points="0,-9 1.5,-1 -1.5,-1" fill="#dde8f0"/>
-        <polygon points="0,-9 0.5,-3 0,-3" fill="#fff" opacity="0.7"/>
-        <rect x="-3" y="-1" width="6" height="1.5" fill="${c}" rx="0.3"/>
-        <rect x="-1" y="0.5" width="2" height="4" fill="#4a3858"/>
-      </g>`);
+    if (n.includes('Dagger')) return wrap('0 0 28 28',
+      `<!-- curved blade top-right to bottom-left -->
+       <path d="M22,4 Q24,6 18,14 L14,14 Z" fill="#c8d8e8"/>
+       <path d="M22,4 Q23,6 18,13 L17,13 Z" fill="rgba(255,255,255,0.55)"/>
+       <path d="M18,14 L14,14 L15,16 Z" fill="rgba(0,0,0,0.25)"/>
+       <!-- crossguard -->
+       <rect x="11" y="13" width="7" height="2.5" rx="1" transform="rotate(-45,14.5,14.25)" fill="${c}"/>
+       <!-- grip -->
+       <rect x="9" y="15" width="3" height="7" rx="1" transform="rotate(-45,10.5,18.5)" fill="#7a4820"/>
+       <rect x="9" y="15" width="1" height="7" rx="0.5" transform="rotate(-45,9.5,18.5)" fill="rgba(255,255,255,0.25)"/>
+       <!-- pommel -->
+       <circle cx="7" cy="23" r="2" fill="${c}"/>
+       <circle cx="6.5" cy="22.5" r="0.8" fill="rgba(255,255,255,0.45)"/>
+      `);
     if (n.includes('Staff')) return wrap('0 0 28 28',
       `<!-- handle -->
        <rect x="12" y="6" width="4" height="20" rx="1.5" fill="#7a5022"/>
