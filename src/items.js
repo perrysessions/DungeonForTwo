@@ -169,8 +169,8 @@ export function generateShopStock(floor) {
   const stock = [];
   for (let i = 0; i < 4; i++) stock.push(generateEquipment(t, floor));
   stock.push(generateEquipment(t, floor + 1, chance(0.4) ? 'legendary' : 'rare'));
+  stock.push(generateEquipment(t, floor));
   stock.push(makePotion('health'));
-  stock.push(makePotion('greaterHealth'));
   stock.push(makePotion('mana'));
   return stock;
 }
