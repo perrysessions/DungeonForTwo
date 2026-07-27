@@ -966,12 +966,19 @@ function itemIconSVG(it) {
         <rect x="-3" y="-1" width="6" height="1.5" fill="${c}" rx="0.3"/>
         <rect x="-1" y="0.5" width="2" height="4" fill="#4a3858"/>
       </g>`);
-    if (n.includes('Staff')) return wrap('-10 -14 20 28',
-      `<rect x="-1.5" y="-7" width="3" height="19" rx="1" fill="#7a5022"/>
-       <rect x="-1.5" y="-7" width="1" height="19" fill="rgba(255,255,255,0.2)" rx="1"/>
-       <circle cx="0" cy="-10" r="5" fill="${c}" opacity="0.9"/>
-       <circle cx="-1.5" cy="-12" r="2" fill="rgba(255,255,255,0.45)"/>
-       <circle cx="0" cy="-10" r="7" fill="${c}" opacity="0.18"/>`);
+    if (n.includes('Staff')) return wrap('0 0 28 28',
+      `<!-- handle -->
+       <rect x="12" y="6" width="4" height="20" rx="1.5" fill="#7a5022"/>
+       <rect x="12" y="6" width="1.5" height="20" fill="rgba(255,255,255,0.2)" rx="1"/>
+       <!-- bark knot -->
+       <rect x="11" y="13" width="6" height="4" rx="1" fill="#3a2010"/>
+       <!-- orb glow halo -->
+       <circle cx="14" cy="5" r="7" fill="${c}" opacity="0.2"/>
+       <!-- orb body -->
+       <circle cx="14" cy="5" r="5" fill="${c}" opacity="0.95"/>
+       <!-- orb inner shine -->
+       <circle cx="12" cy="3" r="2.5" fill="rgba(255,255,255,0.45)"/>`);
+
   }
 
   if (it.slot === 'armor') {
