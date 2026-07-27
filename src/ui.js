@@ -642,11 +642,24 @@ function artPreviewHTML() {
       ${row(staff('#8bc34a','#5a3a1a'), 'Druid')}
       ${row(staff('#e8c34a'), 'Rare')}
     </div>
-    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Blades</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
-      ${['Sword','Axe','Dagger'].map(name => {
-        const svg = itemIconSVG({slot:'weapon',name,color:'#b0b8c8'}).replace('width="28" height="28"','width="64" height="64"');
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Blades &amp; Ranged</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+      ${['Sword','Axe','Dagger','Bow'].map(name => {
+        const slot = name === 'Bow' ? 'weapon' : 'weapon';
+        const svg = itemIconSVG({slot,name,color:'#b0b8c8'}).replace('width="28" height="28"','width="64" height="64"');
         return row(svg, name);
+      }).join('')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Armor</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${[
+        {name:'Worn Tunic',color:'#5a8a3a'},
+        {name:'Worn Robe',color:'#2a4a8a'},
+        {name:'Worn Mail',color:'#808090'},
+        {name:'Worn Plate',color:'#a0a8b8'},
+      ].map(({name,color}) => {
+        const svg = itemIconSVG({slot:'armor',name,color}).replace('width="28" height="28"','width="64" height="64"');
+        return row(svg, name.replace('Worn ',''));
       }).join('')}
     </div>
   </div>`;
@@ -1011,16 +1024,22 @@ function itemIconSVG(it) {
         <rect x="-5" y="-5" width="2" height="3" fill="${c}"/>
         <rect x="3" y="-5" width="2" height="3" fill="${c}"/>
       </g>`);
-    if (n.includes('Bow')) return wrap('0 0 20 28',
-      `<!-- bow limb - D-curve shape -->
-       <path d="M 14,2 Q 2,14 14,26" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
-       <!-- highlight on limb -->
-       <path d="M 14,2 Q 4,14 14,26" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+    if (n.includes('Bow')) return wrap('0 0 28 28',
+      `<!-- bow limb - D-curve -->
+       <path d="M 18,2 Q 4,14 18,26" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
+       <path d="M 18,2 Q 6,14 18,26" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none"/>
        <!-- string -->
-       <line x1="14" y1="2" x2="14" y2="26" stroke="#d0d0a0" stroke-width="1"/>
+       <line x1="18" y1="2" x2="18" y2="26" stroke="#d0d0a0" stroke-width="1"/>
        <!-- grip wrap -->
-       <rect x="10" y="11" width="4" height="6" rx="1" fill="#8b5820"/>
-       <rect x="10" y="11" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>`);
+       <rect x="14" y="11" width="4" height="6" rx="1" fill="#8b5820"/>
+       <rect x="14" y="11" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>
+       <!-- arrow shaft (nocked, pointing left) -->
+       <line x1="4" y1="14" x2="18" y2="14" stroke="#c89050" stroke-width="1.5"/>
+       <!-- arrowhead -->
+       <polygon points="4,14 8,12 8,16" fill="#c8d8e8"/>
+       <!-- fletching -->
+       <polygon points="18,14 20,11.5 21,13" fill="#c04040"/>
+       <polygon points="18,14 20,16.5 21,15" fill="#c04040"/>`);
     if (n.includes('Dagger')) return wrap('0 0 28 28',
       `<g transform="rotate(-45,14,14)">
        <polygon points="14,4 16,14 12,14" fill="#c8d8e8"/>
@@ -1049,23 +1068,27 @@ function itemIconSVG(it) {
   }
 
   if (it.slot === 'armor') {
-    if (n.includes('Robe')) return wrap('0 0 24 30',
-      `<!-- hood/shoulders -->
-       <ellipse cx="12" cy="5" rx="8" ry="5" fill="${c}"/>
-       <!-- hood center peak -->
-       <polygon points="12,0 8,4 16,4" fill="rgba(255,255,255,0.15)"/>
-       <!-- robe body — wide and flowing -->
-       <polygon points="4,8 20,8 22,28 2,28" fill="${c}"/>
-       <!-- front opening / dark seam -->
-       <polygon points="12,8 10,28 14,28" fill="rgba(0,0,0,0.35)"/>
-       <!-- left highlight -->
-       <polygon points="4,8 8,8 7,28 2,28" fill="rgba(255,255,255,0.12)"/>
-       <!-- right shadow -->
-       <polygon points="20,8 16,8 17,28 22,28" fill="rgba(0,0,0,0.2)"/>
-       <!-- collar/neck area -->
-       <ellipse cx="12" cy="8" rx="4" ry="2" fill="rgba(0,0,0,0.3)"/>
-       <!-- hem detail -->
-       <rect x="2" y="26" width="20" height="2" fill="rgba(255,255,255,0.12)"/>`);
+    if (n.includes('Robe')) return wrap('0 0 28 28',
+      `<!-- left sleeve -->
+       <rect x="2" y="8" width="6" height="8" rx="1" fill="${c}"/>
+       <rect x="2" y="14" width="6" height="2" rx="0.5" fill="rgba(0,0,0,0.25)"/>
+       <!-- right sleeve -->
+       <rect x="20" y="8" width="6" height="8" rx="1" fill="${c}"/>
+       <rect x="20" y="14" width="6" height="2" rx="0.5" fill="rgba(0,0,0,0.25)"/>
+       <!-- shoulder yoke -->
+       <rect x="6" y="7" width="16" height="5" rx="1" fill="${c}"/>
+       <!-- body, flares wide toward hem -->
+       <polygon points="6,12 22,12 25,28 3,28" fill="${c}"/>
+       <!-- collar shadow -->
+       <rect x="10" y="7" width="8" height="4" rx="1" fill="rgba(0,0,0,0.3)"/>
+       <!-- left body highlight -->
+       <polygon points="6,12 9,12 7,28 3,28" fill="rgba(255,255,255,0.1)"/>
+       <!-- front seam -->
+       <polygon points="14,12 12.5,28 15.5,28" fill="rgba(0,0,0,0.28)"/>
+       <!-- right body shadow -->
+       <polygon points="22,12 19,12 21,28 25,28" fill="rgba(0,0,0,0.18)"/>
+       <!-- hem band -->
+       <rect x="3" y="26" width="22" height="2" rx="0.5" fill="rgba(0,0,0,0.22)"/>`);
     if (n.includes('Plate')) return wrap('-10 -10 20 20',
       `<polygon points="0,-9 7,-4 8,5 0,9 -8,5 -7,-4" fill="${c}"/>
        <polygon points="0,-9 7,-4 8,5 0,9 -8,5 -7,-4" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
@@ -1077,28 +1100,32 @@ function itemIconSVG(it) {
        <rect x="-7" y="2" width="14" height="1" fill="rgba(255,255,255,0.2)"/>
        <rect x="-7" y="5" width="14" height="1" fill="rgba(255,255,255,0.2)"/>
        <polygon points="0,-9 7,-3 5,-3 0,-7 -5,-3 -7,-3" fill="rgba(255,255,255,0.28)"/>`);
-    // Tunic — leather vest, front-facing
-    return wrap('0 0 24 28',
-      `<!-- body -->
-       <polygon points="3,8 21,8 20,26 4,26" fill="${c}"/>
-       <!-- left lapel/front panel -->
-       <polygon points="12,8 3,8 3,4 8,2 12,8" fill="${c}"/>
-       <!-- right lapel/front panel -->
-       <polygon points="12,8 21,8 21,4 16,2 12,8" fill="${c}"/>
-       <!-- front seam line -->
-       <line x1="12" y1="8" x2="12" y2="26" stroke="rgba(0,0,0,0.35)" stroke-width="1"/>
+    // Tunic — front-facing T-shape with belt
+    return wrap('0 0 28 28',
+      `<!-- left sleeve -->
+       <rect x="2" y="8" width="7" height="7" rx="1" fill="${c}"/>
+       <rect x="2" y="13" width="7" height="2" rx="0.5" fill="rgba(0,0,0,0.22)"/>
+       <!-- right sleeve -->
+       <rect x="19" y="8" width="7" height="7" rx="1" fill="${c}"/>
+       <rect x="19" y="13" width="7" height="2" rx="0.5" fill="rgba(0,0,0,0.22)"/>
+       <!-- shoulder yoke -->
+       <rect x="6" y="7" width="16" height="5" rx="1" fill="${c}"/>
+       <!-- body -->
+       <rect x="7" y="12" width="14" height="16" rx="1" fill="${c}"/>
        <!-- collar -->
-       <polygon points="8,2 16,2 14,0 10,0" fill="rgba(0,0,0,0.3)"/>
-       <!-- left shoulder highlight -->
-       <polygon points="3,4 8,2 8,4 3,6" fill="rgba(255,255,255,0.22)"/>
+       <rect x="10" y="7" width="8" height="4" rx="1" fill="rgba(0,0,0,0.28)"/>
+       <!-- left highlight -->
+       <rect x="7" y="12" width="3" height="16" rx="0.5" fill="rgba(255,255,255,0.15)"/>
        <!-- right shadow -->
-       <polygon points="21,4 16,2 16,4 21,6" fill="rgba(0,0,0,0.25)"/>
-       <!-- bottom shadow -->
-       <rect x="4" y="24" width="16" height="2" fill="rgba(0,0,0,0.25)"/>
-       <!-- button/clasp row -->
-       <circle cx="12" cy="12" r="1" fill="rgba(0,0,0,0.4)"/>
-       <circle cx="12" cy="17" r="1" fill="rgba(0,0,0,0.4)"/>
-       <circle cx="12" cy="22" r="1" fill="rgba(0,0,0,0.4)"/>`);
+       <rect x="18" y="12" width="3" height="16" rx="0.5" fill="rgba(0,0,0,0.2)"/>
+       <!-- belt -->
+       <rect x="7" y="19" width="14" height="3.5" rx="0.5" fill="#7a4818"/>
+       <rect x="7" y="19" width="14" height="1.2" rx="0.3" fill="rgba(255,255,255,0.15)"/>
+       <!-- belt buckle -->
+       <rect x="11.5" y="18.5" width="5" height="4.5" rx="0.5" fill="#c8962a"/>
+       <rect x="12.5" y="19.5" width="3" height="2.5" rx="0.3" fill="#7a4818"/>
+       <!-- hem shadow -->
+       <rect x="7" y="26" width="14" height="2" rx="0.5" fill="rgba(0,0,0,0.22)"/>`);
   }
 
   if (it.slot === 'trinket') {
