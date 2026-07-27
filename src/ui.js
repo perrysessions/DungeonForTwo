@@ -1165,32 +1165,36 @@ function itemIconSVG(it, size = 28) {
 
   if (it.slot === 'trinket') {
     if (n.includes('Boot')) return wrap('0 0 28 28',
-      `<!-- left boot (behind, dim) -->
-       <rect x="1" y="10" width="9" height="12" rx="1.5" fill="${c}" opacity="0.5"/>
-       <rect x="0" y="7" width="11" height="4" rx="1.5" fill="${c}" opacity="0.4"/>
-       <rect x="0" y="21" width="12" height="5" rx="1.5" fill="${c}" opacity="0.45"/>
-       <rect x="0" y="25" width="13" height="2" rx="0.5" fill="rgba(0,0,0,0.65)"/>
-       <!-- right boot shaft (narrow) -->
-       <rect x="10" y="6" width="9" height="15" rx="1.5" fill="${c}"/>
-       <rect x="11" y="7" width="2.5" height="13" rx="1" fill="rgba(255,255,255,0.2)"/>
-       <rect x="16" y="6" width="2" height="15" rx="1" fill="rgba(0,0,0,0.18)"/>
-       <!-- right cuff (rolled, wider than shaft) -->
-       <rect x="9" y="3" width="12" height="5" rx="2" fill="${c}"/>
-       <rect x="10" y="6.5" width="10" height="1.5" fill="rgba(0,0,0,0.25)"/>
-       <rect x="10" y="3" width="10" height="2.5" rx="1" fill="rgba(255,255,255,0.13)"/>
+       `<!-- left boot (behind) -->
+       <rect x="0" y="10" width="10" height="13" rx="1.5" fill="${c}" opacity="0.52"/>
+       <rect x="0" y="14" width="10" height="1.2" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+       <rect x="0" y="17" width="10" height="1.2" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+       <rect x="0" y="7" width="11" height="4.5" rx="2" fill="${c}" opacity="0.45"/>
+       <rect x="0" y="22" width="12" height="4.5" rx="1.5" fill="${c}" opacity="0.5"/>
+       <rect x="0" y="25.5" width="12" height="2" rx="0.5" fill="rgba(0,0,0,0.7)"/>
+       <!-- right boot shaft -->
+       <rect x="9" y="5" width="11" height="17" rx="2" fill="${c}"/>
+       <rect x="10" y="6" width="3" height="15" rx="1" fill="rgba(255,255,255,0.18)"/>
+       <rect x="17" y="5" width="2.5" height="17" rx="1" fill="rgba(0,0,0,0.2)"/>
+       <!-- right cuff (rolled top) -->
+       <rect x="8" y="1" width="13" height="6" rx="2.5" fill="${c}"/>
+       <rect x="9" y="5" width="11" height="2" fill="rgba(0,0,0,0.22)"/>
+       <rect x="9" y="1" width="11" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
        <!-- buckle strap -->
-       <rect x="9" y="13" width="11" height="2.5" rx="0.5" fill="rgba(0,0,0,0.35)"/>
-       <circle cx="14.5" cy="14.25" r="2" fill="#c8962a"/>
-       <circle cx="14.5" cy="14.25" r="1" fill="rgba(0,0,0,0.5)"/>
-       <!-- right foot (extends wide past shaft) -->
-       <rect x="9" y="20" width="18" height="6" rx="2" fill="${c}"/>
-       <rect x="9" y="20" width="5" height="6" rx="1" fill="rgba(0,0,0,0.15)"/>
-       <!-- sole with tread ridges -->
-       <rect x="9" y="25" width="19" height="2.5" rx="0.8" fill="#1a0e05"/>
-       <rect x="11" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
-       <rect x="15" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
-       <rect x="19" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>
-       <rect x="23" y="25.2" width="1.5" height="2" fill="rgba(255,255,255,0.1)"/>`);
+       <rect x="8" y="13" width="13" height="3" rx="0.5" fill="rgba(0,0,0,0.25)"/>
+       <circle cx="14.5" cy="14.5" r="3" fill="#c8962a"/>
+       <circle cx="14.5" cy="14.5" r="1.7" fill="rgba(10,6,2,0.95)"/>
+       <!-- right foot -->
+       <rect x="8" y="21" width="19" height="5" rx="2" fill="${c}"/>
+       <rect x="8" y="21" width="5" height="5" rx="1" fill="rgba(0,0,0,0.15)"/>
+       <rect x="9" y="21" width="17" height="1.5" rx="0.5" fill="rgba(255,255,255,0.12)"/>
+       <!-- sole -->
+       <rect x="8" y="25" width="20" height="0.8" rx="0.3" fill="rgba(200,150,70,0.4)"/>
+       <rect x="8" y="25.5" width="20" height="2.5" rx="0.5" fill="#1a0e05"/>
+       <rect x="10" y="25.7" width="1.5" height="2" fill="rgba(255,255,255,0.08)"/>
+       <rect x="13.5" y="25.7" width="1.5" height="2" fill="rgba(255,255,255,0.08)"/>
+       <rect x="17" y="25.7" width="1.5" height="2" fill="rgba(255,255,255,0.08)"/>
+       <rect x="20.5" y="25.7" width="1.5" height="2" fill="rgba(255,255,255,0.08)"/>`);
     if (n.includes('Ring') || n.includes('Band')) return wrap('0 0 28 28',
       `<!-- band outer shadow -->
        <ellipse cx="14" cy="19" rx="9.5" ry="5.5" fill="rgba(0,0,0,0.4)"/>
