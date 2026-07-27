@@ -226,7 +226,7 @@ export function passiveOnKill(player, enemy) {
       break;
     }
     case 'n_pass': { // Undying Legion — chance per kill to spawn a free wraith minion
-      const chance = [0, 0.05, 0.10, 0.15, 0.20][rank] || 0;
+      const chance = [0, 0.12, 0.22, 0.32, 0.42][rank] || 0;
       if (Math.random() < chance) spawnFreeMinion(player);
       break;
     }
@@ -405,8 +405,8 @@ const ABILITIES = {
 
 // ---- minions ------------------------------------------------------------
 function makeMinion(owner) {
-  const dmg = Math.round(owner.stats.attackDamage * (0.6 + owner.mods.minionDmg) * owner.stats.damageMult);
-  const hp = Math.round(40 * (1 + owner.mods.minionHp) + owner.level * 4);
+  const dmg = Math.round(owner.stats.attackDamage * (0.9 + owner.mods.minionDmg) * owner.stats.damageMult);
+  const hp = Math.round(65 * (1 + owner.mods.minionHp) + owner.level * 5);
   const ox = randRange(-16, 16), oy = randRange(-16, 16);
   return {
     owner, x: owner.x + ox, y: owner.y + oy,
@@ -417,8 +417,8 @@ function makeMinion(owner) {
 
 // Necromancer "Undying Legion" passive minion: same stats as skill minions, distinct color, ignores cap.
 function spawnFreeMinion(owner) {
-  const dmg = Math.round(owner.stats.attackDamage * (0.6 + owner.mods.minionDmg) * owner.stats.damageMult);
-  const hp = Math.round(40 * (1 + owner.mods.minionHp) + owner.level * 4);
+  const dmg = Math.round(owner.stats.attackDamage * (0.9 + owner.mods.minionDmg) * owner.stats.damageMult);
+  const hp = Math.round(65 * (1 + owner.mods.minionHp) + owner.level * 5);
   const ox = randRange(-18, 18), oy = randRange(-18, 18);
   game.minions.push({
     owner, x: owner.x + ox, y: owner.y + oy,

@@ -774,29 +774,29 @@ function drawMinions(ctx) {
 
       // skull
       ctx.fillStyle = c;
-      ctx.fillRect(x - 4, y - 14, 8, 9);
+      ctx.fillRect(x - 4, y - 12, 8, 8);
       // skull highlight
       ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillRect(x - 4, y - 14, 8, 1);
-      ctx.fillRect(x - 4, y - 14, 1, 9);
+      ctx.fillRect(x - 4, y - 12, 8, 1);
+      ctx.fillRect(x - 4, y - 12, 1, 8);
       // skull shadow
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillRect(x + 3, y - 14, 1, 9);
+      ctx.fillRect(x + 3, y - 12, 1, 8);
       // jaw gap
       ctx.fillStyle = 'rgba(0,0,0,0.28)';
-      ctx.fillRect(x - 3, y - 6, 6, 1);
+      ctx.fillRect(x - 3, y - 5, 6, 1);
 
       // hollow eye sockets
       ctx.fillStyle = '#120808';
-      ctx.fillRect(x - 3, y - 12, 3, 3);
-      ctx.fillRect(x,     y - 12, 3, 3);
+      ctx.fillRect(x - 3, y - 10, 3, 3);
+      ctx.fillRect(x,     y - 10, 3, 3);
       // green soul-glow in eyes
       ctx.fillStyle = 'rgba(60,255,100,0.9)';
-      ctx.fillRect(x - 3, y - 12, 1, 1);
-      ctx.fillRect(x,     y - 12, 1, 1);
+      ctx.fillRect(x - 3, y - 10, 1, 1);
+      ctx.fillRect(x,     y - 10, 1, 1);
     }
 
-    drawMiniBar(ctx, x, y - 18, m.hp / m.maxHp, m.free ? '#d69cff' : '#7bff9b');
+    drawMiniBar(ctx, x, y - 16, m.hp / m.maxHp, m.free ? '#d69cff' : '#7bff9b');
   }
 }
 
