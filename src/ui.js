@@ -397,10 +397,23 @@ let panelFlashT = [0, 0];
 function flashPanel(pi, msg) { panelFlash[pi] = msg; panelFlashT[pi] = 1.6; }
 
 // ---------------- rendering ----------------
+function potionSVG(liq) {
+  const glass = liq === '#bb1828' ? 'rgba(255,180,180,0.8)' : 'rgba(140,180,255,0.8)';
+  return `<svg viewBox="0 0 20 28" width="12" height="17" style="display:inline-block;vertical-align:middle;margin-right:3px;image-rendering:pixelated">` +
+    `<ellipse cx="10" cy="19" rx="8" ry="7" fill="${liq}"/>` +
+    `<ellipse cx="10" cy="19" rx="8" ry="7" fill="none" stroke="${glass}" stroke-width="1.2"/>` +
+    `<ellipse cx="6" cy="15" rx="2" ry="3.5" fill="rgba(255,255,255,0.3)"/>` +
+    `<rect x="7" y="8" width="6" height="8" fill="${liq}"/>` +
+    `<rect x="7" y="8" width="6" height="8" fill="none" stroke="${glass}" stroke-width="1"/>` +
+    `<rect x="6" y="3" width="8" height="6" rx="2" fill="#c08030"/>` +
+    `</svg>`;
+}
+
 function bar(label, cur, max, color) {
   const pct = Math.max(0, Math.min(100, (cur / max) * 100));
+  const icon = label === 'HP' ? potionSVG('#bb1828') : label === 'MP' ? potionSVG('#3050ee') : '';
   return `<div class="bar"><div class="fill" style="width:${pct}%;background:${color}"></div>` +
-    `<span>${label} ${Math.ceil(cur)}/${Math.round(max)}</span></div>`;
+    `<span>${icon}${Math.ceil(cur)}/${Math.round(max)}</span></div>`;
 }
 
 function eqLine(p) {
