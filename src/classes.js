@@ -112,7 +112,7 @@ export const CLASSES = {
       projectileSpeed: 360, moveSpeed: 178,
     },
     tree: [
-      node('d_pass', 'Wildblood', 'PASSIVE — On kill in beast form: restore 1.5s beast timer per rank', { passive: true, maxRank: 4 }),
+      node('d_pass', 'Wildblood', 'PASSIVE — On kill in beast form: restore 0.5s beast timer per rank', { passive: true, maxRank: 4 }),
       node('d_dur', 'Pack Endurance', '+2s Beast form duration', { maxRank: 4, mods: { beastDur: 2 } }),
       node('d_bdmg', 'Feral Rage', '+15% Beast form damage', { maxRank: 4, mods: { beastDmg: 0.15 } }),
       node('d_bspd', 'Wild Sprint', '+18 Beast form speed', { maxRank: 3, mods: { beastSpd: 18 } }),
