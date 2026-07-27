@@ -58,10 +58,10 @@ export function initUI(controller) {
       titleToggleHowTo();
     }
     if (e.target.closest('[data-artpreview-open]')) {
-      _showArtPreview = true; lastOverlayPhase = null;
+      _showArtPreview = true; els.overlay.innerHTML = titleHTML();
     }
     if (e.target.closest('[data-artpreview-back]')) {
-      _showArtPreview = false; lastOverlayPhase = null;
+      _showArtPreview = false; els.overlay.innerHTML = titleHTML();
     }
     if (e.target.closest('[data-cls-back]')) ctrl.onBackToTitle();
   });
