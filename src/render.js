@@ -530,7 +530,8 @@ function drawPlayers(ctx) {
     if (p.swing && p.swing.t > 0) drawSwing(ctx, p);
     if (p.novaFx && p.novaFx.t > 0) {
       const k = 1 - p.novaFx.t / p.novaFx.max;
-      ctx.strokeStyle = `rgba(160,224,255,${1 - k})`; ctx.lineWidth = 4;
+      const novaCol = p.cls.key === 'druid' ? `rgba(140,224,80,${1 - k})` : `rgba(160,224,255,${1 - k})`;
+      ctx.strokeStyle = novaCol; ctx.lineWidth = 4;
       ctx.beginPath(); ctx.arc(x, y, p.novaFx.radius * k, 0, Math.PI * 2); ctx.stroke();
     }
     // name tag + tiny hp
@@ -575,6 +576,27 @@ function drawHead(ctx, x, y, a) {
     // hood shadow right
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.fillRect(x + 4, y - 16, 2, 6);
+  } else if (a.head === 'antlers') {
+    // leaf crown band
+    ctx.fillStyle = a.body;
+    ctx.fillRect(x - 6, y - 16, 12, 5);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fillRect(x - 6, y - 16, 12, 1);
+    ctx.fillRect(x - 6, y - 16, 1, 5);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(x + 4, y - 16, 2, 5);
+    // left antler branch
+    ctx.fillStyle = '#5a3a1a';
+    ctx.fillRect(x - 5, y - 20, 2, 5);  // main left stalk
+    ctx.fillRect(x - 7, y - 22, 2, 3);  // left fork
+    ctx.fillRect(x - 4, y - 22, 2, 2);  // inner fork
+    // right antler branch
+    ctx.fillRect(x + 3, y - 20, 2, 5);  // main right stalk
+    ctx.fillRect(x + 5, y - 22, 2, 3);  // right fork
+    ctx.fillRect(x + 2, y - 22, 2, 2);  // inner fork
+    // leaf accent on crown
+    ctx.fillStyle = a.accent;
+    ctx.fillRect(x - 2, y - 17, 4, 2);
   }
 }
 
@@ -639,16 +661,19 @@ function drawWeapon(ctx, clsKey, x, y, facing, a) {
       ctx.beginPath(); ctx.arc(12, 0, 7, 0, Math.PI * 2); ctx.fill();
       break;
     }
-    case 'cleric': {
-      // Mace: handle + cross head
-      ctx.fillStyle = '#9a8050';
-      ctx.fillRect(0, -1, 9, 2);
-      ctx.fillStyle = a.accent;
-      ctx.fillRect(9, -4, 4, 8);   // vertical bar
-      ctx.fillRect(7, -2, 8, 4);   // horizontal bar
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.fillRect(9, -4, 1, 4);
-      ctx.fillRect(7, -2, 4, 1);
+    case 'druid': {
+      // Gnarled staff: dark wood handle + glowing green gem tip
+      ctx.fillStyle = '#5a3a1a';
+      ctx.fillRect(0, -1, 12, 2);
+      ctx.fillStyle = '#3a2010';
+      ctx.fillRect(3, -2, 2, 4);   // bark knot
+      ctx.fillStyle = '#8bc34a';   // gem
+      ctx.fillRect(12, -3, 5, 5);
+      ctx.fillRect(14, -5, 3, 2);
+      ctx.fillRect(14, 4, 3, 2);
+      ctx.fillStyle = 'rgba(200,230,120,0.7)';
+      ctx.fillRect(12, -3, 1, 3);  // gem highlight
+      ctx.fillRect(12, -3, 3, 1);
       break;
     }
     case 'rogue': {

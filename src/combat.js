@@ -218,8 +218,17 @@ export function passiveOnKill(player, enemy) {
       spawnParticles(enemy.x, enemy.y, '#a0e0ff', 8, 90);
       break;
     }
-    case 'c_pass':
-    case 'p_pass': { // Renewal / Retribution — heal both heroes
+    case 'd_pass': { // Regrowth — chance on kill to restore HP to self
+      const chance = [0, 0.25, 0.40, 0.55, 0.70][rank] || 0;
+      if (Math.random() < chance) {
+        const h = Math.round(player.stats.maxHp * 0.08 * rank);
+        player.hp = Math.min(player.stats.maxHp, player.hp + h);
+        spawnFloater(player.x, player.y - 20, `+${h}`, '#8ce050');
+        spawnParticles(player.x, player.y, '#8ce050', 6, 70);
+      }
+      break;
+    }
+    case 'p_pass': { // Retribution — heal both heroes
       const h = Math.round(player.stats.maxHp * 0.015 * rank);
       for (const p of game.players) if (!p.downed) p.hp = Math.min(p.stats.maxHp, p.hp + h);
       if (passiveId === 'p_pass') spawnParticles(player.x, player.y, '#ffe680', 6, 80);
@@ -287,7 +296,7 @@ function projColor(player) {
   if (key === 'firemage') return '#ff7020';
   if (key === 'frostmage') return '#80d0ff';
   if (key === 'necromancer') return '#8ce0a0';
-  if (key === 'cleric') return '#ffe680';
+  if (key === 'druid') return '#8ce050';
   return '#ffd060';
 }
 
@@ -296,7 +305,7 @@ function projColor(player) {
 // The tiny lock just prevents firing 60x/frame while the button is held.
 const ABILITY_CD = {
   cleave: 0.15, multishot: 0.15, fireball: 0.15, raiseMinion: 0.15,
-  healAura: 0.15, dash: 0.15, smite: 0.15, frostNova: 0.15,
+  thornBurst: 0.15, dash: 0.15, smite: 0.15, frostNova: 0.15,
 };
 
 export function useAbility(player) {
@@ -358,17 +367,19 @@ const ABILITIES = {
     game.minions.push(makeMinion(player));
     spawnParticles(player.x, player.y, '#8ce0a0', 12, 90);
   },
-  healAura(player) {
-    const radius = 150 * (1 + player.mods.auraRadius);
-    const amount = Math.round(player.stats.maxHp * (0.18 + player.mods.healPower * 0.18) + 12);
-    for (const p of game.players) {
-      const d = Math.hypot(p.x - player.x, p.y - player.y);
-      if (d <= radius && !p.downed) {
-        p.hp = Math.min(p.stats.maxHp, p.hp + amount);
-        spawnFloater(p.x, p.y - 20, `+${amount}`, '#7bff9b');
+  thornBurst(player) {
+    const radius = 140 * (1 + (player.mods.slowPower || 0) * 0.5);
+    const { dmg } = rollDamage(player, 1.2 + (player.mods.holy || 0));
+    for (const e of game.enemies) {
+      if (e.dead) continue;
+      const d = Math.hypot(e.x - player.x, e.y - player.y);
+      if (d <= radius && game.map.lineClear(player.x, player.y, e.x, e.y)) {
+        damageEnemy(e, dmg, { source: player, slow: 0.35 + (player.mods.slowPower || 0) * 0.1, slowTime: 2 + (player.mods.slowPower || 0) });
       }
     }
-    spawnParticles(player.x, player.y, '#fff0a0', 18, 110);
+    spawnParticles(player.x, player.y, '#8ce050', 22, 140);
+    spawnParticles(player.x, player.y, '#c8e67a', 10, 90);
+    player.novaFx = { t: 0.3, max: 0.3, radius };
   },
   dash(player) {
     const f = player.facing;
