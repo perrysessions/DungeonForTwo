@@ -560,13 +560,20 @@ function renderOverlay() {
     return;
   }
   o.classList.remove('hidden');
-  // End screens have interactive elements (name input) — only render once per phase entry.
+  // Title/end screens: cache by compound key so sub-state changes (howTo, artPreview) still re-render,
+  // but 60fps DOM stomping is avoided (which breaks click events on the buttons).
+  const titleKey = `title_${_showHowTo}_${_showArtPreview}`;
+  if (game.phase === Phase.TITLE) {
+    if (lastOverlayPhase === titleKey) return;
+    lastOverlayPhase = titleKey;
+    o.innerHTML = titleHTML();
+    return;
+  }
   const isEnd = game.phase === Phase.GAME_OVER || game.phase === Phase.WIN;
   if (isEnd && lastOverlayPhase === game.phase) return;
   lastOverlayPhase = game.phase;
 
-  if (game.phase === Phase.TITLE) o.innerHTML = titleHTML();
-  else if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
+  if (game.phase === Phase.MODE_SELECT) o.innerHTML = modeSelectHTML();
   else if (game.phase === Phase.CLASS_SELECT) o.innerHTML = classSelectHTML();
   else if (game.phase === Phase.SHOP) {
     // Don't stomp the overlay while settings modal is open
@@ -598,7 +605,7 @@ export function titleToggleHowTo() { _showHowTo = !_showHowTo; lastOverlayPhase 
 let _showArtPreview = false;
 export function titleToggleArtPreview(show) {
   _showArtPreview = show;
-  document.getElementById('overlay').innerHTML = titleHTML();
+  lastOverlayPhase = null;
 }
 function artPreviewHTML() {
   const vial = (liq) => `<svg viewBox="0 0 28 28" width="48" height="48" style="image-rendering:pixelated">
@@ -637,9 +644,10 @@ function artPreviewHTML() {
     </div>
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Blades</div>
     <div style="display:flex;gap:16px;flex-wrap:wrap">
-      ${row(itemIconSVG({slot:'weapon',name:'Sword',color:'#b0b8c8'}), 'Sword')}
-      ${row(itemIconSVG({slot:'weapon',name:'Axe',color:'#b0b8c8'}), 'Axe')}
-      ${row(itemIconSVG({slot:'weapon',name:'Dagger',color:'#b0b8c8'}), 'Dagger')}
+      ${['Sword','Axe','Dagger'].map(name => {
+        const svg = itemIconSVG({slot:'weapon',name,color:'#b0b8c8'}).replace('width="28" height="28"','width="64" height="64"');
+        return row(svg, name);
+      }).join('')}
     </div>
   </div>`;
 }
@@ -974,30 +982,26 @@ function itemIconSVG(it) {
   const n = it.name || '';
   if (it.slot === 'weapon') {
     if (n.includes('Sword')) return wrap('0 0 28 28',
-      `<!-- blade diagonal top-right to bottom-left -->
-       <polygon points="24,2 26,4 10,22 6,22" fill="#c8d8e8"/>
-       <polygon points="24,2 25,3 10,20 10,22" fill="rgba(255,255,255,0.6)"/>
-       <polygon points="10,22 6,22 7,24" fill="rgba(0,0,0,0.3)"/>
-       <!-- crossguard -->
-       <rect x="5" y="20" width="10" height="3" rx="1" transform="rotate(-45,10,21.5)" fill="${c}"/>
-       <!-- grip -->
-       <rect x="3" y="20" width="3" height="8" rx="1" transform="rotate(-45,4.5,24)" fill="#7a4820"/>
-       <rect x="3" y="20" width="1" height="8" rx="0.5" transform="rotate(-45,3.5,24)" fill="rgba(255,255,255,0.25)"/>
-       <!-- pommel -->
-       <circle cx="5" cy="26" r="2.5" fill="${c}"/>
-       <circle cx="4.5" cy="25.5" r="1" fill="rgba(255,255,255,0.45)"/>`);
+      `<g transform="rotate(-45,14,14)">
+       <polygon points="14,1 16,13 12,13" fill="#c8d8e8"/>
+       <polygon points="14,1 15,8 14,8" fill="rgba(255,255,255,0.7)"/>
+       <polygon points="16,13 12,13 12.5,14" fill="rgba(0,0,0,0.25)"/>
+       <rect x="8" y="13" width="12" height="2.5" rx="1" fill="${c}"/>
+       <rect x="8" y="13" width="12" height="1" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+       <rect x="12" y="15.5" width="4" height="7" rx="1" fill="#7a4820"/>
+       <rect x="12" y="15.5" width="1.5" height="7" rx="0.5" fill="rgba(255,255,255,0.25)"/>
+       <circle cx="14" cy="24" r="2.5" fill="${c}"/>
+       <circle cx="13.5" cy="23.5" r="1" fill="rgba(255,255,255,0.45)"/>
+       </g>`);
     if (n.includes('Axe')) return wrap('0 0 28 28',
-      `<!-- handle diagonal -->
-       <rect x="12" y="10" width="4" height="16" rx="1.5" transform="rotate(45,14,18)" fill="#7a4820"/>
-       <rect x="12" y="10" width="1.5" height="16" rx="1" transform="rotate(45,12.75,18)" fill="rgba(255,255,255,0.2)"/>
-       <!-- top axe blade -->
-       <path d="M6,4 Q2,8 5,13 L11,9 Z" fill="${c}"/>
-       <path d="M6,4 Q4,7 6,10 L9,8 Z" fill="rgba(255,255,255,0.4)"/>
-       <!-- bottom axe blade -->
-       <path d="M17,15 L22,20 Q24,24 20,25 Q17,22 15,20 Z" fill="${c}"/>
-       <path d="M17,15 L21,20 Q22,22 20,23 L17,19 Z" fill="rgba(255,255,255,0.35)"/>
-       <!-- blade edge shadow -->
-       <path d="M5,13 Q8,16 11,9" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>`);
+      `<g transform="rotate(-45,14,14)">
+       <rect x="12" y="10" width="4" height="17" rx="1.5" fill="#7a4820"/>
+       <rect x="12" y="10" width="1.5" height="17" rx="1" fill="rgba(255,255,255,0.22)"/>
+       <polygon points="16,10 24,8 24,18 16,18" fill="${c}"/>
+       <polygon points="16,10 23,9 23,13 18,11" fill="rgba(255,255,255,0.45)"/>
+       <polygon points="24,8 26,13 24,18" fill="rgba(255,255,255,0.6)"/>
+       <polygon points="24,8 24,18 23,18" fill="rgba(0,0,0,0.2)"/>
+       </g>`);
     if (n.includes('Mace')) return wrap('-10 -10 20 20',
       `<g transform="rotate(40)">
         <rect x="-1.5" y="-4" width="3" height="12" fill="#7a5030"/>
@@ -1018,19 +1022,17 @@ function itemIconSVG(it) {
        <rect x="10" y="11" width="4" height="6" rx="1" fill="#8b5820"/>
        <rect x="10" y="11" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>`);
     if (n.includes('Dagger')) return wrap('0 0 28 28',
-      `<!-- curved blade top-right to bottom-left -->
-       <path d="M22,4 Q24,6 18,14 L14,14 Z" fill="#c8d8e8"/>
-       <path d="M22,4 Q23,6 18,13 L17,13 Z" fill="rgba(255,255,255,0.55)"/>
-       <path d="M18,14 L14,14 L15,16 Z" fill="rgba(0,0,0,0.25)"/>
-       <!-- crossguard -->
-       <rect x="11" y="13" width="7" height="2.5" rx="1" transform="rotate(-45,14.5,14.25)" fill="${c}"/>
-       <!-- grip -->
-       <rect x="9" y="15" width="3" height="7" rx="1" transform="rotate(-45,10.5,18.5)" fill="#7a4820"/>
-       <rect x="9" y="15" width="1" height="7" rx="0.5" transform="rotate(-45,9.5,18.5)" fill="rgba(255,255,255,0.25)"/>
-       <!-- pommel -->
-       <circle cx="7" cy="23" r="2" fill="${c}"/>
-       <circle cx="6.5" cy="22.5" r="0.8" fill="rgba(255,255,255,0.45)"/>
-      `);
+      `<g transform="rotate(-45,14,14)">
+       <polygon points="14,4 16,14 12,14" fill="#c8d8e8"/>
+       <polygon points="14,4 15,10 14,10" fill="rgba(255,255,255,0.7)"/>
+       <polygon points="16,14 12,14 12.5,15" fill="rgba(0,0,0,0.25)"/>
+       <rect x="9" y="14" width="10" height="2.5" rx="1" fill="${c}"/>
+       <rect x="9" y="14" width="10" height="1" rx="0.5" fill="rgba(255,255,255,0.3)"/>
+       <rect x="12" y="16.5" width="4" height="5" rx="1" fill="#7a4820"/>
+       <rect x="12" y="16.5" width="1.5" height="5" rx="0.5" fill="rgba(255,255,255,0.25)"/>
+       <circle cx="14" cy="23" r="2" fill="${c}"/>
+       <circle cx="13.5" cy="22.5" r="0.8" fill="rgba(255,255,255,0.45)"/>
+       </g>`);
     if (n.includes('Staff')) return wrap('0 0 28 28',
       `<!-- handle -->
        <rect x="12" y="6" width="4" height="20" rx="1.5" fill="#7a5022"/>
