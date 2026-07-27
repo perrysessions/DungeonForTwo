@@ -1192,22 +1192,22 @@ function itemIconSVG(it) {
        <ellipse cx="15.5" cy="12" rx="1.2" ry="1.2" fill="rgba(0,0,0,0.25)"/>`);
     if (n.includes('Amulet') || n.includes('Charm') || n.includes('Sigil')) return wrap('0 0 28 28',
       `<!-- chain U-arc with bead/dash look -->
-       <path d="M 7,4 Q 7,19 14,22 Q 21,19 21,4"
+       <path d="M 7,2 Q 7,14 14,17 Q 21,14 21,2"
              fill="none" stroke="#c8962a" stroke-width="2"
              stroke-dasharray="2.5,2" stroke-linecap="round"/>
        <!-- chain end beads -->
-       <circle cx="7" cy="4" r="2" fill="#c8962a"/>
-       <circle cx="21" cy="4" r="2" fill="#c8962a"/>
+       <circle cx="7" cy="2" r="2" fill="#c8962a"/>
+       <circle cx="21" cy="2" r="2" fill="#c8962a"/>
        <!-- bail loop -->
-       <ellipse cx="14" cy="19" rx="2.5" ry="1.8" fill="none" stroke="#c8962a" stroke-width="1.5"/>
+       <ellipse cx="14" cy="16" rx="2" ry="1.5" fill="none" stroke="#c8962a" stroke-width="1.5"/>
        <!-- pendant gold backing -->
-       <ellipse cx="14" cy="25" rx="5.5" ry="6" fill="#c8962a"/>
+       <ellipse cx="14" cy="23" rx="5" ry="5" fill="#c8962a"/>
        <!-- gem -->
-       <ellipse cx="14" cy="25" rx="4.5" ry="5" fill="${c}"/>
+       <ellipse cx="14" cy="23" rx="4" ry="4.2" fill="${c}"/>
        <!-- gem shine -->
-       <ellipse cx="12.5" cy="23" rx="2" ry="2.2" fill="rgba(255,255,255,0.5)"/>
+       <ellipse cx="12.5" cy="21" rx="1.8" ry="2" fill="rgba(255,255,255,0.5)"/>
        <!-- gem shadow -->
-       <ellipse cx="15.5" cy="27" rx="1.5" ry="1.2" fill="rgba(0,0,0,0.28)"/>`);
+       <ellipse cx="15.5" cy="25" rx="1.3" ry="1" fill="rgba(0,0,0,0.28)"/>`);
     // Fallback trinket — gem on chain
     return wrap('-10 -12 20 22',
       `<path d="M-5,-10 Q0,-8 5,-10" stroke="#c8a860" stroke-width="1" fill="none"/>
