@@ -891,9 +891,13 @@ function drawCreature(ctx, e, x, y, r) {
 function drawProjectiles(ctx) {
   for (const p of game.projectiles) {
     ctx.fillStyle = p.color;
-    ctx.fillRect(Math.round(p.x - p.radius), Math.round(p.y - p.radius), p.radius * 2, p.radius * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillRect(Math.round(p.x - 2), Math.round(p.y - 2), 3, 3);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.beginPath();
+    ctx.arc(p.x - p.radius * 0.25, p.y - p.radius * 0.25, p.radius * 0.35, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
