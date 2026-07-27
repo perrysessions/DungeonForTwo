@@ -428,7 +428,7 @@ function spawnFreeMinion(owner) {
   spawnParticles(owner.x, owner.y, '#c060ff', 12, 100);
 }
 
-const MINION_ORBIT_RADIUS = 75;
+const MINION_ORBIT_RADIUS = 48;
 const MINION_DETECT_RANGE = 210;
 
 export function updateMinions(dt) {
@@ -462,7 +462,7 @@ export function updateMinions(dt) {
       const dx = tx - m.x, dy = ty - m.y;
       const dist = Math.hypot(dx, dy);
       if (dist > 8) {
-        const spd = Math.min(dist * 3, 110);
+        const spd = Math.min(dist * 4, 160);
         const nx = m.x + (dx / dist) * spd * dt;
         const ny = m.y + (dy / dist) * spd * dt;
         if (!game.map.worldSolid(nx, ny)) { m.x = nx; m.y = ny; }

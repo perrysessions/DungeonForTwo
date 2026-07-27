@@ -94,7 +94,7 @@ export const CLASSES = {
     },
     tree: [
       node('n_pass', 'Undying Legion', 'PASSIVE — Every few kills, raise a free wraith minion that ignores your cap (higher rank: more often & stronger)', { passive: true, maxRank: 4 }),
-      node('n_num', 'Grave Horde', '+1 Max minions', { cost: 2, maxRank: 3, mods: { minions: 1 } }),
+      node('n_num', 'Grave Horde', '+1 Max minions', { cost: 1, maxRank: 3, mods: { minions: 1 } }),
       node('n_mdmg', 'Bone Blades', '+20% Minion damage', { maxRank: 4, mods: { minionDmg: 0.2 } }),
       node('n_mhp', 'Undying', '+20% Minion HP', { maxRank: 3, mods: { minionHp: 0.2 } }),
       node('n_leech', 'Life Siphon', 'Attacks heal you 6%', { maxRank: 3, mods: { lifesteal: 0.06 } }),
