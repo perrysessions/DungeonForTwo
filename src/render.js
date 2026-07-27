@@ -1114,27 +1114,32 @@ function drawMobileStats(ctx) {
   if (!isMobile || !game.players.length) return;
   const p = game.players[0];
   if (!p) return;
-  const x = 8, barW = 120, barH = 10;
+  const iconW = 14, barX = 8 + iconW + 3, barW = 110, barH = 10;
   ctx.save();
-  ctx.globalAlpha = 0.85;
-  // HP bar
-  let y = 8;
-  ctx.fillStyle = '#111';
-  ctx.fillRect(x, y, barW, barH);
-  ctx.fillStyle = '#e0463c';
-  ctx.fillRect(x, y, barW * Math.max(0, p.hp / p.stats.maxHp), barH);
-  ctx.fillStyle = '#fff';
+  ctx.globalAlpha = 0.88;
   ctx.font = '8px monospace';
   ctx.textAlign = 'left';
-  ctx.fillText(`HP ${Math.ceil(p.hp)}/${Math.round(p.stats.maxHp)}`, x + 2, y + 8);
-  // MP bar
-  y += barH + 3;
+
+  // HP bar + red potion icon
+  let y = 8;
+  _drawVial(ctx, 8 + iconW / 2, y + barH / 2 + 2, '#e03050');
   ctx.fillStyle = '#111';
-  ctx.fillRect(x, y, barW, barH);
-  ctx.fillStyle = '#3c7be0';
-  ctx.fillRect(x, y, barW * Math.max(0, p.mana / p.stats.maxMana), barH);
+  ctx.fillRect(barX, y, barW, barH);
+  ctx.fillStyle = '#e0463c';
+  ctx.fillRect(barX, y, barW * Math.max(0, p.hp / p.stats.maxHp), barH);
   ctx.fillStyle = '#fff';
-  ctx.fillText(`MP ${Math.ceil(p.mana)}/${Math.round(p.stats.maxMana)}`, x + 2, y + 8);
+  ctx.fillText(`${Math.ceil(p.hp)}/${Math.round(p.stats.maxHp)}`, barX + 2, y + 8);
+
+  // MP bar + blue potion icon
+  y += barH + 4;
+  _drawVial(ctx, 8 + iconW / 2, y + barH / 2 + 2, '#5080ff');
+  ctx.fillStyle = '#111';
+  ctx.fillRect(barX, y, barW, barH);
+  ctx.fillStyle = '#3c7be0';
+  ctx.fillRect(barX, y, barW * Math.max(0, p.mana / p.stats.maxMana), barH);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`${Math.ceil(p.mana)}/${Math.round(p.stats.maxMana)}`, barX + 2, y + 8);
+
   ctx.restore();
 }
 
