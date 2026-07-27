@@ -714,7 +714,7 @@ function titleHTML() {
     <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap">
       <p class="blink big" style="font-size:18px;margin:0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
       <button data-htp-open style="background:none;border:1px solid #5a4a7a;color:#9070c0;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">How to Play</button>
-      <button data-artpreview-open style="background:none;border:1px solid #3a6a3a;color:#70b070;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">🎨 Art</button>
+      <button data-artpreview-open style="background:none;border:1px solid #3a6a3a;color:#70b070;font-family:monospace;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer">Art</button>
     </div>
     <p class="credit" style="margin-top:14px">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank">uppbeat.io</a></p>
   </div>`;
