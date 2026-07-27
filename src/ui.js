@@ -651,7 +651,7 @@ function artPreviewHTML() {
       }).join('')}
     </div>
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Armor</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
       ${[
         {name:'Worn Tunic',color:'#5a8a3a'},
         {name:'Worn Robe',color:'#2a4a8a'},
@@ -660,6 +660,19 @@ function artPreviewHTML() {
       ].map(({name,color}) => {
         const svg = itemIconSVG({slot:'armor',name,color}).replace('width="28" height="28"','width="64" height="64"');
         return row(svg, name.replace('Worn ',''));
+      }).join('')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Trinkets</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${[
+        {name:'Mace',slot:'weapon',color:'#909098'},
+        {name:'Ring of Might',slot:'trinket',color:'#e05050'},
+        {name:'Amulet of Focus',slot:'trinket',color:'#a060ff'},
+        {name:'Charm of Vigor',slot:'trinket',color:'#40c080'},
+        {name:'Sigil of Power',slot:'trinket',color:'#ffb040'},
+      ].map(({name,slot,color}) => {
+        const svg = itemIconSVG({slot,name,color}).replace('width="28" height="28"','width="64" height="64"');
+        return row(svg, name.split(' ')[0]);
       }).join('')}
     </div>
   </div>`;
@@ -1015,15 +1028,25 @@ function itemIconSVG(it) {
        <polygon points="24,8 26,13 24,18" fill="rgba(255,255,255,0.6)"/>
        <polygon points="24,8 24,18 23,18" fill="rgba(0,0,0,0.2)"/>
        </g>`);
-    if (n.includes('Mace')) return wrap('-10 -10 20 20',
-      `<g transform="rotate(40)">
-        <rect x="-1.5" y="-4" width="3" height="12" fill="#7a5030"/>
-        <rect x="-4" y="-8" width="8" height="6" rx="1" fill="${c}"/>
-        <rect x="-4" y="-8" width="2" height="6" fill="rgba(255,255,255,0.25)" rx="0.5"/>
-        <rect x="2" y="-8" width="2" height="6" fill="rgba(0,0,0,0.35)" rx="0.5"/>
-        <rect x="-5" y="-5" width="2" height="3" fill="${c}"/>
-        <rect x="3" y="-5" width="2" height="3" fill="${c}"/>
-      </g>`);
+    if (n.includes('Mace')) return wrap('0 0 28 28',
+      `<g transform="rotate(-45,14,14)">
+       <rect x="12" y="11" width="4" height="18" rx="1.5" fill="#7a4820"/>
+       <rect x="12" y="11" width="1.5" height="18" rx="1" fill="rgba(255,255,255,0.2)"/>
+       <circle cx="14" cy="29" r="2.2" fill="#909098"/>
+       <circle cx="14" cy="6" r="5.5" fill="${c}"/>
+       <circle cx="12.5" cy="4.5" r="2.5" fill="rgba(255,255,255,0.28)"/>
+       <circle cx="15.5" cy="7.5" r="1.5" fill="rgba(0,0,0,0.2)"/>
+       <g transform="translate(14,6)">
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(0)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(45)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(90)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(135)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(180)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(225)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(270)"/>
+         <polygon points="0,-9.5 -1.3,-5.5 1.3,-5.5" fill="${c}" transform="rotate(315)"/>
+       </g>
+       </g>`);
     if (n.includes('Bow')) return wrap('0 0 28 28',
       `<!-- bow limb - D-curve -->
        <path d="M 18,2 Q 4,14 18,26" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -1148,28 +1171,43 @@ function itemIconSVG(it) {
        <rect x="13" y="2" width="2" height="13" fill="rgba(0,0,0,0.22)" rx="1"/>
        <!-- ankle crease -->
        <line x1="7" y1="18" x2="16" y2="18" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>`);
-    if (n.includes('Ring') || n.includes('Band')) return wrap('0 0 24 24',
-      `<!-- ring band - clean circle -->
-       <circle cx="12" cy="14" r="8" fill="none" stroke="${c}" stroke-width="4"/>
-       <!-- inner shadow on band -->
-       <circle cx="12" cy="14" r="8" fill="none" stroke="rgba(0,0,0,0.35)" stroke-width="1.5" stroke-dasharray="0" transform="translate(1,1)"/>
-       <!-- band highlight -->
-       <path d="M 6,9 A 8,8 0 0,1 18,9" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none"/>
-       <!-- gem on top -->
-       <polygon points="12,1 16,5 12,7 8,5" fill="${c}"/>
-       <polygon points="12,1 16,5 12,5" fill="rgba(255,255,255,0.5)"/>
-       <polygon points="12,1 8,5 12,5" fill="rgba(255,255,255,0.25)"/>
+    if (n.includes('Ring') || n.includes('Band')) return wrap('0 0 28 28',
+      `<!-- band outer shadow -->
+       <ellipse cx="14" cy="19" rx="9.5" ry="5.5" fill="rgba(0,0,0,0.4)"/>
+       <!-- gold band -->
+       <ellipse cx="14" cy="18" rx="9" ry="5" fill="#c8962a"/>
+       <!-- band inner cutout -->
+       <ellipse cx="14" cy="18" rx="5.5" ry="2.5" fill="rgba(0,0,0,0.65)"/>
+       <!-- band top highlight -->
+       <ellipse cx="14" cy="15" rx="7" ry="2" fill="rgba(255,255,255,0.22)"/>
+       <!-- band right shadow -->
+       <ellipse cx="20" cy="18" rx="3" ry="3.5" fill="rgba(0,0,0,0.2)"/>
+       <!-- gem mount (gold setting) -->
+       <rect x="11" y="7" width="6" height="6" rx="1" fill="#c8962a"/>
+       <!-- gem body -->
+       <ellipse cx="14" cy="10" rx="3.5" ry="4.5" fill="${c}"/>
        <!-- gem shine -->
-       <polygon points="11,2 13,2 12,4" fill="rgba(255,255,255,0.8)"/>
-       <!-- gem base connects to band -->
-       <rect x="9" y="6" width="6" height="3" fill="${c}"/>`);
-    if (n.includes('Amulet') || n.includes('Charm') || n.includes('Sigil')) return wrap('-10 -12 20 22',
-      `<line x1="-5" y1="-10" x2="0" y2="-6" stroke="#c8a860" stroke-width="1"/>
-       <line x1="5" y1="-10" x2="0" y2="-6" stroke="#c8a860" stroke-width="1"/>
-       <polygon points="0,-6 7,2 0,8 -7,2" fill="${c}"/>
-       <polygon points="0,-6 -7,2 -4,2 0,-3" fill="rgba(255,255,255,0.35)"/>
-       <polygon points="7,2 0,8 -7,2 -4,2 0,5 4,2" fill="rgba(0,0,0,0.3)"/>
-       <circle cx="0" cy="1" r="2" fill="rgba(255,255,255,0.6)"/>`);
+       <ellipse cx="12.5" cy="8" rx="1.5" ry="2" fill="rgba(255,255,255,0.55)"/>
+       <!-- gem dark edge -->
+       <ellipse cx="15.5" cy="12" rx="1.2" ry="1.2" fill="rgba(0,0,0,0.25)"/>`);
+    if (n.includes('Amulet') || n.includes('Charm') || n.includes('Sigil')) return wrap('0 0 28 28',
+      `<!-- chain U-arc with bead/dash look -->
+       <path d="M 7,4 Q 7,19 14,22 Q 21,19 21,4"
+             fill="none" stroke="#c8962a" stroke-width="2"
+             stroke-dasharray="2.5,2" stroke-linecap="round"/>
+       <!-- chain end beads -->
+       <circle cx="7" cy="4" r="2" fill="#c8962a"/>
+       <circle cx="21" cy="4" r="2" fill="#c8962a"/>
+       <!-- bail loop -->
+       <ellipse cx="14" cy="19" rx="2.5" ry="1.8" fill="none" stroke="#c8962a" stroke-width="1.5"/>
+       <!-- pendant gold backing -->
+       <ellipse cx="14" cy="25" rx="5.5" ry="6" fill="#c8962a"/>
+       <!-- gem -->
+       <ellipse cx="14" cy="25" rx="4.5" ry="5" fill="${c}"/>
+       <!-- gem shine -->
+       <ellipse cx="12.5" cy="23" rx="2" ry="2.2" fill="rgba(255,255,255,0.5)"/>
+       <!-- gem shadow -->
+       <ellipse cx="15.5" cy="27" rx="1.5" ry="1.2" fill="rgba(0,0,0,0.28)"/>`);
     // Fallback trinket — gem on chain
     return wrap('-10 -12 20 22',
       `<path d="M-5,-10 Q0,-8 5,-10" stroke="#c8a860" stroke-width="1" fill="none"/>
