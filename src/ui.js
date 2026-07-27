@@ -418,15 +418,26 @@ function bar(label, cur, max, color) {
     `<span>${icon}${Math.ceil(cur)}/${Math.round(max)}</span></div>`;
 }
 
+function emptySlotSVG(slotName) {
+  const s = 18;
+  const base = `width="${s}" height="${s}" style="display:block;opacity:0.28"`;
+  if (slotName === 'weapon')
+    return `<svg viewBox="0 0 18 18" ${base}><line x1="3" y1="3" x2="13" y2="13" stroke="#aaa" stroke-width="2" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="#aaa" stroke-width="2" stroke-linecap="round"/></svg>`;
+  if (slotName === 'armor')
+    return `<svg viewBox="0 0 18 18" ${base}><path d="M9,2 L15,5 L15,11 L9,16 L3,11 L3,5 Z" fill="none" stroke="#aaa" stroke-width="1.5"/></svg>`;
+  return `<svg viewBox="0 0 18 18" ${base}><circle cx="9" cy="9" r="5.5" fill="none" stroke="#aaa" stroke-width="2"/></svg>`;
+}
+
 function eqLine(p) {
-  const slot = (icon, it) => {
-    if (!it) return `<div class="eqrow"><span class="ico">${icon}</span><i>—</i></div>`;
-    return `<div class="eqrow"><span class="ico">${icon}</span>` +
+  const slot = (slotName, it) => {
+    const ico = it ? itemIconSVG(it, 18) : emptySlotSVG(slotName);
+    if (!it) return `<div class="eqrow"><span class="ico">${ico}</span><i>—</i></div>`;
+    return `<div class="eqrow"><span class="ico">${ico}</span>` +
       `<span class="eqname" style="color:${it.color || '#fff'}">${it.name}</span>` +
       `<small class="eqstats">${it.desc || ''}</small></div>`;
   };
   return `<div class="equip">` +
-    slot('⚔️', p.equipment.weapon) + slot('🛡️', p.equipment.armor) + slot('💍', p.equipment.trinket) + `</div>`;
+    slot('weapon', p.equipment.weapon) + slot('armor', p.equipment.armor) + slot('trinket', p.equipment.trinket) + `</div>`;
 }
 
 // Computed character stats (base + level + skills + equipment).
@@ -478,7 +489,7 @@ function invSection(pi) {
           `</div>`
         : '';
       return `<div class="row ${sel ? 'sel' : ''}" data-row-idx="${i}" data-row-tab="items"><div class="rowmain">` +
-        `<span class="ico">${it.icon || '❔'}</span>` +
+        `<span class="ico">${itemIconSVG(it, 18)}</span>` +
         `<span style="color:${it.color || '#fff'}">${it.name}</span></div>` +
         `<small>${rarityTag(it)}${it.desc || ''}${sel && !isMobile ? ` · ${keyName(pi, 'attack')}:${action}` : ''}</small>${btns}</div>`;
     }).join('');
@@ -979,9 +990,9 @@ function classSelectHTML() {
   </div>`;
 }
 
-function itemIconSVG(it) {
+function itemIconSVG(it, size = 28) {
   const c = it.color || '#b8b8c4';
-  const dim = 'width="28" height="28"';
+  const dim = `width="${size}" height="${size}"`;
   const wrap = (vb, content) =>
     `<svg viewBox="${vb}" ${dim} style="display:block;image-rendering:pixelated">${content}</svg>`;
 
@@ -1216,7 +1227,7 @@ function itemIconSVG(it) {
   }
 
   // fallback
-  return `<span style="font-size:18px">${it.icon || '❔'}</span>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 28 28" style="display:block"><text x="14" y="20" text-anchor="middle" font-size="18" fill="#888">?</text></svg>`;
 }
 
 function shopCornerSVG(pos) {
