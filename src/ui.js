@@ -899,25 +899,22 @@ function itemIconSVG(it) {
     `<svg viewBox="${vb}" ${dim} style="display:block;image-rendering:pixelated">${content}</svg>`;
 
   if (it.slot === 'consumable') {
-    const liq = it.id.startsWith('mana') ? '#3050ee' : '#bb1828';
-    const glassStroke = it.id.startsWith('mana') ? 'rgba(140,180,255,0.8)' : 'rgba(255,180,180,0.7)';
-    return wrap('0 0 20 28',
-      `<!-- bottle body - wide rounded flask -->
-       <ellipse cx="10" cy="19" rx="8" ry="7" fill="${liq}"/>
-       <ellipse cx="10" cy="19" rx="8" ry="7" fill="rgba(255,255,255,0.08)"/>
-       <ellipse cx="10" cy="19" rx="8" ry="7" fill="none" stroke="${glassStroke}" stroke-width="1.2"/>
-       <!-- liquid fill line -->
-       <ellipse cx="10" cy="16" rx="7" ry="1.5" fill="rgba(255,255,255,0.15)"/>
-       <!-- glass highlight -->
-       <ellipse cx="6" cy="15" rx="2" ry="3.5" fill="rgba(255,255,255,0.3)"/>
-       <!-- neck -->
-       <rect x="7" y="8" width="6" height="8" fill="${liq}"/>
-       <rect x="7" y="8" width="6" height="8" fill="none" stroke="${glassStroke}" stroke-width="1"/>
-       <rect x="8" y="9" width="1.5" height="6" fill="rgba(255,255,255,0.2)" rx="0.5"/>
+    const liq = it.id.startsWith('mana') ? '#5080ff' : '#e03050';
+    // Pixel-art vial matching the canvas _drawVial style, scaled 3.5x into a 28x28 viewBox
+    // Origin maps to center of vial body; vial body is 6px wide, 8px tall
+    return wrap('0 0 28 28',
+      `<!-- body: glass -->
+       <rect x="7" y="8" width="14" height="14" rx="2" fill="rgba(200,230,255,0.35)" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
+       <!-- liquid fill bottom half -->
+       <rect x="8.5" y="15" width="11" height="7" rx="1.5" fill="${liq}"/>
+       <!-- shine strip -->
+       <rect x="8.5" y="9" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+       <!-- neck left line -->
+       <line x1="9" y1="8" x2="7" y2="5" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
+       <!-- neck right line -->
+       <line x1="19" y1="8" x2="21" y2="5" stroke="rgba(200,230,255,0.85)" stroke-width="1"/>
        <!-- cork -->
-       <rect x="6" y="3" width="8" height="6" rx="2" fill="#c08030"/>
-       <rect x="6" y="3" width="3" height="6" fill="rgba(255,255,255,0.18)" rx="1"/>
-       <rect x="6" y="3" width="8" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>`
+       <rect x="9" y="2" width="10" height="4" rx="1.5" fill="#c89050"/>`
     );
   }
 
