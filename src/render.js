@@ -613,17 +613,17 @@ function drawBeastDruid(ctx, p, x, y) {
 
   flash(ctx, x - 9, y - 17, 18, 30, p.hitFlash);
 
-  // beast timer bar
+  // name tag
+  drawTag(ctx, x, y - 42, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
+  // beast timer bar (green/orange) — clearly separated from HP bar
   const pct = Math.max(0, p.beastForm / (p.beastFormMax || 7));
   const bw = 30;
   ctx.fillStyle = 'rgba(0,0,0,0.65)';
-  ctx.fillRect(x - bw / 2, y - 24, bw, 4);
+  ctx.fillRect(x - bw / 2, y - 37, bw, 4);
   ctx.fillStyle = pct > 0.4 ? '#8bc34a' : '#ff7020';
-  ctx.fillRect(x - bw / 2, y - 24, Math.round(bw * pct), 4);
-
-  // name tag
-  drawTag(ctx, x, y - 28, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
-  drawMiniBar(ctx, x, y - 22, p.hp / p.stats.maxHp, '#e04040');
+  ctx.fillRect(x - bw / 2, y - 37, Math.round(bw * pct), 4);
+  // HP bar — separated below timer
+  drawMiniBar(ctx, x, y - 30, p.hp / p.stats.maxHp, '#e04040');
 }
 
 function drawHead(ctx, x, y, a) {

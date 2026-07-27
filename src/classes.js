@@ -104,7 +104,7 @@ export const CLASSES = {
   },
   druid: {
     key: 'druid', name: 'Druid', ability: 'shapeshift', abilityName: 'Shapeshift',
-    abilityCost: 20, passiveId: 'd_pass',
+    abilityCost: 30, passiveId: 'd_pass',
     blurb: 'Shapeshifter. Ranged in human form; transforms into a savage melee beast.',
     art: { body: '#3d6b30', accent: '#8bc34a', trim: '#c8e67a', head: 'antlers' },
     stats: {

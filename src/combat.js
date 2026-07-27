@@ -220,7 +220,7 @@ export function passiveOnKill(player, enemy) {
     }
     case 'd_pass': { // Wildblood — on kill in beast form, restore beast timer
       if (player.beastForm > 0) {
-        const ext = 1.5 * rank;
+        const ext = 0.5 * rank;
         player.beastForm = Math.min(player.beastFormMax || 10, player.beastForm + ext);
         spawnFloater(player.x, player.y - 20, `+${ext.toFixed(1)}s`, '#8bc34a');
       }
