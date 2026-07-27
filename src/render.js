@@ -536,9 +536,11 @@ function drawPlayers(ctx) {
       ctx.strokeStyle = novaCol; ctx.lineWidth = 4;
       ctx.beginPath(); ctx.arc(x, y, p.novaFx.radius * k, 0, Math.PI * 2); ctx.stroke();
     }
-    // name tag + tiny hp
-    drawTag(ctx, x, y - 26, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
-    drawMiniBar(ctx, x, y - 20, p.hp / p.stats.maxHp, '#e04040');
+    // name tag + tiny hp (beast druid draws its own, skip here)
+    if (!(p.cls.key === 'druid' && p.beastForm > 0)) {
+      drawTag(ctx, x, y - 26, p.name, p.index === 0 ? '#6cc0ff' : '#ff9c6c');
+      drawMiniBar(ctx, x, y - 20, p.hp / p.stats.maxHp, '#e04040');
+    }
   }
 }
 
