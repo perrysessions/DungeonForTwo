@@ -269,12 +269,12 @@ export function basicAttack(player) {
   const f = nearestEnemyDir(player);
   if (inBeast) {
     const dmgMult = 1.6 * (1 + (player.mods.beastDmg || 0));
-    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, big: true };
+    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, big: true, rad: 82 };
     meleeHit(player, 82, dmgMult, { full: true, knockback: 2, source: player, aim: f });
     return;
   }
   if (player.stats.weaponType === 'melee') {
-    player.swing = { t: 0.18, max: 0.18, dir: { ...f } };
+    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, rad: player.stats.attackRange };
     meleeHit(player, player.stats.attackRange, 1, {
       knockback: player.mods.knockback, source: player, aim: f,
     });
@@ -330,7 +330,7 @@ export function useAbility(player) {
 const ABILITIES = {
   cleave(player) {
     const range = player.stats.attackRange * (1.7 + player.mods.cleaveSize);
-    player.swing = { t: 0.24, max: 0.24, dir: { ...player.facing }, big: true };
+    player.swing = { t: 0.24, max: 0.24, dir: { ...player.facing }, big: true, rad: range };
     spawnParticles(player.x, player.y, '#ffd060', 12, 140);
     meleeHit(player, range, 2.2, { full: true, knockback: 60 + player.mods.knockback, source: player });
   },
@@ -391,11 +391,12 @@ const ABILITIES = {
     meleeHit(player, player.stats.attackRange * 1.4, 1.6, { full: true, source: player });
   },
   smite(player) {
-    player.swing = { t: 0.22, max: 0.22, dir: { ...player.facing }, big: true };
+    const smiteRange = player.stats.attackRange * 1.3;
+    player.swing = { t: 0.22, max: 0.22, dir: { ...player.facing }, big: true, rad: smiteRange };
     const heal = Math.round(player.stats.maxHp * (0.06 + player.mods.healPower * 0.1) + 6);
     player.hp = Math.min(player.stats.maxHp, player.hp + heal);
     spawnFloater(player.x, player.y - 20, `+${heal}`, '#7bff9b');
-    meleeHit(player, player.stats.attackRange * 1.3, 2.0 + player.mods.holy, { full: true, source: player });
+    meleeHit(player, smiteRange, 2.0 + player.mods.holy, { full: true, source: player });
     spawnParticles(player.x, player.y, '#ffe680', 12, 120);
   },
   frostNova(player) {

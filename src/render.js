@@ -816,7 +816,7 @@ function drawSwing(ctx, p) {
   const alpha = s.t / s.max;
   const ang = Math.atan2(s.dir.y, s.dir.x);
   const spread = s.big ? Math.PI * 1.1 : Math.PI * 0.6;
-  const rad = (s.big ? 42 : 26);
+  const rad = s.rad ?? (s.big ? 42 : 26);
   ctx.fillStyle = `rgba(255,255,255,${alpha * 0.5})`;
   ctx.beginPath();
   ctx.moveTo(p.x, p.y);
