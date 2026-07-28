@@ -273,8 +273,8 @@ function setupMenuTap() {
     const sellBtn = e.target.closest('[data-sell-idx]');
     if (sellBtn) { mobileTapInvRow(parseInt(sellBtn.dataset.sellIdx, 10), 'items', 'sell'); return; }
 
-    // Generic confirm: title, game over, win — not during class/mode select or how-to screen
-    if (document.getElementById('overlay')?.querySelector('.clsgrid, [data-confirm-class], [data-htp-back]')) return;
+    // Generic confirm: title, game over, win — not during class/mode select, how-to, or art preview
+    if (document.getElementById('overlay')?.querySelector('.clsgrid, [data-confirm-class], [data-htp-back], [data-artpreview-back]')) return;
     touch.attack = true;
     setTimeout(() => { touch.attack = false; }, 80);
   }, { passive: true });
