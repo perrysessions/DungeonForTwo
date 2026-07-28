@@ -25,7 +25,7 @@ const ARCHETYPES = [
 const BOSSES = {
   2:  { key: 'kingslime', name: 'King Slime', color: '#50c840', behavior: 'heavy', hp: 180, dmg: 10, speed: 58, radius: 22,
         minionDef: 'slime', minionCount: 3, minionInterval: 8 },
-  4:  { key: 'batzilla', name: 'Bat-Zilla', color: '#7a40c0', behavior: 'boss_phasing', hp: 290, dmg: 13, speed: 130, radius: 20,
+  4:  { key: 'batzilla', name: 'Bat-Zilla', color: '#7a40c0', behavior: 'heavy', hp: 290, dmg: 13, speed: 130, radius: 20,
         minionDef: 'bat', minionCount: 4, minionInterval: 7 },
   7:  { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 480, dmg: 18, speed: 78, radius: 22,
         minionDef: 'goblin_skirmisher', minionCount: 3, minionInterval: 8 },
