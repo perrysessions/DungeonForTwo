@@ -34,7 +34,7 @@ export const CLASSES = {
     art: { body: '#8a6d3b', accent: '#c0c0c8', trim: '#e8c34a', head: 'helm' },
     stats: {
       maxHp: 170, maxMana: 40, moveSpeed: 140, armor: 7, weaponType: 'melee',
-      attackRange: 58, attackCooldown: 0.5, attackDamage: 17,
+      attackRange: 74, attackCooldown: 0.5, attackDamage: 17,
     },
     tree: [
       node('w_pass', 'Bloodlust', 'PASSIVE — On kill: heal 2% max HP per rank', { passive: true, maxRank: 4 }),
@@ -127,7 +127,7 @@ export const CLASSES = {
     blurb: 'Blinding speed and lethal crits. Dashes through foes.',
     art: { body: '#2a2a33', accent: '#6a6a78', trim: '#c04040', head: 'hood' },
     stats: {
-      maxHp: 95, moveSpeed: 200, weaponType: 'melee', attackRange: 54,
+      maxHp: 95, moveSpeed: 200, weaponType: 'melee', attackRange: 70,
       attackCooldown: 0.3, attackDamage: 11, critChance: 0.15, critMult: 2.4,
     },
     tree: [
@@ -146,7 +146,7 @@ export const CLASSES = {
     blurb: 'Holy knight: heavy melee that also mends wounds.',
     art: { body: '#c0c0cc', accent: '#e8c34a', trim: '#ffffff', head: 'helm' },
     stats: {
-      maxHp: 150, maxMana: 65, armor: 5, weaponType: 'melee', attackRange: 60,
+      maxHp: 150, maxMana: 65, armor: 5, weaponType: 'melee', attackRange: 76,
       attackCooldown: 0.5, attackDamage: 15,
     },
     tree: [

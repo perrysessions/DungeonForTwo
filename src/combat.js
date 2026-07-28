@@ -270,7 +270,7 @@ export function basicAttack(player) {
   if (inBeast) {
     const dmgMult = 1.6 * (1 + (player.mods.beastDmg || 0));
     player.swing = { t: 0.18, max: 0.18, dir: { ...f }, big: true };
-    meleeHit(player, 65, dmgMult, { full: true, knockback: 2, source: player, aim: f });
+    meleeHit(player, 82, dmgMult, { full: true, knockback: 2, source: player, aim: f });
     return;
   }
   if (player.stats.weaponType === 'melee') {
