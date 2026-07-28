@@ -944,44 +944,39 @@ function drawCreature(ctx, e, x, y, r) {
   ctx.fillStyle = e.color;
   switch (e.key) {
     case 'slime': {
-      // base blob
-      ctx.beginPath(); ctx.ellipse(x, y + 2, r, r * 0.8, 0, 0, Math.PI * 2); ctx.fill();
-      // top highlight sheen
+      const t = game.time;
+      const pulse = Math.sin(t * 2.8) * 0.06;
+      const yOff = Math.sin(t * 2.8) * 1.5; // whole blob bobs up/down
+      ctx.beginPath(); ctx.ellipse(x, y + 2 + yOff, r * (1 + pulse), r * (0.8 - pulse), 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,0.28)';
-      ctx.beginPath(); ctx.ellipse(x - r * 0.2, y - r * 0.15, r * 0.45, r * 0.28, -0.4, 0, Math.PI * 2); ctx.fill();
-      // right shadow
+      ctx.beginPath(); ctx.ellipse(x - r * 0.2, y - r * 0.15 + yOff, r * 0.45, r * 0.28, -0.4, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.beginPath(); ctx.ellipse(x + r * 0.3, y + 4, r * 0.4, r * 0.5, 0.3, 0, Math.PI * 2); ctx.fill();
-      // eyes
-      ctx.fillStyle = '#0a2a0a'; ctx.fillRect(x - 5, y - 1, 3, 3); ctx.fillRect(x + 2, y - 1, 3, 3);
-      // eye shine
+      ctx.beginPath(); ctx.ellipse(x + r * 0.3, y + 4 + yOff, r * 0.4, r * 0.5, 0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0a2a0a'; ctx.fillRect(x - 5, y - 1 + yOff, 3, 3); ctx.fillRect(x + 2, y - 1 + yOff, 3, 3);
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillRect(x - 5, y - 1, 1, 1); ctx.fillRect(x + 2, y - 1, 1, 1);
+      ctx.fillRect(x - 5, y - 1 + yOff, 1, 1); ctx.fillRect(x + 2, y - 1 + yOff, 1, 1);
       break;
     }
     case 'bat': {
-      // body
+      const t = game.time;
+      const flap = Math.sin(t * 10) * 5; // fast wing flap
       ctx.fillRect(x - 3, y - 3, 6, 8);
-      // wings
       ctx.beginPath();
-      ctx.moveTo(x - 3, y); ctx.lineTo(x - r - 3, y - 4); ctx.lineTo(x - 3, y + 3); ctx.fill();
-      ctx.moveTo(x + 3, y); ctx.lineTo(x + r + 3, y - 4); ctx.lineTo(x + 3, y + 3); ctx.fill();
-      // wing top highlight
+      ctx.moveTo(x - 3, y); ctx.lineTo(x - r - 3, y - 4 + flap); ctx.lineTo(x - 3, y + 3); ctx.fill();
+      ctx.moveTo(x + 3, y); ctx.lineTo(x + r + 3, y - 4 + flap); ctx.lineTo(x + 3, y + 3); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
       ctx.beginPath();
-      ctx.moveTo(x - 3, y - 1); ctx.lineTo(x - r, y - 4); ctx.lineTo(x - r + 3, y - 2); ctx.closePath(); ctx.fill();
+      ctx.moveTo(x - 3, y - 1); ctx.lineTo(x - r, y - 4 + flap); ctx.lineTo(x - r + 3, y - 2 + flap * 0.5); ctx.closePath(); ctx.fill();
       ctx.beginPath();
-      ctx.moveTo(x + 3, y - 1); ctx.lineTo(x + r, y - 4); ctx.lineTo(x + r - 3, y - 2); ctx.closePath(); ctx.fill();
-      // body highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x - 3, y - 3, 2, 5);
-      // body shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.fillRect(x + 1, y - 3, 2, 8);
+      ctx.moveTo(x + 3, y - 1); ctx.lineTo(x + r, y - 4 + flap); ctx.lineTo(x + r - 3, y - 2 + flap * 0.5); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(x - 3, y - 3, 2, 5);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x + 1, y - 3, 2, 8);
       break;
     }
     case 'trollwarchief': {
       const c = e.color;
+      const t = game.time;
+      const cOff = Math.round(Math.sin(t * 1.5) * 4); // club sway
       // legs / boots
       ctx.fillStyle = '#4a3010';
       ctx.fillRect(x - 10, y + 8, 8, 12); ctx.fillRect(x + 2, y + 8, 8, 12);
@@ -1008,11 +1003,11 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillRect(x - 17, y - 14, 9, 10); ctx.fillRect(x + 8, y - 14, 9, 10);
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
       ctx.fillRect(x - 17, y - 14, 2, 10); ctx.fillRect(x + 8, y - 14, 2, 10);
-      // club (left side)
-      ctx.fillStyle = '#4a2808'; ctx.fillRect(x - 23, y - 2, 4, 14); // handle
-      ctx.fillStyle = '#6a4010'; ctx.fillRect(x - 26, y - 12, 8, 12); // head
-      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 26, y - 12, 2, 12);
-      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x - 19, y - 12, 2, 12);
+      // club (left side, sways)
+      ctx.fillStyle = '#4a2808'; ctx.fillRect(x - 23, y - 2 + cOff, 4, 14);
+      ctx.fillStyle = '#6a4010'; ctx.fillRect(x - 26, y - 12 + cOff, 8, 12);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 26, y - 12 + cOff, 2, 12);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x - 19, y - 12 + cOff, 2, 12);
       // head
       ctx.fillStyle = c; ctx.fillRect(x - 12, y - 24, 24, 16);
       ctx.fillStyle = 'rgba(255,255,255,0.22)';
@@ -1034,6 +1029,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'goblinking': {
       const gc = '#4a8a28'; // green body
+      const t = game.time;
+      const gemAlpha = 0.5 + Math.sin(t * 4) * 0.4; // crown gem sparkle
       // legs + shoes
       ctx.fillStyle = '#3a2010';
       ctx.fillRect(x - 11, y + 10, 9, 10); ctx.fillRect(x + 2, y + 10, 9, 10);
@@ -1068,9 +1065,9 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillRect(x - 11, y - 33, 5, 7); ctx.fillRect(x - 3, y - 32, 6, 6); ctx.fillRect(x + 6, y - 33, 5, 7);
       ctx.fillStyle = 'rgba(255,255,255,0.4)';
       ctx.fillRect(x - 11, y - 33, 1, 33 - 28 + 6); ctx.fillRect(x - 11, y - 28, 22, 1);
-      // gem in crown
+      // gem in crown (sparkles)
       ctx.fillStyle = '#e03030'; ctx.fillRect(x - 2, y - 30, 4, 4);
-      ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(x - 2, y - 30, 1, 1);
+      ctx.fillStyle = `rgba(255,255,255,${gemAlpha})`; ctx.fillRect(x - 2, y - 30, 2, 2);
       // brow ridge
       ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 11, y - 18, 22, 2);
       // eyes
@@ -1080,6 +1077,7 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'bonelord': {
       const robe = '#702090'; const skull = '#d8d8c0';
+      const t = game.time;
       // robe body
       ctx.fillStyle = robe; ctx.fillRect(x - 14, y - 12, 28, 24);
       ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 14, y - 12, 3, 24);
@@ -1110,12 +1108,15 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillStyle = skull; ctx.fillRect(x - 5, y - 14, 10, 3);
       ctx.fillStyle = '#201010';
       for (let i = 0; i < 4; i++) ctx.fillRect(x - 4 + i * 3, y - 13, 2, 3); // teeth gaps
-      // purple wisps
-      ctx.globalAlpha = 0.55;
+      // purple wisps (animated)
+      const wispAlpha = 0.45 + Math.sin(t * 2.0) * 0.2;
+      ctx.globalAlpha = wispAlpha;
       ctx.fillStyle = '#b040ff';
-      ctx.fillRect(x - 22, y - 22, 4, 8); ctx.fillRect(x - 20, y - 28, 3, 8); // left wisps
-      ctx.fillRect(x + 18, y - 22, 4, 8); ctx.fillRect(x + 17, y - 28, 3, 8); // right wisps
-      ctx.fillRect(x - 22, y - 16, 3, 5); ctx.fillRect(x + 19, y - 16, 3, 5);
+      const w1 = Math.round(Math.sin(t * 1.8) * 2);
+      const w2 = Math.round(Math.sin(t * 2.3 + 1) * 2);
+      ctx.fillRect(x - 22 + w1, y - 22, 4, 8); ctx.fillRect(x - 20 + w2, y - 28, 3, 8);
+      ctx.fillRect(x + 18 - w1, y - 22, 4, 8); ctx.fillRect(x + 17 - w2, y - 28, 3, 8);
+      ctx.fillRect(x - 22 + w2, y - 16, 3, 5); ctx.fillRect(x + 19 - w2, y - 16, 3, 5);
       ctx.globalAlpha = 1;
       break;
     }
@@ -1258,6 +1259,8 @@ function drawCreature(ctx, e, x, y, r) {
       break;
     }
     case 'troll_grunt': {
+      const t = game.time;
+      const aOff = Math.round(Math.sin(t * 2.2) * 2); // axe sway
       // legs
       ctx.fillStyle = '#4a3010';
       ctx.fillRect(x - 5, y + 5, 4, 6); ctx.fillRect(x + 1, y + 5, 4, 6);
@@ -1272,11 +1275,11 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillStyle = '#5a9a28';
       ctx.fillRect(x - 9, y - 8, 4, 5); ctx.fillRect(x + 5, y - 8, 4, 5);
       ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(x - 9, y - 8, 1, 5); ctx.fillRect(x + 5, y - 8, 1, 5);
-      // axe (right side)
-      ctx.fillStyle = '#3a2808'; ctx.fillRect(x + 9, y - 6, 3, 10);
-      ctx.fillStyle = '#909898'; ctx.fillRect(x + 10, y - 10, 5, 7);
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x + 10, y - 10, 1, 7);
-      ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(x + 14, y - 10, 1, 7);
+      // axe (right side, sways)
+      ctx.fillStyle = '#3a2808'; ctx.fillRect(x + 9, y - 6 + aOff, 3, 10);
+      ctx.fillStyle = '#909898'; ctx.fillRect(x + 10, y - 10 + aOff, 5, 7);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x + 10, y - 10 + aOff, 1, 7);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(x + 14, y - 10 + aOff, 1, 7);
       // head
       ctx.fillStyle = '#5a9a28'; ctx.fillRect(x - 5, y - 14, 10, 9);
       ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 5, y - 14, 10, 1);
@@ -1290,6 +1293,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'goblin_skirmisher': {
       const gc2 = '#7ab030';
+      const t = game.time;
+      const sOff = Math.round(Math.sin(t * 3.5) * 2); // sword bob
       // legs
       ctx.fillStyle = '#3a2a10'; ctx.fillRect(x - 4, y + 5, 3, 6); ctx.fillRect(x + 1, y + 5, 3, 6);
       // tunic (purple stripe accent)
@@ -1300,11 +1305,11 @@ function drawCreature(ctx, e, x, y, r) {
       // green arms
       ctx.fillStyle = gc2; ctx.fillRect(x - 7, y - 4, 3, 7); ctx.fillRect(x + 4, y - 4, 3, 7);
       ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(x - 7, y - 4, 1, 7); ctx.fillRect(x + 4, y - 4, 1, 7);
-      // sword (right side)
-      ctx.fillStyle = '#b0b8c0'; ctx.fillRect(x + 6, y - 8, 2, 12);
-      ctx.fillStyle = '#7a4010'; ctx.fillRect(x + 5, y, 4, 2);
-      ctx.fillStyle = '#3a1808'; ctx.fillRect(x + 6, y + 2, 2, 4);
-      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(x + 6, y - 8, 1, 12);
+      // sword (right side, bobs)
+      ctx.fillStyle = '#b0b8c0'; ctx.fillRect(x + 6, y - 8 + sOff, 2, 12);
+      ctx.fillStyle = '#7a4010'; ctx.fillRect(x + 5, y + sOff, 4, 2);
+      ctx.fillStyle = '#3a1808'; ctx.fillRect(x + 6, y + 2 + sOff, 2, 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(x + 6, y - 8 + sOff, 1, 12);
       // head
       ctx.fillStyle = gc2; ctx.fillRect(x - 4, y - 13, 8, 8);
       ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 4, y - 13, 8, 1);
@@ -1318,6 +1323,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'skeletal_servant': {
       const bone = '#d8d8b8';
+      const t = game.time;
+      const rattle = Math.round(Math.sin(t * 6) * 1); // subtle bone rattle
       // leg bones
       ctx.fillStyle = bone; ctx.fillRect(x - 4, y + 4, 2, 7); ctx.fillRect(x + 2, y + 4, 2, 7);
       ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(x - 2, y + 4, 1, 7); ctx.fillRect(x + 4, y + 4, 1, 7);
@@ -1329,11 +1336,11 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillStyle = 'rgba(255,255,255,0.22)'; ctx.fillRect(x - 5, y - 5, 2, 10);
       // arm bones
       ctx.fillStyle = bone; ctx.fillRect(x - 7, y - 4, 2, 8); ctx.fillRect(x + 5, y - 4, 2, 8);
-      // sword (left side)
-      ctx.fillStyle = '#b0b0c0'; ctx.fillRect(x - 11, y - 8, 2, 13);
-      ctx.fillStyle = bone; ctx.fillRect(x - 13, y - 3, 6, 2);
-      ctx.fillStyle = '#4a3010'; ctx.fillRect(x - 11, y + 5, 2, 4);
-      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x - 11, y - 8, 1, 13);
+      // sword (left side, rattles)
+      ctx.fillStyle = '#b0b0c0'; ctx.fillRect(x - 11 + rattle, y - 8, 2, 13);
+      ctx.fillStyle = bone; ctx.fillRect(x - 13 + rattle, y - 3, 6, 2);
+      ctx.fillStyle = '#4a3010'; ctx.fillRect(x - 11 + rattle, y + 5, 2, 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x - 11 + rattle, y - 8, 1, 13);
       // skull
       ctx.fillStyle = bone; ctx.fillRect(x - 4, y - 14, 8, 9);
       ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(x - 4, y - 14, 8, 1); ctx.fillRect(x - 4, y - 14, 1, 9);
@@ -1370,16 +1377,21 @@ function drawCreature(ctx, e, x, y, r) {
       break;
     }
     case 'devourer_larva': {
-      // Mini eye-creature with tentacle nubs
+      const t = game.time;
+      const lPulse = Math.sin(t * 3) * 0.08; // body scale pulse
+      // Mini eye-creature with animated tentacle nubs
       ctx.fillStyle = '#3a5a20';
       const nubs2 = [[-1.2, 0], [1.2, 0], [0, -1], [0, 1], [-0.85, -0.85], [0.85, 0.85]];
-      for (const [nx, ny] of nubs2) {
-        ctx.fillRect(x + nx * (r + 1) - 2, y + ny * (r + 1) - 2, 4, 4);
-        ctx.fillRect(x + nx * (r + 4) - 1, y + ny * (r + 4) - 1, 3, 3);
+      for (let ni = 0; ni < nubs2.length; ni++) {
+        const [nx, ny] = nubs2[ni];
+        const nWave = Math.sin(t * 3 + ni * 1.05) * 1.5;
+        ctx.fillRect(x + nx * (r + 1 + nWave) - 2, y + ny * (r + 1 + nWave) - 2, 4, 4);
+        ctx.fillRect(x + nx * (r + 4 + nWave) - 1, y + ny * (r + 4 + nWave) - 1, 3, 3);
       }
-      // body
+      // body (pulsing scale)
+      const rp = r * (1 + lPulse);
       ctx.fillStyle = '#4a8028';
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, rp, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#5a9a30';
       ctx.beginPath(); ctx.arc(x - r * 0.2, y - r * 0.2, r * 0.7, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
@@ -1400,20 +1412,22 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'goblin': {
       const gc = e.color;
+      const t = game.time;
+      const dOff = Math.round(Math.sin(t * 3.2) * 2); // dagger bob
       // legs — scrappy brown rags
       ctx.fillStyle = '#3a2a10'; ctx.fillRect(x - 4, y + 5, 3, 6); ctx.fillRect(x + 1, y + 5, 3, 6);
       // body — crude leather vest
       ctx.fillStyle = '#6a4218'; ctx.fillRect(x - 5, y - 4, 10, 10);
-      ctx.fillStyle = '#4a2c0e'; ctx.fillRect(x - 5, y - 4, 3, 10); // left dark panel
+      ctx.fillStyle = '#4a2c0e'; ctx.fillRect(x - 5, y - 4, 3, 10);
       ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 5, y - 4, 1, 10);
       ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x + 3, y - 4, 2, 10);
       // green arms
       ctx.fillStyle = gc; ctx.fillRect(x - 7, y - 3, 3, 6); ctx.fillRect(x + 4, y - 3, 3, 6);
       ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.fillRect(x - 7, y - 3, 1, 6); ctx.fillRect(x + 4, y - 3, 1, 6);
-      // dagger (right side)
-      ctx.fillStyle = '#909898'; ctx.fillRect(x + 6, y - 5, 2, 9);
-      ctx.fillStyle = '#5a3010'; ctx.fillRect(x + 5, y, 4, 2); ctx.fillRect(x + 6, y + 2, 2, 3);
-      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x + 6, y - 5, 1, 9);
+      // dagger (right side, bobs up/down)
+      ctx.fillStyle = '#909898'; ctx.fillRect(x + 6, y - 5 + dOff, 2, 9);
+      ctx.fillStyle = '#5a3010'; ctx.fillRect(x + 5, y + dOff, 4, 2); ctx.fillRect(x + 6, y + 2 + dOff, 2, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x + 6, y - 5 + dOff, 1, 9);
       // head + big ears
       ctx.fillStyle = gc; ctx.fillRect(x - 4, y - 13, 8, 8);
       ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(x - 4, y - 13, 8, 1);
@@ -1426,6 +1440,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'orc': {
       const oc = e.color;
+      const t = game.time;
+      const aOff = Math.round(Math.sin(t * 1.8) * 3); // axe sway
       // legs
       ctx.fillStyle = '#2e1e0c'; ctx.fillRect(x - 6, y + 7, 5, 7); ctx.fillRect(x + 1, y + 7, 5, 7);
       ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 6, y + 7, 1, 7); ctx.fillRect(x + 1, y + 7, 1, 7);
@@ -1436,11 +1452,11 @@ function drawCreature(ctx, e, x, y, r) {
       // shoulder pads (dark leather)
       ctx.fillStyle = '#3a2808'; ctx.fillRect(x - 11, y - 9, 6, 5); ctx.fillRect(x + 5, y - 9, 6, 5);
       ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.fillRect(x - 11, y - 9, 1, 5); ctx.fillRect(x + 5, y - 9, 1, 5);
-      // two-handed axe (left side, big)
-      ctx.fillStyle = '#4a2808'; ctx.fillRect(x - 16, y - 8, 4, 16);
-      ctx.fillStyle = '#808888'; ctx.fillRect(x - 19, y - 13, 7, 9);
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x - 19, y - 13, 1, 9);
-      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 13, y - 13, 1, 9);
+      // two-handed axe (left side, big, sways)
+      ctx.fillStyle = '#4a2808'; ctx.fillRect(x - 16, y - 8 + aOff, 4, 16);
+      ctx.fillStyle = '#808888'; ctx.fillRect(x - 19, y - 13 + aOff, 7, 9);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(x - 19, y - 13 + aOff, 1, 9);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 13, y - 13 + aOff, 1, 9);
       // head (wider, brutish)
       ctx.fillStyle = oc; ctx.fillRect(x - 8, y - 17, 16, 12);
       ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 8, y - 17, 16, 1); ctx.fillRect(x - 8, y - 17, 2, 12);
@@ -1456,6 +1472,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'skeleton': {
       const bone = e.color;
+      const t = game.time;
+      const bStr = Math.sin(t * 5) * 1.5; // bowstring vibration
       // leg bones
       ctx.fillStyle = bone; ctx.fillRect(x - 4, y + 4, 2, 7); ctx.fillRect(x + 2, y + 4, 2, 7);
       ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(x - 2, y + 4, 1, 7); ctx.fillRect(x + 4, y + 4, 1, 7);
@@ -1472,10 +1490,10 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.beginPath(); ctx.moveTo(x + 8, y - 10); ctx.quadraticCurveTo(x + 14, y, x + 8, y + 10); ctx.stroke();
       ctx.fillStyle = '#7a5022'; ctx.fillRect(x + 8, y - 10, 3, 2); ctx.fillRect(x + 8, y + 8, 3, 2); ctx.fillRect(x + 8, y - 1, 3, 2);
       ctx.strokeStyle = '#c8b070'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(x + 9, y - 9); ctx.lineTo(x + 9, y + 9); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + 9, y - 9); ctx.quadraticCurveTo(x + 9 + bStr, y, x + 9, y + 9); ctx.stroke();
       // arrow nocked
       ctx.strokeStyle = '#c89050'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(x + 3, y); ctx.lineTo(x + 9, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + 3, y); ctx.lineTo(x + 9 + bStr, y); ctx.stroke();
       ctx.fillStyle = '#c0d0d8'; ctx.beginPath(); ctx.moveTo(x + 3, y); ctx.lineTo(x + 6, y - 2); ctx.lineTo(x + 6, y + 2); ctx.fill();
       ctx.lineWidth = 1;
       // skull
@@ -1489,6 +1507,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'cultist': {
       const rc = e.color;
+      const t = game.time;
+      const orbGlow = 0.35 + Math.sin(t * 2.5) * 0.2; // orb glow pulses
       // robe body
       ctx.fillStyle = rc; ctx.fillRect(x - 7, y - 8, 14, 20);
       ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 7, y - 8, 2, 20);
@@ -1498,12 +1518,12 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x - 8, y + 10, 16, 2);
       // dark inner robe panel
       ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x - 2, y - 8, 4, 20);
-      // orb / magic ball (left hand)
+      // orb / magic ball (left hand) — pulsing glow
       ctx.fillStyle = '#ff5a7a';
       ctx.beginPath(); ctx.arc(x - 10, y - 2, 5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,0.5)';
       ctx.beginPath(); ctx.arc(x - 11, y - 3, 2, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = 'rgba(255,60,100,0.4)';
+      ctx.fillStyle = `rgba(255,60,100,${orbGlow})`;
       ctx.beginPath(); ctx.arc(x - 10, y - 2, 7, 0, Math.PI * 2); ctx.fill();
       // hood
       ctx.fillStyle = rc; ctx.fillRect(x - 6, y - 20, 12, 14);
@@ -1517,6 +1537,8 @@ function drawCreature(ctx, e, x, y, r) {
     }
     case 'golem': {
       const gc3 = e.color;
+      const t = game.time;
+      const eyePulse = 0.28 + Math.sin(t * 1.6) * 0.15; // eye glow throb
       // stone legs — thick blocks
       ctx.fillStyle = '#50545c'; ctx.fillRect(x - 9, y + 6, 8, 10); ctx.fillRect(x + 1, y + 6, 8, 10);
       ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(x - 9, y + 6, 2, 10); ctx.fillRect(x + 1, y + 6, 2, 10);
@@ -1540,10 +1562,10 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillStyle = 'rgba(0,0,0,0.32)'; ctx.fillRect(x + 7, y - 22, 2, 14);
       // crack on head
       ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 2, y - 21, 1, 6); ctx.fillRect(x + 4, y - 18, 1, 4);
-      // glowing eyes (orange, magical)
+      // glowing eyes (orange, magical, pulsing)
       ctx.fillStyle = '#ff8020'; ctx.fillRect(x - 5, y - 17, 4, 4); ctx.fillRect(x + 1, y - 17, 4, 4);
       ctx.fillStyle = '#ffb060'; ctx.fillRect(x - 4, y - 16, 2, 2); ctx.fillRect(x + 2, y - 16, 2, 2);
-      ctx.fillStyle = 'rgba(255,120,20,0.35)'; ctx.fillRect(x - 6, y - 18, 6, 6); ctx.fillRect(x, y - 18, 6, 6);
+      ctx.fillStyle = `rgba(255,120,20,${eyePulse})`; ctx.fillRect(x - 6, y - 18, 6, 6); ctx.fillRect(x, y - 18, 6, 6);
       break;
     }
     default: {
