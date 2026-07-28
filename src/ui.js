@@ -715,6 +715,7 @@ function artPreviewHTML() {
         {key:'goblin_skirmisher', label:'Goblin Skirmisher',  boss:'Goblin King'},
         {key:'skeletal_servant',  label:'Skeletal Servant',   boss:'Bone Lord'},
         {key:'spectral_echo',     label:'Spectral Echo',      boss:'Wraith Queen'},
+        {key:'golem_shard',       label:'Golem Shard',        boss:'Sentinel Golem'},
         {key:'devourer_larva',    label:'Devourer Larva',     boss:'The Devourer'},
       ].map(({key,label,boss}) =>
         `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
@@ -727,10 +728,13 @@ function artPreviewHTML() {
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Bosses</div>
     <div style="display:flex;gap:20px;flex-wrap:wrap">
       ${[
-        {key:'trollwarchief', label:'Troll Warchief', floor:3},
-        {key:'goblinking',    label:'Goblin King',    floor:5},
-        {key:'bonelord',      label:'Bone Lord',      floor:10},
-        {key:'wraithqueen',   label:'Wraith Queen',   floor:15},
+        {key:'kingslime',     label:'King Slime',     floor:2},
+        {key:'batzilla',      label:'Bat-Zilla',      floor:4},
+        {key:'goblinking',    label:'Goblin King',    floor:7},
+        {key:'trollwarchief', label:'Troll Warchief', floor:10},
+        {key:'bonelord',      label:'Bone Lord',      floor:13},
+        {key:'wraithqueen',   label:'Wraith Queen',   floor:16},
+        {key:'sentinelgolem', label:'Sentinel Golem', floor:18},
         {key:'devourer',      label:'The Devourer',   floor:20},
       ].map(({key,label,floor}) =>
         `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">

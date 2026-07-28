@@ -1258,6 +1258,180 @@ function drawCreature(ctx, e, x, y, r) {
       ctx.fillRect(x - 12, y - 6, 2, 2); ctx.fillRect(x + 10, y + 8, 2, 2);
       break;
     }
+    case 'kingslime': {
+      const t = game.time;
+      const pulse = Math.sin(t * 2.2) * 0.07;
+      const yOff = Math.sin(t * 2.2) * 2;
+      // outer glow
+      ctx.globalAlpha = 0.22 + Math.sin(t * 1.8) * 0.07;
+      ctx.fillStyle = '#90ff60';
+      ctx.beginPath(); ctx.ellipse(x, y + 4 + yOff, r * 1.35, r * 1.1, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      // main body
+      ctx.fillStyle = '#3ab828';
+      ctx.beginPath(); ctx.ellipse(x, y + 4 + yOff, r * (1.18 + pulse), r * (0.96 - pulse), 0, 0, Math.PI * 2); ctx.fill();
+      // highlight dome
+      ctx.fillStyle = '#60e040';
+      ctx.beginPath(); ctx.ellipse(x - r * 0.18, y - r * 0.1 + yOff, r * 0.72, r * 0.5, -0.3, 0, Math.PI * 2); ctx.fill();
+      // specular
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.beginPath(); ctx.ellipse(x - r * 0.3, y - r * 0.25 + yOff, r * 0.28, r * 0.18, -0.4, 0, Math.PI * 2); ctx.fill();
+      // shadow underside
+      ctx.fillStyle = 'rgba(0,0,0,0.32)';
+      ctx.beginPath(); ctx.ellipse(x + r * 0.2, y + r * 0.5 + yOff, r * 0.65, r * 0.45, 0.3, 0, Math.PI * 2); ctx.fill();
+      // eyes
+      ctx.fillStyle = '#081a04'; ctx.fillRect(x - 8, y + yOff, 6, 6); ctx.fillRect(x + 3, y + yOff, 6, 6);
+      ctx.fillStyle = '#50ff20'; ctx.fillRect(x - 7, y + 1 + yOff, 3, 3); ctx.fillRect(x + 4, y + 1 + yOff, 3, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(x - 7, y + 1 + yOff, 1, 1); ctx.fillRect(x + 4, y + 1 + yOff, 1, 1);
+      // mouth
+      ctx.fillStyle = '#0a1a06'; ctx.fillRect(x - 7, y + 8 + yOff, 14, 4);
+      ctx.fillStyle = '#50ff20';
+      ctx.fillRect(x - 6, y + 8 + yOff, 2, 3); ctx.fillRect(x - 2, y + 8 + yOff, 2, 3); ctx.fillRect(x + 2, y + 8 + yOff, 2, 3);
+      // crown
+      ctx.fillStyle = '#ffd060'; ctx.fillRect(x - 12, y - r - 2 + yOff, 24, 7);
+      ctx.fillStyle = '#ffd060';
+      ctx.fillRect(x - 12, y - r - 9 + yOff, 5, 9); // left point
+      ctx.fillRect(x - 3,  y - r - 7 + yOff, 6, 7); // center point
+      ctx.fillRect(x + 7,  y - r - 9 + yOff, 5, 9); // right point
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(x - 12, y - r - 9 + yOff, 1, 16); ctx.fillRect(x - 12, y - r - 2 + yOff, 24, 1);
+      // crown gem
+      const gA = 0.55 + Math.sin(t * 4.5) * 0.35;
+      ctx.fillStyle = '#e03030'; ctx.fillRect(x - 2, y - r - 5 + yOff, 5, 5);
+      ctx.fillStyle = `rgba(255,255,255,${gA})`; ctx.fillRect(x - 2, y - r - 5 + yOff, 2, 2);
+      break;
+    }
+    case 'batzilla': {
+      const t = game.time;
+      const flap = Math.sin(t * 5) * 8;
+      const glide = Math.sin(t * 1.2) * 3;
+      // wing membranes (left)
+      ctx.fillStyle = '#5a2888';
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y + glide);
+      ctx.lineTo(x - r * 2.4, y - 14 + flap + glide);
+      ctx.lineTo(x - r * 2.8, y + 4 + flap * 0.5 + glide);
+      ctx.lineTo(x - r * 1.8, y + 12 + glide);
+      ctx.lineTo(x - 4, y + 8 + glide);
+      ctx.fill();
+      // wing membranes (right)
+      ctx.beginPath();
+      ctx.moveTo(x + 4, y + glide);
+      ctx.lineTo(x + r * 2.4, y - 14 + flap + glide);
+      ctx.lineTo(x + r * 2.8, y + 4 + flap * 0.5 + glide);
+      ctx.lineTo(x + r * 1.8, y + 12 + glide);
+      ctx.lineTo(x + 4, y + 8 + glide);
+      ctx.fill();
+      // wing highlight
+      ctx.fillStyle = 'rgba(160,80,255,0.28)';
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y + glide);
+      ctx.lineTo(x - r * 2.0, y - 10 + flap + glide);
+      ctx.lineTo(x - r * 1.4, y + 6 + glide);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + 4, y + glide);
+      ctx.lineTo(x + r * 2.0, y - 10 + flap + glide);
+      ctx.lineTo(x + r * 1.4, y + 6 + glide);
+      ctx.fill();
+      // wing fingers
+      ctx.fillStyle = '#3a1660';
+      ctx.fillRect(x - r * 2.8 - 1, y + 4 + flap * 0.5 + glide, 3, 3);
+      ctx.fillRect(x - r * 2.0, y - 16 + flap + glide, 3, 5);
+      ctx.fillRect(x + r * 2.8 - 2, y + 4 + flap * 0.5 + glide, 3, 3);
+      ctx.fillRect(x + r * 2.0 - 2, y - 16 + flap + glide, 3, 5);
+      // body
+      ctx.fillStyle = '#5a2090';
+      ctx.beginPath(); ctx.ellipse(x, y + 2 + glide, r * 0.72, r * 0.88, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#7830b8';
+      ctx.beginPath(); ctx.ellipse(x - r * 0.15, y - r * 0.1 + glide, r * 0.5, r * 0.55, -0.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath(); ctx.ellipse(x + r * 0.2, y + r * 0.3 + glide, r * 0.45, r * 0.5, 0.2, 0, Math.PI * 2); ctx.fill();
+      // ears
+      ctx.fillStyle = '#3a1660';
+      ctx.fillRect(x - 8, y - r * 0.8 + glide, 5, 10); ctx.fillRect(x + 3, y - r * 0.8 + glide, 5, 10);
+      ctx.fillStyle = '#7030a8'; ctx.fillRect(x - 7, y - r * 0.8 + 2 + glide, 3, 6); ctx.fillRect(x + 4, y - r * 0.8 + 2 + glide, 3, 6);
+      // eyes
+      ctx.fillStyle = '#ff2020';
+      ctx.beginPath(); ctx.arc(x - 5, y - 2 + glide, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 5, y - 2 + glide, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff8040'; ctx.fillRect(x - 6, y - 3 + glide, 2, 2); ctx.fillRect(x + 4, y - 3 + glide, 2, 2);
+      const eyeGlow = 0.3 + Math.sin(t * 3) * 0.15;
+      ctx.fillStyle = `rgba(255,30,30,${eyeGlow})`;
+      ctx.beginPath(); ctx.arc(x - 5, y - 2 + glide, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 5, y - 2 + glide, 6, 0, Math.PI * 2); ctx.fill();
+      // fangs
+      ctx.fillStyle = '#f0e8d0'; ctx.fillRect(x - 5, y + 5 + glide, 3, 5); ctx.fillRect(x + 2, y + 5 + glide, 3, 5);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x - 5, y + 5 + glide, 1, 5); ctx.fillRect(x + 2, y + 5 + glide, 1, 5);
+      break;
+    }
+    case 'sentinelgolem': {
+      const t = game.time;
+      const eyePulse = 0.6 + Math.sin(t * 1.4) * 0.3;
+      const gc = '#a0a8b8';
+      // stone legs
+      ctx.fillStyle = '#707888'; ctx.fillRect(x - 13, y + 10, 11, 14); ctx.fillRect(x + 2, y + 10, 11, 14);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 13, y + 10, 2, 14); ctx.fillRect(x + 2, y + 10, 2, 14);
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x - 2, y + 10, 4, 14);
+      // rust armor bands on shins
+      ctx.fillStyle = '#8a5030'; ctx.fillRect(x - 13, y + 16, 11, 3); ctx.fillRect(x + 2, y + 16, 11, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 13, y + 16, 2, 3); ctx.fillRect(x + 2, y + 16, 2, 3);
+      // massive stone torso
+      ctx.fillStyle = gc; ctx.fillRect(x - 16, y - 12, 32, 24);
+      ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.fillRect(x - 16, y - 12, 3, 24); ctx.fillRect(x - 16, y - 12, 32, 1);
+      ctx.fillStyle = 'rgba(0,0,0,0.32)'; ctx.fillRect(x + 13, y - 12, 3, 24);
+      // crack texture
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.fillRect(x - 10, y - 8, 1, 10); ctx.fillRect(x - 5, y - 2, 1, 8);
+      ctx.fillRect(x + 5, y - 9, 1, 6); ctx.fillRect(x + 10, y - 4, 1, 9);
+      ctx.fillRect(x - 13, y + 4, 5, 1); ctx.fillRect(x + 4, y, 6, 1);
+      // rust armor bands on torso
+      ctx.fillStyle = '#8a5030'; ctx.fillRect(x - 16, y - 4, 32, 4); ctx.fillRect(x - 16, y + 6, 32, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.22)'; ctx.fillRect(x - 16, y - 4, 3, 4); ctx.fillRect(x - 16, y + 6, 3, 3);
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x + 13, y - 4, 3, 4); ctx.fillRect(x + 13, y + 6, 3, 3);
+      // massive stone fists/arms
+      ctx.fillStyle = '#808898'; ctx.fillRect(x - 24, y - 8, 10, 10); ctx.fillRect(x + 14, y - 8, 10, 10);
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(x - 24, y - 8, 2, 10); ctx.fillRect(x + 14, y - 8, 2, 10);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x - 15, y - 8, 1, 10); ctx.fillRect(x + 23, y - 8, 1, 10);
+      // rust bands on arms
+      ctx.fillStyle = '#8a5030'; ctx.fillRect(x - 24, y - 3, 10, 3); ctx.fillRect(x + 14, y - 3, 10, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 24, y - 3, 2, 3); ctx.fillRect(x + 14, y - 3, 2, 3);
+      // stone head (square)
+      ctx.fillStyle = gc; ctx.fillRect(x - 14, y - 28, 28, 18);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 14, y - 28, 28, 1); ctx.fillRect(x - 14, y - 28, 3, 18);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + 11, y - 28, 3, 18);
+      // crack on head
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fillRect(x - 3, y - 27, 1, 8); ctx.fillRect(x + 5, y - 24, 1, 5);
+      // single large red eye (center)
+      ctx.fillStyle = '#cc1010'; ctx.beginPath(); ctx.arc(x, y - 18, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff3020'; ctx.beginPath(); ctx.arc(x - 1, y - 19, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff8060'; ctx.fillRect(x - 2, y - 21, 3, 3);
+      ctx.fillStyle = `rgba(220,20,10,${eyePulse})`;
+      ctx.beginPath(); ctx.arc(x, y - 18, 12, 0, Math.PI * 2); ctx.fill();
+      // rust crown band on head
+      ctx.fillStyle = '#8a5030'; ctx.fillRect(x - 14, y - 12, 28, 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(x - 14, y - 12, 3, 4);
+      break;
+    }
+    case 'golem_shard': {
+      const t = game.time;
+      const eyeP = 0.4 + Math.sin(t * 2) * 0.2;
+      // stone body (smaller golem chunk)
+      ctx.fillStyle = '#808898'; ctx.fillRect(x - 8, y - 8, 16, 16);
+      ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.fillRect(x - 8, y - 8, 2, 16); ctx.fillRect(x - 8, y - 8, 16, 1);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(x + 6, y - 8, 2, 16);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(x - 5, y - 4, 1, 6); ctx.fillRect(x + 2, y - 2, 1, 5);
+      // rust band
+      ctx.fillStyle = '#7a4828'; ctx.fillRect(x - 8, y - 2, 16, 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(x - 8, y - 2, 2, 3);
+      // arms
+      ctx.fillStyle = '#909898'; ctx.fillRect(x - 12, y - 4, 6, 6); ctx.fillRect(x + 6, y - 4, 6, 6);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x - 12, y - 4, 1, 6); ctx.fillRect(x + 6, y - 4, 1, 6);
+      // single red eye
+      ctx.fillStyle = '#cc1010'; ctx.beginPath(); ctx.arc(x, y - 4, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff4020'; ctx.beginPath(); ctx.arc(x - 1, y - 5, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(220,20,10,${eyeP})`; ctx.beginPath(); ctx.arc(x, y - 4, 6, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
     case 'troll_grunt': {
       const t = game.time;
       const aOff = Math.round(Math.sin(t * 2.2) * 2); // axe sway
@@ -1754,6 +1928,7 @@ export function drawMinionCanvases() {
     { key: 'skeletal_servant',  color: '#d8d8b8', r: 16 },
     { key: 'spectral_echo',     color: '#80c8e0', r: 17 },
     { key: 'devourer_larva',    color: '#50a030', r: 15 },
+    { key: 'golem_shard',       color: '#8a8f98', r: 16 },
   ];
   for (const b of defs) {
     const cvs = document.getElementById(`mpv-${b.key}`);
@@ -1767,10 +1942,13 @@ export function drawMinionCanvases() {
 
 export function drawBossCanvases() {
   const defs = [
-    { key: 'trollwarchief', color: '#6aaf3a', r: 28 },
+    { key: 'kingslime',     color: '#50c840', r: 28 },
+    { key: 'batzilla',      color: '#7a40c0', r: 26 },
     { key: 'goblinking',    color: '#c8b020', r: 30 },
+    { key: 'trollwarchief', color: '#6aaf3a', r: 28 },
     { key: 'bonelord',      color: '#e8e8d0', r: 32 },
     { key: 'wraithqueen',   color: '#5fe0d0', r: 32 },
+    { key: 'sentinelgolem', color: '#a0a8b8', r: 34 },
     { key: 'devourer',      color: '#a02060', r: 36 },
   ];
   for (const b of defs) {

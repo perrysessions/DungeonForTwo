@@ -19,18 +19,25 @@ const ARCHETYPES = [
   { key: 'skeletal_servant',  name: 'Skeletal Servant',   color: '#d8d8b8', behavior: 'chaser',  hp: 40,  dmg: 10, speed: 72,  radius: 10, minFloor: 99, tier: 2 },
   { key: 'spectral_echo',     name: 'Spectral Echo',      color: '#80c8e0', behavior: 'phasing', hp: 45,  dmg: 11, speed: 96,  radius: 11, minFloor: 99, tier: 3 },
   { key: 'devourer_larva',    name: 'Devourer Larva',     color: '#50a030', behavior: 'chaser',  hp: 28,  dmg: 8,  speed: 88,  radius: 9,  minFloor: 99, tier: 1 },
+  { key: 'golem_shard',       name: 'Golem Shard',        color: '#8a8f98', behavior: 'heavy',   hp: 70,  dmg: 14, speed: 56,  radius: 11, minFloor: 99, tier: 3 },
 ];
 
 const BOSSES = {
-  3:  { key: 'trollwarchief', name: 'Troll Warchief', color: '#6aaf3a', behavior: 'heavy', hp: 260, dmg: 14, speed: 68, radius: 20,
-        minionDef: 'troll_grunt', minionCount: 2, minionInterval: 9 },
-  5:  { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 420, dmg: 20, speed: 78, radius: 22,
+  2:  { key: 'kingslime', name: 'King Slime', color: '#50c840', behavior: 'heavy', hp: 180, dmg: 10, speed: 58, radius: 22,
+        minionDef: 'slime', minionCount: 3, minionInterval: 8 },
+  4:  { key: 'batzilla', name: 'Bat-Zilla', color: '#7a40c0', behavior: 'boss_phasing', hp: 290, dmg: 13, speed: 130, radius: 20,
+        minionDef: 'bat', minionCount: 4, minionInterval: 7 },
+  7:  { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 480, dmg: 18, speed: 78, radius: 22,
         minionDef: 'goblin_skirmisher', minionCount: 3, minionInterval: 8 },
-  10: { key: 'bonelord', name: 'Bone Lord', color: '#e8e8d0', behavior: 'boss_ranged', hp: 820, dmg: 22, speed: 60, radius: 24, shootSpeed: 260, shootColor: '#fff0c0',
+  10: { key: 'trollwarchief', name: 'Troll Warchief', color: '#6aaf3a', behavior: 'heavy', hp: 720, dmg: 22, speed: 68, radius: 20,
+        minionDef: 'troll_grunt', minionCount: 2, minionInterval: 9 },
+  13: { key: 'bonelord', name: 'Bone Lord', color: '#e8e8d0', behavior: 'boss_ranged', hp: 1100, dmg: 26, speed: 60, radius: 24, shootSpeed: 260, shootColor: '#fff0c0',
         minionDef: 'skeletal_servant', minionCount: 2, minionInterval: 10 },
-  15: { key: 'wraithqueen', name: 'Wraith Queen', color: '#5fe0d0', behavior: 'boss_phasing', hp: 1500, dmg: 26, speed: 100, radius: 24, shootSpeed: 300, shootColor: '#a0ffe0',
+  16: { key: 'wraithqueen', name: 'Wraith Queen', color: '#5fe0d0', behavior: 'boss_phasing', hp: 1800, dmg: 30, speed: 100, radius: 24, shootSpeed: 300, shootColor: '#a0ffe0',
         minionDef: 'spectral_echo', minionCount: 2, minionInterval: 9 },
-  20: { key: 'devourer', name: 'The Devourer', color: '#a02060', behavior: 'boss_ranged', hp: 3200, dmg: 34, speed: 74, radius: 30, shootSpeed: 320, shootColor: '#ff60a0',
+  18: { key: 'sentinelgolem', name: 'Sentinel Golem', color: '#a0a8b8', behavior: 'heavy', hp: 2400, dmg: 36, speed: 52, radius: 26,
+        minionDef: 'golem_shard', minionCount: 2, minionInterval: 11 },
+  20: { key: 'devourer', name: 'The Devourer', color: '#a02060', behavior: 'boss_ranged', hp: 3600, dmg: 40, speed: 74, radius: 30, shootSpeed: 320, shootColor: '#ff60a0',
         minionDef: 'devourer_larva', minionCount: 3, minionInterval: 7 },
 };
 
