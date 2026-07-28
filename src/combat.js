@@ -274,7 +274,7 @@ export function basicAttack(player) {
     return;
   }
   if (player.stats.weaponType === 'melee') {
-    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, rad: player.stats.attackRange };
+    player.swing = { t: 0.18, max: 0.18, dir: { ...f }, big: true, rad: player.stats.attackRange };
     meleeHit(player, player.stats.attackRange, 1, {
       knockback: player.mods.knockback, source: player, aim: f,
     });
