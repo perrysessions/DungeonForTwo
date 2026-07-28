@@ -3,7 +3,7 @@
 import { game, Phase, MAX_FLOORS, calcScore } from './state.js';
 import { input, KEYMAPS } from './input.js';
 import { isMobile } from './detect.js';
-import { drawBossCanvases } from './render.js';
+import { drawBossCanvases, drawMinionCanvases } from './render.js';
 import { CLASS_LIST } from './classes.js';
 import { buy } from './shop.js';
 import { sellValue } from './items.js';
@@ -580,7 +580,7 @@ function renderOverlay() {
       lastOverlayPhase = titleKey;
       o.innerHTML = titleHTML();
     }
-    if (_showArtPreview) drawBossCanvases();
+    if (_showArtPreview) { drawMinionCanvases(); drawBossCanvases(); }
     return;
   }
   const isEnd = game.phase === Phase.GAME_OVER || game.phase === Phase.WIN;
@@ -689,6 +689,22 @@ function artPreviewHTML() {
         const svg = itemIconSVG({slot,name,color}).replace('width="28" height="28"','width="64" height="64"');
         return row(svg, name.split(' ')[0]);
       }).join('')}
+    </div>
+    <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Minions</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px">
+      ${[
+        {key:'troll_grunt',       label:'Troll Grunt',        boss:'Troll Warchief'},
+        {key:'goblin_skirmisher', label:'Goblin Skirmisher',  boss:'Goblin King'},
+        {key:'skeletal_servant',  label:'Skeletal Servant',   boss:'Bone Lord'},
+        {key:'spectral_echo',     label:'Spectral Echo',      boss:'Wraith Queen'},
+        {key:'devourer_larva',    label:'Devourer Larva',     boss:'The Devourer'},
+      ].map(({key,label,boss}) =>
+        `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <canvas id="mpv-${key}" width="80" height="80" style="image-rendering:pixelated"></canvas>
+          <span style="font-size:11px;color:#c0b0e0">${label}</span>
+          <span style="font-size:10px;color:#6a5a8a">${boss}</span>
+        </div>`
+      ).join('')}
     </div>
     <div style="color:#9080b0;font-size:12px;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Bosses</div>
     <div style="display:flex;gap:20px;flex-wrap:wrap">

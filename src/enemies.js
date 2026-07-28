@@ -13,19 +13,25 @@ const ARCHETYPES = [
   { key: 'cultist', name: 'Cultist', color: '#c0392b', behavior: 'caster', hp: 42, dmg: 11, speed: 62, radius: 11, minFloor: 5, tier: 2, shootRange: 300, shootSpeed: 230, shootColor: '#ff5a7a' },
   { key: 'wraith', name: 'Wraith', color: '#4fd0c0', behavior: 'phasing', hp: 48, dmg: 12, speed: 98, radius: 11, minFloor: 6, tier: 3 },
   { key: 'golem', name: 'Golem', color: '#8a8f98', behavior: 'tank', hp: 150, dmg: 18, speed: 54, radius: 15, minFloor: 7, tier: 3 },
+  // Boss minions — unique art, never spawn as floor enemies
+  { key: 'troll_grunt',       name: 'Troll Grunt',        color: '#5a9a28', behavior: 'heavy',   hp: 55,  dmg: 12, speed: 68,  radius: 11, minFloor: 99, tier: 2 },
+  { key: 'goblin_skirmisher', name: 'Goblin Skirmisher',  color: '#7ab030', behavior: 'swarm',   hp: 30,  dmg: 9,  speed: 100, radius: 10, minFloor: 99, tier: 1 },
+  { key: 'skeletal_servant',  name: 'Skeletal Servant',   color: '#d8d8b8', behavior: 'chaser',  hp: 40,  dmg: 10, speed: 72,  radius: 10, minFloor: 99, tier: 2 },
+  { key: 'spectral_echo',     name: 'Spectral Echo',      color: '#80c8e0', behavior: 'phasing', hp: 45,  dmg: 11, speed: 96,  radius: 11, minFloor: 99, tier: 3 },
+  { key: 'devourer_larva',    name: 'Devourer Larva',     color: '#50a030', behavior: 'chaser',  hp: 28,  dmg: 8,  speed: 88,  radius: 9,  minFloor: 99, tier: 1 },
 ];
 
 const BOSSES = {
   3:  { key: 'trollwarchief', name: 'Troll Warchief', color: '#6aaf3a', behavior: 'heavy', hp: 260, dmg: 14, speed: 68, radius: 20,
-        minionDef: 'goblin', minionCount: 2, minionInterval: 9 },
+        minionDef: 'troll_grunt', minionCount: 2, minionInterval: 9 },
   5:  { key: 'goblinking', name: 'Goblin King', color: '#c8b020', behavior: 'heavy', hp: 420, dmg: 20, speed: 78, radius: 22,
-        minionDef: 'goblin', minionCount: 3, minionInterval: 8 },
+        minionDef: 'goblin_skirmisher', minionCount: 3, minionInterval: 8 },
   10: { key: 'bonelord', name: 'Bone Lord', color: '#e8e8d0', behavior: 'boss_ranged', hp: 820, dmg: 22, speed: 60, radius: 24, shootSpeed: 260, shootColor: '#fff0c0',
-        minionDef: 'skeleton', minionCount: 2, minionInterval: 10 },
+        minionDef: 'skeletal_servant', minionCount: 2, minionInterval: 10 },
   15: { key: 'wraithqueen', name: 'Wraith Queen', color: '#5fe0d0', behavior: 'boss_phasing', hp: 1500, dmg: 26, speed: 100, radius: 24, shootSpeed: 300, shootColor: '#a0ffe0',
-        minionDef: 'wraith', minionCount: 2, minionInterval: 9 },
+        minionDef: 'spectral_echo', minionCount: 2, minionInterval: 9 },
   20: { key: 'devourer', name: 'The Devourer', color: '#a02060', behavior: 'boss_ranged', hp: 3200, dmg: 34, speed: 74, radius: 30, shootSpeed: 320, shootColor: '#ff60a0',
-        minionDef: 'cultist', minionCount: 3, minionInterval: 7 },
+        minionDef: 'devourer_larva', minionCount: 3, minionInterval: 7 },
 };
 
 export class Enemy {
