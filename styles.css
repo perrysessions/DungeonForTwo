@@ -432,11 +432,6 @@ html, body {
     pointer-events: auto;
     padding: 10px 8px;
   }
-  @media (orientation: portrait) {
-    #overlay {
-      align-items: center;
-    }
-  }
   #overlay .card {
     max-height: none;
     width: 100%;
