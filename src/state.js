@@ -34,6 +34,7 @@ export const game = {
   camera: { x: 0, y: 0 },
   stairsActive: false,
   awaitingBoss: false,
+  chest: null,          // { x, y, opened } — floor chest
   paused: false,
   time: 0,           // seconds elapsed (accumulated fixed steps)
   runTime: 0,        // seconds elapsed during active play (for scoring)
@@ -77,6 +78,7 @@ export function resetRunState() {
   game.floaters = [];
   game.particles = [];
   game.stairsActive = false;
+  game.chest = null;
   game.paused = false;
   game.comboTimer = 0;
   game.comboCount = 0;

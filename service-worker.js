@@ -1,4 +1,4 @@
-const CACHE = 'dft-v10';
+const CACHE = 'dft-v11';
 
 // Build absolute URLs relative to this SW's scope so it works both
 // on localhost and on GitHub Pages (/DungeonForTwo/).

@@ -1,6 +1,8 @@
 // Bootstrap: game loop, phase transitions, player control, floor flow.
 import { game, Phase, TILE, MAX_FLOORS, setMessage, resetRunState } from './state.js';
 import { input } from './input.js';
+import { generateEquipment, tierForFloor } from './items.js';
+import { rand, pick } from './rng.js';
 import * as ui from './ui.js';
 import { Dungeon } from './dungeon.js';
 import { spawnFloorEnemies, spawnBoss, isBossFloor } from './enemies.js';
@@ -61,6 +63,7 @@ function generateFloor() {
   });
   game.enemies = spawnFloorEnemies(game.floor, game.map);
   game.awaitingBoss = isBossFloor(game.floor);
+  placeChest();
   game.stairsActive = false;
   updateCamera();
   setMessage(`Floor ${game.floor}${game.awaitingBoss ? ' — BOSS LAIR' : ''}`, 2.4);
@@ -156,6 +159,55 @@ function safePickupPos(x, y) {
   return { x, y };
 }
 
+function placeChest() {
+  const rooms = game.map.rooms;
+  // Pick any room that isn't the start or the stairs room
+  const candidates = rooms.filter((r, i) => i !== 0 && i !== rooms.length - 1);
+  const room = candidates.length ? pick(candidates) : rooms[Math.floor(rooms.length / 2)];
+  // Place in a corner of the room (inset 1 tile from edge)
+  const corners = [
+    { x: room.x + 1, y: room.y + 1 },
+    { x: room.x + room.w - 2, y: room.y + 1 },
+    { x: room.x + 1, y: room.y + room.h - 2 },
+    { x: room.x + room.w - 2, y: room.y + room.h - 2 },
+  ];
+  const corner = pick(corners);
+  game.chest = { x: (corner.x + 0.5) * TILE, y: (corner.y + 0.5) * TILE, opened: false };
+}
+
+function updateChest() {
+  const ch = game.chest;
+  if (!ch || ch.opened) return;
+  for (const p of game.players) {
+    if (p.downed) continue;
+    if (Math.hypot(p.x - ch.x, p.y - ch.y) < p.radius + 20) {
+      ch.opened = true;
+      playSfx('pickup_gold', 0.7);
+      addShake(4);
+      // Always give some gold
+      const gold = 8 + Math.floor(game.floor * 2.5) + Math.floor(rand() * game.floor * 2);
+      for (const pl of game.players) pl.gold += Math.floor(gold / game.players.length);
+      setMessage(`Chest! +${gold} gold`, 2.0);
+      // Chance of equipment: 60% base, scales up slightly with floor
+      if (rand() < Math.min(0.85, 0.60 + game.floor * 0.01)) {
+        // Rarity weights: common → rare → legendary → mythic as floors increase
+        let forcedRarity = null;
+        const r = rand();
+        if (game.floor >= 14 && r < 0.08)      forcedRarity = 'mythic';
+        else if (game.floor >= 9  && r < 0.22)  forcedRarity = 'legendary';
+        else if (game.floor >= 5  && r < 0.50)  forcedRarity = 'rare';
+        else if (r < 0.75)                       forcedRarity = 'uncommon';
+        else                                     forcedRarity = 'common';
+        const item = generateEquipment(tierForFloor(game.floor), game.floor, forcedRarity);
+        // Drop as a pickup so it lands on the ground (player can walk over to collect)
+        game.pickups.push({ x: ch.x, y: ch.y, vx: (rand() - 0.5) * 60, vy: -40, r: 10, life: 60, kind: 'item', item });
+        setMessage(`Chest! +${gold} gold · ${item.rarityName} ${item.name}`, 3.5);
+      }
+      break;
+    }
+  }
+}
+
 function updatePickups(dt) {
   for (const pk of game.pickups) {
     pk.vx *= 0.86; pk.vy *= 0.86;
@@ -244,6 +296,7 @@ function simulate(dt) {
   updateProjectiles(dt);
   updateMinions(dt);
   updateRevives(dt);
+  updateChest();
   updatePickups(dt);
   updateParticles(dt);
   updateCamera();

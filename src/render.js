@@ -50,6 +50,7 @@ export function render(ctx) {
 
   drawTiles(ctx, th);
   drawStairs(ctx);
+  drawChest(ctx);
   drawPickups(ctx);
   drawMinions(ctx);
   drawEnemies(ctx);
@@ -319,6 +320,55 @@ function drawStairs(ctx) {
     ctx.lineWidth = 2;
     ctx.strokeRect(px + 2, py + 2, TILE - 4, TILE - 4);
   }
+}
+
+function drawChest(ctx) {
+  const ch = game.chest;
+  if (!ch) return;
+  const x = Math.round(ch.x), y = Math.round(ch.y);
+  if (ch.opened) {
+    // Open chest — flat, lid flipped back
+    ctx.fillStyle = '#5a3a10';
+    ctx.fillRect(x - 12, y + 2, 24, 10);   // base
+    ctx.fillStyle = '#7a5018';
+    ctx.fillRect(x - 11, y + 3, 22, 8);
+    ctx.fillStyle = '#3a2008';
+    ctx.fillRect(x - 12, y - 6, 24, 6);    // lid (flat/open)
+    ctx.fillStyle = '#5a3a10';
+    ctx.fillRect(x - 11, y - 5, 22, 4);
+    ctx.fillStyle = '#888';
+    ctx.fillRect(x - 2, y + 5, 4, 4);      // latch
+    return;
+  }
+  // Closed chest body
+  ctx.fillStyle = '#3a2008';
+  ctx.fillRect(x - 12, y - 4, 24, 16);
+  ctx.fillStyle = '#7a5018';
+  ctx.fillRect(x - 11, y - 3, 22, 14);
+  ctx.fillStyle = '#c89040';
+  ctx.fillRect(x - 11, y - 3, 22, 3);      // lid stripe
+  // Metal band
+  ctx.fillStyle = '#909090';
+  ctx.fillRect(x - 12, y + 2, 24, 3);
+  ctx.fillStyle = '#b8b8b8';
+  ctx.fillRect(x - 12, y + 2, 24, 1);
+  // Latch
+  ctx.fillStyle = '#c8a820';
+  ctx.fillRect(x - 3, y + 1, 6, 5);
+  ctx.fillStyle = '#f0d040';
+  ctx.fillRect(x - 2, y + 2, 4, 3);
+  // Lid top
+  ctx.fillStyle = '#3a2008';
+  ctx.fillRect(x - 12, y - 10, 24, 8);
+  ctx.fillStyle = '#5a3a10';
+  ctx.fillRect(x - 11, y - 9, 22, 6);
+  ctx.fillStyle = '#7a5018';
+  ctx.fillRect(x - 10, y - 8, 20, 2);      // highlight
+  // Pulsing glow when unopened
+  const g = 0.3 + Math.sin(game.time * 3) * 0.2;
+  ctx.strokeStyle = `rgba(255, 210, 60, ${g})`;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x - 13, y - 11, 26, 28);
 }
 
 function drawPickups(ctx) {
