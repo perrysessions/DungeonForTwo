@@ -788,7 +788,7 @@ function howToPlayHTML() {
     )}
 
     ${sec('Reviving', '#ff6090',
-      `<p style="font-size:12px;color:#ccc;margin:0">If your ally falls, <b>walk over them</b> and hold to revive. If both players are down at the same time, it's game over.</p>`
+      `<p style="font-size:12px;color:#ccc;margin:0">If your ally falls, <b>walk over them and stand still</b> to revive — no button needed. If both players are down at the same time, it's game over.</p>`
     )}
 
     <button data-htp-back style="margin-top:14px;background:#1c1730;border:2px solid #c080ff;color:#c080ff;font-family:monospace;font-size:13px;padding:8px 24px;border-radius:6px;cursor:pointer">← Back to Title</button>
