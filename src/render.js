@@ -1951,7 +1951,7 @@ export function drawTitleScene() {
     if (!cvs) continue;
     const c2 = cvs.getContext('2d');
     c2.clearRect(0, 0, cvs.width, cvs.height);
-    drawCreature(c2, { key: b.key, color: b.color, isBoss: b.isBoss }, cvs.width / 2, Math.round(cvs.height * 0.62), b.r);
+    drawCreature(c2, { key: b.key, color: b.color, isBoss: b.isBoss }, cvs.width / 2, Math.round(cvs.height * 0.52), b.r);
   }
 }
 
