@@ -432,9 +432,10 @@ html, body {
     pointer-events: auto;
     padding: 10px 8px;
   }
-  #overlay .card {
+  #overlay .card, #overlay .shop-frame {
     max-height: none;
     width: 100%;
+    margin: auto;
   }
   /* Class select: 2-column grid on mobile so all 8 fit without cutting off */
   .clsgrid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
