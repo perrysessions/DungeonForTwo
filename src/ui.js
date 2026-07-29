@@ -799,97 +799,25 @@ function titleHTML() {
   if (_showHowTo) return howToPlayHTML();
   if (_showArtPreview) return artPreviewHTML();
 
-  if (isMobile) {
-    // ── Mobile: full-screen pixel-art style title ──────────────────────────
-    const swordL = `<svg width="36" height="72" viewBox="0 0 18 36" style="image-rendering:pixelated">
-      <rect x="8" y="2" width="2" height="22" fill="#c8c8d8"/>
-      <rect x="8" y="2" width="1" height="22" fill="rgba(255,255,255,0.45)"/>
-      <rect x="5" y="14" width="8" height="2" fill="#a0a0b8"/>
-      <rect x="5" y="14" width="1" height="2" fill="rgba(255,255,255,0.3)"/>
-      <rect x="7" y="24" width="4" height="8" fill="#7a5022"/>
-      <rect x="7" y="24" width="1" height="8" fill="rgba(255,255,255,0.2)"/>
-      <rect x="8" y="1" width="2" height="3" fill="#e0e0f0"/>
-    </svg>`;
-    const swordR = `<svg width="36" height="72" viewBox="0 0 18 36" style="image-rendering:pixelated;transform:scaleX(-1)">
-      <rect x="8" y="2" width="2" height="22" fill="#c8c8d8"/>
-      <rect x="8" y="2" width="1" height="22" fill="rgba(255,255,255,0.45)"/>
-      <rect x="5" y="14" width="8" height="2" fill="#a0a0b8"/>
-      <rect x="5" y="14" width="1" height="2" fill="rgba(255,255,255,0.3)"/>
-      <rect x="7" y="24" width="4" height="8" fill="#7a5022"/>
-      <rect x="7" y="24" width="1" height="8" fill="rgba(255,255,255,0.2)"/>
-      <rect x="8" y="1" width="2" height="3" fill="#e0e0f0"/>
-    </svg>`;
-    const axeR = `<svg width="40" height="72" viewBox="0 0 20 36" style="image-rendering:pixelated">
-      <rect x="9" y="4" width="2" height="28" fill="#7a5022"/>
-      <rect x="9" y="4" width="1" height="28" fill="rgba(255,255,255,0.2)"/>
-      <rect x="9" y="2" width="2" height="4" fill="#909898"/>
-      <rect x="7" y="4" width="8" height="12" fill="#909898"/>
-      <rect x="7" y="4" width="2" height="12" fill="rgba(255,255,255,0.3)"/>
-      <rect x="14" y="4" width="1" height="12" fill="rgba(0,0,0,0.25)"/>
-      <rect x="11" y="8" width="4" height="4" fill="#707878"/>
-    </svg>`;
-    const scroll = (text) =>
-      `<div style="background:linear-gradient(135deg,#2a1f0e,#1e1708);border:2px solid #7a5a20;border-radius:4px;padding:10px 14px;margin:0 12px 10px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,220,120,0.15),0 2px 8px rgba(0,0,0,0.5)">
-        <p style="margin:0;font-size:13px;color:#d4c090;font-family:monospace;line-height:1.5">${text}</p>
-      </div>`;
-    const bigBtn = (text, attrs, color='#8a5a20', glow='#c07820') =>
-      `<button ${attrs} style="font-family:monospace;font-size:16px;font-weight:bold;color:#f0d890;background:linear-gradient(180deg,${color} 0%,#4a2c08 100%);border:3px solid ${glow};border-radius:4px;padding:14px 0;width:100%;cursor:pointer;letter-spacing:1px;text-shadow:1px 1px 0 #000;box-shadow:0 4px 0 #2a1408,0 6px 12px rgba(0,0,0,0.5)">${text}</button>`;
-
-    return `<div style="width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#06040c;padding:0;box-sizing:border-box">
-
-      <!-- Title bar -->
-      <div style="width:100%;display:flex;align-items:flex-start;justify-content:center;gap:8px;padding:18px 8px 10px;background:linear-gradient(180deg,#0e0820 0%,#06040c 100%)">
-        <div style="display:flex;gap:2px;margin-top:4px">${swordL}${swordL}</div>
-        <h1 style="margin:0;font-family:monospace;font-size:clamp(32px,9vw,52px);font-weight:900;letter-spacing:4px;line-height:1.1;color:#c080ff;text-shadow:0 0 24px #c080ff88,2px 2px 0 #000;text-align:center;text-transform:uppercase">DUNGEON<br>FOR TWO</h1>
-        <div style="display:flex;gap:2px;margin-top:4px">${axeR}${swordR}</div>
-      </div>
-
-      <!-- Scene canvas: enemies drawn here every frame -->
-      <div style="width:100%;background:linear-gradient(180deg,#06040c 0%,#0e0a1a 40%,#1a1028 100%);display:flex;justify-content:center;align-items:center;padding:8px 0;min-height:140px;position:relative">
-        <div style="display:flex;gap:16px;align-items:flex-end;padding:0 12px">
-          <canvas id="ts-kingslime"    width="80" height="80" style="image-rendering:pixelated"></canvas>
-          <canvas id="ts-warrior"      width="80" height="80" style="image-rendering:pixelated"></canvas>
-          <canvas id="ts-mage"         width="80" height="80" style="image-rendering:pixelated"></canvas>
-          <canvas id="ts-batzilla"     width="80" height="80" style="image-rendering:pixelated"></canvas>
-          <canvas id="ts-sentinelgolem" width="80" height="80" style="image-rendering:pixelated"></canvas>
-        </div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(180deg,transparent,#06040c)"></div>
-      </div>
-
-      <!-- Scroll banners -->
-      <div style="width:100%;padding:4px 0">
-        ${scroll('A dungeon adventure game · two player co-op<br>available on desktop')}
-        ${scroll('Unlock unique class skills. Find epic,<br>legendary and mythical items.')}
-      </div>
-
-      <!-- Buttons -->
-      <div style="width:100%;padding:4px 12px 8px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box">
-        ${bigBtn('▶ &nbsp;Tap to begin', '', '#7a5018','#c07820')}
-        <div style="display:flex;gap:8px">
-          ${bigBtn('[How to Play]', 'data-htp-open', '#2a1a50','#6040b0')}
-          ${bigBtn('[Art]', 'data-artpreview-open', '#0e2a12','#306830')}
-        </div>
-      </div>
-
-      <!-- Credit -->
-      <p style="font-size:10px;color:#4a3a6a;font-family:monospace;margin:6px 0 12px;text-align:center">Music: "Make Believe" by Giulio Fazio · <a href="https://uppbeat.io/t/giulio-fazio/make-believe" target="_blank" style="color:#6a5a8a">uppbeat.io</a></p>
-    </div>`;
-  }
-
-  // ── Desktop ────────────────────────────────────────────────────────────────
-  const prompt = 'Press an Attack key to begin';
-  return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px">
-    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:3px;color:#c080ff;text-shadow:0 0 28px #c080ffaa,0 0 8px #c080ff55;text-transform:uppercase">⚔ Dungeon For Two ⚔</h1>
-    <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">A local co-op pixel roguelike · descend ${MAX_FLOORS} floors</p>
-    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
-    <div class="controls two">
+  const controls = isMobile
+    ? `<p style="font-size:13px;margin:4px 0;color:#b0a0cc">Unlock unique class skills. Find epic, legendary and mythical items.</p>`
+    : `<div class="controls two">
       <div><h3 style="color:${P_COLOR[0]}">Player 1</h3>
         <div>Move: <b>W A S D</b></div><div>Attack: <b>Space</b></div>
         <div>Ability: <b>E</b></div><div>Interact/Revive: <b>Q</b></div><div>Inventory: <b>R</b></div></div>
       <div><h3 style="color:${P_COLOR[1]}">Player 2</h3>
         <div>Move: <b>Arrow Keys</b></div><div>Attack: <b>/</b></div>
         <div>Ability: <b>'</b></div><div>Interact/Revive: <b>;</b></div><div>Inventory: <b>P</b></div></div>
-    </div>
+    </div>`;
+  const subtitle = isMobile
+    ? `A dungeon adventure game · two player co-op available on desktop`
+    : `A local co-op pixel roguelike · descend ${MAX_FLOORS} floors`;
+  const prompt = isMobile ? '▶ Tap to begin' : 'Press an Attack key to begin';
+  return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px">
+    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:3px;color:#c080ff;text-shadow:0 0 28px #c080ffaa,0 0 8px #c080ff55;text-transform:uppercase">⚔ Dungeon For Two ⚔</h1>
+    <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">${subtitle}</p>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
+    ${controls}
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0 8px"></div>
     <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap">
       <p class="blink big" style="font-size:18px;margin:0;color:#e8d87a;letter-spacing:1px">${prompt}</p>
