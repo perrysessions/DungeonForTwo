@@ -10,7 +10,7 @@ import { CLASSES } from './classes.js';
 import {
   basicAttack, useAbility, updateProjectiles, updateMinions, updateParticles,
 } from './combat.js';
-import { render, updateCamera, clampToView } from './render.js';
+import { render, updateCamera, clampToView, drawTitleScene } from './render.js';
 import { openShop, closeShop } from './shop.js';
 import { preloadAudio, playMusic, stopMusic, resumeAudio, playSfx, fadeOutThenIn } from './audio.js';
 import { initMobileControls, updateMobileControls, toggleMobilePanel, isMobile } from './mobile.js';
@@ -278,6 +278,7 @@ function frame(now) {
   if (game.phase === Phase.PLAYING && !game.paused && !game.floorTransition && !game.tabHidden) simulate(dt);
 
   if (game.map) render(ctx);
+  if (game.phase === Phase.TITLE) drawTitleScene();
   game.time += dt;
   if (game.messageTimer > 0) game.messageTimer -= dt;
   game.shake *= 0.86;

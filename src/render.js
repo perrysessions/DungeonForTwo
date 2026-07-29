@@ -1941,6 +1941,20 @@ export function drawMinionCanvases() {
   }
 }
 
+export function drawTitleScene() {
+  const defs = [
+    { id: 'ts-left',  key: 'kingslime', color: '#50c840', r: 32, isBoss: true },
+    { id: 'ts-right', key: 'bonelord',  color: '#e8e8d0', r: 36, isBoss: true },
+  ];
+  for (const b of defs) {
+    const cvs = document.getElementById(b.id);
+    if (!cvs) continue;
+    const c2 = cvs.getContext('2d');
+    c2.clearRect(0, 0, cvs.width, cvs.height);
+    drawCreature(c2, { key: b.key, color: b.color, isBoss: b.isBoss }, cvs.width / 2, Math.round(cvs.height * 0.62), b.r);
+  }
+}
+
 export function drawBossCanvases() {
   const defs = [
     { key: 'kingslime',     color: '#50c840', r: 28 },

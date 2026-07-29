@@ -814,7 +814,11 @@ function titleHTML() {
     : `A local co-op pixel roguelike · descend ${MAX_FLOORS} floors`;
   const prompt = isMobile ? '▶ Tap to begin' : 'Press an Attack key to begin';
   return `<div class="card title" style="text-align:center;padding:28px 22px;max-width:520px;margin:auto">
-    <h1 style="font-size:clamp(28px,6vw,52px);margin:0 0 4px;letter-spacing:3px;color:#c080ff;text-shadow:0 0 28px #c080ffaa,0 0 8px #c080ff55;text-transform:uppercase">Dungeon For Two</h1>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px">
+      <canvas id="ts-left"  width="90" height="90" style="image-rendering:pixelated;flex-shrink:0"></canvas>
+      <h1 style="flex:1;font-size:clamp(24px,5vw,48px);margin:0;letter-spacing:3px;color:#c080ff;text-shadow:0 0 28px #c080ffaa,0 0 8px #c080ff55;text-transform:uppercase">Dungeon For Two</h1>
+      <canvas id="ts-right" width="90" height="90" style="image-rendering:pixelated;flex-shrink:0"></canvas>
+    </div>
     <p class="sub" style="margin:6px 0 10px;font-size:13px;opacity:0.7">${subtitle}</p>
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:10px 0"></div>
     ${controls}
