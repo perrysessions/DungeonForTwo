@@ -132,7 +132,9 @@ function updateRevives(dt) {
     let reviver = null;
     for (const q of game.players) {
       if (q === p || q.downed || ui.isCapturing(q.index)) continue;
-      if (Math.hypot(q.x - p.x, q.y - p.y) < 40 && input.actionDown(q.index, 'interact')) reviver = q;
+      const mv = input.moveVector(q.index);
+      const standing = mv.x === 0 && mv.y === 0 && !q.dashTimer;
+      if (Math.hypot(q.x - p.x, q.y - p.y) < 40 && standing) reviver = q;
     }
     if (reviver) {
       p.reviveProgress += dt * 0.55 * (1 + reviver.mods.reviveSpeed);
